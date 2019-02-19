@@ -10,13 +10,6 @@
 
 %option noyywrap
 
-lowercase-letter    [a-z]
-uppercase-letter    [A-Z]
-letter              {lowercase-letter}|{uppercase-letter}
-
-bin-digit   0|1
-digit       {bin-digit}|[2-9]
-hex-digit   {digit}|[a-fA-F]
 
 tab         "\x9"
 lf          "\x10"
@@ -24,22 +17,36 @@ ff          "\x12"
 cr          "\x13"
 whitespace  " "|{tab}|{lf}|{ff}|{cr}
 
+bin-digit   0|1
+digit       {bin-digit}|[2-9]
+hex-digit   {digit}|[a-fA-F]
 integer-literal     {digit}+|"0x"{hex-digit}+|"0b"{bin-digit}+
 
-string-literal      """
+lowercase-letter    [a-z]
+uppercase-letter    [A-Z]
+letter              {lowercase-letter}|{uppercase-letter}
+
+regular-char        [^\n\0EOF]
+escape-sequence     "b"|"t"|"n"|"r"|'"'|"\"|"x"{hex-digit}+
+escape-char         "\"{escape-char}
+
+
 typeId              {uppercase-letter}({letter}|{digit}|"_")*
 objectId            {lowercase-letter}({letter}|{digit}|"_")*
 
 
 %%
+EOF             {std::cout << "End-of-file" << std::endl; }
 {whitespace}    {  }
+
+
 
 {integer-literal}                           { std::cout << "Integer-literal : " << yytext << std::endl; }
 {integer-literal}({objectId}|{typeId})      { std::cout << "Lexical Error : Missing whitespace between integer and identifier" << std::endl; }
 
 
-
 {typeId}        { std::cout << "Type-Identifier : " << yytext << std::endl; }
+
 {objectId}      { std::map<std::string, enum yytokentype>::iterator isReserved;
                   isReserved = reservedId.find(yytext);
                   if (isReserved != reservedId.end()) {
@@ -66,7 +73,8 @@ objectId            {lowercase-letter}({letter}|{digit}|"_")*
 "<="    { std::cout << "Lower or Equal" << std::endl; }
 "<-"    { std::cout << "Assign" << std::endl; }
 
-"//"    { int c = yyinput();
+"//"    { std::cout << "Skip Line Comment" << std::endl;
+          int c = yyinput();
           while (c != '\n' && c != EOF) {
             c = yyinput();
           }
@@ -74,7 +82,8 @@ objectId            {lowercase-letter}({letter}|{digit}|"_")*
             unput(EOF);
           }
         }
-"(*"    { int opened = 1;
+"(*"    { std::cout << "Skip Long Comment" << std::endl;
+          int opened = 1;
           while(opened != 0) {
             int c1 = yyinput();
             if (c1 == EOF) {
@@ -99,6 +108,7 @@ objectId            {lowercase-letter}({letter}|{digit}|"_")*
             }
           }
         }
+
 
 %%
 int main() {
