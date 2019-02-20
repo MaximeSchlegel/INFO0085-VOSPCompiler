@@ -6,8 +6,8 @@
 %token UNIT		//  native type : unit
 %token TYPEID		//  user-define type
 
-%token INTEGERLITERAL
-%token STRINGLITERAL
+%token INTLITERAL
+%token STRLITERAL
 
 %token AND		//  and operator
 %token NOT		//  not oprator

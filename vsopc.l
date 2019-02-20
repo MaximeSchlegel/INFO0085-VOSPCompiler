@@ -10,68 +10,110 @@
 
 %option noyywrap
 
+%s str
 
-tab         "\x9"
-lf          "\x10"
-ff          "\x12"
-cr          "\x13"
-whitespace  " "|{tab}|{lf}|{ff}|{cr}
+tab           "\x9"
+lf            "\x10"
+ff            "\x12"
+cr            "\x13"
+whitespace    " "|{tab}|{lf}|{ff}|{cr}
 
-bin-digit   0|1
-digit       {bin-digit}|[2-9]
-hex-digit   {digit}|[a-fA-F]
-integer-literal     {digit}+|"0x"{hex-digit}+|"0b"{bin-digit}+
+bin-digit          0|1
+digit              {bin-digit}|[2-9]
+hex-digit          {digit}|[a-fA-F]
+integer-literal    {digit}+|"0x"{hex-digit}+|"0b"{bin-digit}+
 
 lowercase-letter    [a-z]
 uppercase-letter    [A-Z]
 letter              {lowercase-letter}|{uppercase-letter}
-
-regular-char        [^\n\0EOF]
-escape-sequence     "b"|"t"|"n"|"r"|'"'|"\"|"x"{hex-digit}+
-escape-char         "\"{escape-char}
-
-
 typeId              {uppercase-letter}({letter}|{digit}|"_")*
 objectId            {lowercase-letter}({letter}|{digit}|"_")*
 
 
 %%
-EOF             {std::cout << "End-of-file" << std::endl; }
-{whitespace}    {  }
+{integer-literal}                         { std::cout << "Integer-literal : " << yytext << std::endl; }
+{integer-literal}({objectId}|{typeId})    { std::cout << "Lexical Error : Missing whitespace between integer and identifier" << std::endl; retur -1;}
 
-
-
-{integer-literal}                           { std::cout << "Integer-literal : " << yytext << std::endl; }
-{integer-literal}({objectId}|{typeId})      { std::cout << "Lexical Error : Missing whitespace between integer and identifier" << std::endl; }
-
-
-{typeId}        { std::cout << "Type-Identifier : " << yytext << std::endl; }
-
-{objectId}      { std::map<std::string, enum yytokentype>::iterator isReserved;
-                  isReserved = reservedId.find(yytext);
-                  if (isReserved != reservedId.end()) {
-                    std::cout << "Reversed Identifier : " << yytext << std::endl;
+"\""    { std::string buffer = yytext;
+          int c = yyinput;
+          while (c != "\"") {
+          switch (c) {
+            case EOF:
+              std::cout << "Lexical Error : End of file in string" << std::endl;
+              return -1;
+            case '\n':
+              std::cout << "Lexical Error : Feed Line without \ in string" << std::endl;
+              return -1;
+            case '\0':
+              std::cout << "Lexical Error : Null character in string" << std::endl;
+              return -1;
+            case '\':
+              int c1 = yyinput();
+              switch (c1) {
+                case '\n':
+                  c1 == yyinput();
+                  while (c1 == ' ' or c1 == '\x9') {
+                    c1 == yyinput();
                   }
-                  std::cout << "Object-Identifier : " << yytext << std::endl;
-               }
+                  break;
+                case 'b':
+                  buffer += '\b';
+                  break;
+                case 't':
+                  buffer += '\t';
+                  break;
+                case 'n':
+                  buffer += '\n';
+                  break;
+                case 'r':
+                  buffer += '\r';
+                  break;
+                case '"':
+                  buffer += '"';
+                  break;
+                case '\':
+                  buffer += '\';
+                  break;
+                case 'x':
+                  buffer += '\x';
+                  break;
+                default:
+                  std::cout << "Lexical Error : '\' character in string" << std::endl;
+                  return -1;
 
-"{"     { std::cout << "L Brace" << std::endl; }
-"}"     { std::cout << "R Brace" << std::endl; }
-"("     { std::cout << "L Par" << std::endl; }
-")"     { std::cout << "R Par" << std::endl; }
-":"     { std::cout << "Colon" << std::endl; }
-";"     { std::cout << "Semi-Colon" << std::endl; }
-","     { std::cout << "Coma" << std::endl; }
-"+"     { std::cout << "Plus" << std::endl; }
-"-"     { std::cout << "Minus" << std::endl; }
-"*"     { std::cout << "Times" << std::endl; }
-"/"     { std::cout << "Div" << std::endl; }
-"^"     { std::cout << "Pow" << std::endl; }
-"."     { std::cout << "Dot" << std::endl; }
-"="     { std::cout << "Equal" << std::endl; }
-"<"     { std::cout << "Lower" << std::endl; }
-"<="    { std::cout << "Lower or Equal" << std::endl; }
-"<-"    { std::cout << "Assign" << std::endl; }
+            }
+          }
+
+          }
+        }
+
+{typeId}    { std::cout << "Type-Identifier : " << yytext << std::endl; }
+
+{objectId}    { std::map<std::string, enum yytokentype>::iterator isReserved;
+                isReserved = reservedId.find(yytext);
+                if (isReserved != reservedId.end()) {
+                  std::cout << "Reversed Identifier : " << yytext << std::endl;
+                }
+                std::cout << "Object-Identifier : " << yytext << std::endl;
+              }
+
+"{"    { std::cout << "L Brace" << std::endl; }
+"}"    { std::cout << "R Brace" << std::endl; }
+"("    { std::cout << "L Par" << std::endl; }
+")"    { std::cout << "R Par" << std::endl; }
+":"    { std::cout << "Colon" << std::endl; }
+";"    { std::cout << "Semi-Colon" << std::endl; }
+","    { std::cout << "Coma" << std::endl; }
+"+"    { std::cout << "Plus" << std::endl; }
+"-"    { std::cout << "Minus" << std::endl; }
+"*"    { std::cout << "Times" << std::endl; }
+"/"    { std::cout << "Div" << std::endl; }
+"^"    { std::cout << "Pow" << std::endl; }
+"."    { std::cout << "Dot" << std::endl; }
+"="    { std::cout << "Equal" << std::endl; }
+"<"    { std::cout << "Lower" << std::endl; }
+"<="   { std::cout << "Lower or Equal" << std::endl; }
+"<-"   { std::cout << "Assign" << std::endl; }
 
 "//"    { std::cout << "Skip Line Comment" << std::endl;
           int c = yyinput();
@@ -88,7 +130,7 @@ EOF             {std::cout << "End-of-file" << std::endl; }
             int c1 = yyinput();
             if (c1 == EOF) {
               std::cout << "Error : End-Of-File while scanning Comment" << std::endl;
-              exit(-1);
+              return -1;
             }
             if (c1 == '*') {
               int c2 = yyinput();
@@ -108,6 +150,9 @@ EOF             {std::cout << "End-of-file" << std::endl; }
             }
           }
         }
+
+{whitespace}    {  }
+<<EOF>>         { std::cout << "End of file" << std::endl; }
 
 
 %%
