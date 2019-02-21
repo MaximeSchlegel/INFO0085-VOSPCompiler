@@ -10,8 +10,6 @@
 
 %option noyywrap
 
-%s str
-
 tab           "\x9"
 lf            "\x10"
 ff            "\x12"
@@ -32,60 +30,96 @@ objectId            {lowercase-letter}({letter}|{digit}|"_")*
 
 %%
 {integer-literal}                         { std::cout << "Integer-literal : " << yytext << std::endl; }
-{integer-literal}({objectId}|{typeId})    { std::cout << "Lexical Error : Missing whitespace between integer and identifier" << std::endl; retur -1;}
+{integer-literal}({objectId}|{typeId})    { std::cout << "Lexical Error : Missing whitespace between integer and identifier" << std::endl; return -1;}
 
-"\""    { std::string buffer = yytext;
-          int c = yyinput;
-          while (c != "\"") {
+\"    { std::string buffer = yytext;
+        int c = yyinput();
+        bool erase_space = false;
+        while (c != '\x22') {
           switch (c) {
-            case EOF:
+            case EOF: {
               std::cout << "Lexical Error : End of file in string" << std::endl;
               return -1;
-            case '\n':
-              std::cout << "Lexical Error : Feed Line without \ in string" << std::endl;
+            }
+            case '\x0A': {
+              std::cout << "Lexical Error : Feed line without \\ in string" << std::endl;
               return -1;
-            case '\0':
+            }
+            case '\x00': {
               std::cout << "Lexical Error : Null character in string" << std::endl;
               return -1;
-            case '\':
+            }
+            case '\x5C': {
               int c1 = yyinput();
+              erase_space = false;
+              std::cout << "on backslash " << erase_space << std::endl;
               switch (c1) {
-                case '\n':
-                  c1 == yyinput();
-                  while (c1 == ' ' or c1 == '\x9') {
-                    c1 == yyinput();
-                  }
-                  break;
-                case 'b':
-                  buffer += '\b';
-                  break;
-                case 't':
-                  buffer += '\t';
-                  break;
-                case 'n':
-                  buffer += '\n';
-                  break;
-                case 'r':
-                  buffer += '\r';
-                  break;
-                case '"':
-                  buffer += '"';
-                  break;
-                case '\':
-                  buffer += '\';
-                  break;
-                case 'x':
-                  buffer += '\x';
-                  break;
-                default:
-                  std::cout << "Lexical Error : '\' character in string" << std::endl;
-                  return -1;
+                case '\x0A': {
+                  erase_space = true;
 
+              std::cout << "on feed line " << erase_space << std::endl;
+                  break;
+                }
+                case 'b': {
+                  buffer += '\x08';
+                  break;
+                }
+                case 't': {
+                  buffer += '\x09';
+                  break;
+                }
+                case 'n': {
+                  buffer += '\x0A';
+                  break;
+                }
+                case 'r': {
+                  buffer += '\x0D';
+                  break;
+                }
+                case '"': {
+                  buffer += '\x22';
+                  break;
+                }
+                case '\x5C': {
+                  buffer += '\x5C';
+                  break;
+                }
+                case 'x': {
+                  buffer += '\\';
+                  buffer += 'x';
+                  break;
+                }
+                default: {
+                  std::cout << "Lexical Error : \'\\\' character in string" << std::endl;
+                  return -1;
+                }
+              }
+              break;
+            }
+            case ' ': {
+              if (!erase_space) {
+                buffer += c;
+              }
+              break;
+            }
+            case '\x09': {
+              if (!erase_space) {
+                buffer += c;
+              }
+              break;
+            }
+            default: {
+              erase_space = false;
+              buffer += c;
+              break;
             }
           }
-
-          }
+          c = yyinput();
         }
+        buffer += c;
+        std::cout << "String literral : " << buffer << std::endl;
+        BEGIN(0);
+      }
 
 {typeId}    { std::cout << "Type-Identifier : " << yytext << std::endl; }
 
