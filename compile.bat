@@ -1,3 +1,3 @@
 bison -d vsopc.y
 flex vsopc.l
-g++ -o vsopc lex.yy.c
+g++ lex.yy.c utils.cpp -o vsopc
