@@ -1,5 +1,5 @@
 %{
-    #include "utils.h"
+    #include "lexer/utils.h"
     #define YY_DECL extern "C" int yylex()
 
     int yycharno = 1;

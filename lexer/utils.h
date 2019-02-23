@@ -4,7 +4,7 @@
 #include <string>
 #include <iostream>
 #include <math.h>
-#include "vsopc.tab.h"
+#include "../vsopc.tab.h"
 
 int binToDigit (char c);
 int digitToDigit (char c);
