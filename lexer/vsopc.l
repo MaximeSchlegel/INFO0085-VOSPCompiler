@@ -4,7 +4,9 @@
 
     YYSTYPE yylval;
     int yycharno = 1, prevTokenLength = 0;
+
     std::map<std::string, int> reservedId;
+
     std::string strBuffer;
     std::pair<int,int> strStartPos;
     std::stack<std::pair<int, int>> openedCommentsPosition;
@@ -149,6 +151,8 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                                           }
 
 {typeId}    { yycharnoRefresh();
+              std::string s = yytext;
+              yylval.strValue = &s;
               return returnAndDisplayToken(TYPEID);
             }
 
@@ -156,8 +160,10 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                 std::map<std::string, int>::iterator isReserved;
                 isReserved = reservedId.find(yytext);
                 if (isReserved != reservedId.end()) {
-                    return returnAndDisplayToken(isReserved->second);
+                  return returnAndDisplayToken(isReserved->second);
                 } else {
+                  std::string s = yytext;
+                  yylval.strValue = &s;
                   return returnAndDisplayToken(OBJECTID);
                 }
               }
@@ -244,10 +250,6 @@ int main() {
     reservedId.emplace("true", TRUE);
     reservedId.emplace("while", WHILE);
 
-    int tmp = yylex();
-    while (tmp != END and tmp != -1) {
-      std::cout << tmp << std::endl;
-      tmp = yylex();
-    }
+    yylex();
     return 0;
 }

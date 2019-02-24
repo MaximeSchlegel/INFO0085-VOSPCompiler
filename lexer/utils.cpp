@@ -66,7 +66,7 @@ int returnAndDisplayToken (int token, bool display) {
             case INT32: std::cout << "int32"; break;
             case STRING: std::cout << "string"; break;
             case UNIT: std::cout << "unit"; break;
-            case TYPEID: std::cout << "type-identifier,"; break;
+            case TYPEID: std::cout << "type-identifier," << *yylval.strValue; break;
             case INTLITERAL: std::cout << "integer-literal," << yylval.intValue; break;
             case STRLITERAL: std::cout << "string-literal," << *yylval.strValue; break;
             case AND: std::cout << "and"; break;
@@ -84,7 +84,7 @@ int returnAndDisplayToken (int token, bool display) {
             case THEN: std::cout << "then"; break;
             case TRUE: std::cout << "true"; break;
             case WHILE: std::cout << "while"; break;
-            case OBJECTID: std::cout << "object-identifier,"; break;
+            case OBJECTID: std::cout << "object-identifier," << *yylval.strValue; break;
             case LBRACE: std::cout << "lbrace"; break;
             case RBRACE: std::cout << "rbrace"; break;
             case LPAR: std::cout << "lpar"; break;
@@ -118,7 +118,7 @@ int returnAndDisplayError(int error, int lineno, int charno, bool display) {
             case 103: std::cout << "invalid decimal number"; break;
             case 104: std::cout << "invalid hexadecimal number"; break;
             case 105: std::cout << "missing whitespace between integer and identifier"; break;
-            case 106: std::cout << "invalid escape sequence"; break;
+            case 106: std::cout << "invalid escaped sequence"; break;
             case 107: std::cout << "invalid hexadecimal code"; break;
             case 108: std::cout << "null char in string"; break;
             case 109: std::cout << "feed line in string"; break;
