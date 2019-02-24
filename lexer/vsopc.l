@@ -2,11 +2,12 @@
     #include "lexer/utils.h"
     #define YY_DECL extern "C" int yylex()
 
-    int yycharno = 1;
-    std::map<std::string, enum yytokentype> reservedId;
+    YYSTYPE yylval;
+    int yycharno = 1, prevTokenLength = 0;
+    std::map<std::string, int> reservedId;
     std::string strBuffer;
     std::pair<int,int> strStartPos;
-    std::stack<std::pair<int, int>> openedCommentsPos;
+    std::stack<std::pair<int, int>> openedCommentsPosition;
 %}
 
 %option noyywrap
@@ -40,176 +41,187 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
 
 
 %%
-"//".*\n                  { yycharno = 1; }
-<INITIAL,COMMENT>"(*"     { openedCommentsPos.emplace(yylineno, yycharno);
-                            yycharno += yyleng;
+"//".*\n                  { yycharnoNewline(); }
+<INITIAL,COMMENT>"(*"     { yycharnoRefresh();
+                            openedCommentsPosition.emplace(yylineno, yycharno);
                             BEGIN(COMMENT);
                           }
-<COMMENT>"*)"             { yycharno += yyleng;
-                            openedCommentsPos.pop();
-                            if (openedCommentsPos.empty()) { BEGIN(INITIAL); }
+<COMMENT>"*)"             { yycharnoRefresh();
+                            openedCommentsPosition.pop();
+                            if (openedCommentsPosition.empty()) { BEGIN(INITIAL); }
                           }
-<COMMENT>([^*(\n])+       { yycharno += yyleng; }
-<COMMENT>\n               { yycharno = 1; }
-<COMMENT><<EOF>>          { std::cout << "Lexical Error : end of file in comment" << std::endl;
-                            return -1;
+<COMMENT>([^*(\n])+       { yycharnoRefresh(); }
+<COMMENT>\n               { yycharnoNewline(); }
+<COMMENT><<EOF>>          { yycharnoRefresh();
+                            int errorLine = openedCommentsPosition.top().first, errorChar = openedCommentsPosition.top().second;
+                            return returnAndDisplayError(101, errorLine, errorChar);
                           }
 
-\x22                           { strStartPos = std::pair<int , int>(yycharno, yylineno);
+\x22                           { yycharnoRefresh();
+                                 strStartPos = std::pair<int , int>(yylineno, yycharno);
                                  strBuffer = yytext;
-                                 yycharno += yyleng;
                                  BEGIN(STR);
                                }
-<STR>\x22                      { strBuffer += yytext;
-                                 std::cout << "String Literral : " << strBuffer << std::endl;
-                                 yycharno += yyleng;
+<STR>\x22                      { yycharnoRefresh();
+                                 strBuffer += yytext;
+                                 yylval.strValue = &strBuffer;
                                  BEGIN(INITIAL);
+                                 return returnAndDisplayToken(STRLITERAL);
                                }
-<STR>\x5C\x0A([ '\x09'])*      { yycharno = yyleng - 2; }
-<STR>\x5Cb                     { strBuffer += "\\x08";
-                                 yycharno += yyleng;
+<STR>\x5C\x0A([ '\x09'])*      { yyleng -= 2;
+                                 yycharnoRefresh();
                                }
-<STR>\x5Ct                     { strBuffer += "\\x09";
-                                 yycharno += yyleng;
+<STR>\x5Cb                     { yycharnoRefresh();
+                                 strBuffer += "\\x08";
                                }
-<STR>\x5Cn                     { strBuffer += "\\x0A";
-                                 yycharno += yyleng;
+<STR>\x5Ct                     { yycharnoRefresh();
+                                 strBuffer += "\\x09";
                                }
-<STR>\x5Cr                     { strBuffer += "\\x0D";
-                                 yycharno += yyleng;
+<STR>\x5Cn                     { yycharnoRefresh();
+                                 strBuffer += "\\x0A";
                                }
-<STR>\x5C\x22                  { strBuffer += 34;
-                                 yycharno += yyleng;
+<STR>\x5Cr                     { yycharnoRefresh();
+                                 strBuffer += "\\x0D";
                                }
-<STR>\x5C\x5C                  { strBuffer += 92;
-                                 yycharno += yyleng;
+<STR>\x5C\x22                  { yycharnoRefresh();
+                                 strBuffer += 34;
                                }
-<STR>\x5Cx({hex-digit}{2})     { std::string s = yytext; s = s.erase(0,2);
+<STR>\x5C\x5C                  { yycharnoRefresh();
+                                 strBuffer += 92;
+                               }
+<STR>\x5Cx({hex-digit}{2})     { yycharnoRefresh();
+                                 std::string s = yytext; s = s.erase(0,2);
                                  int intLit = dehexify(s);
                                  if (intLit == -1) {
-                                   std::cout << "Lexical Error : invalid hexadecimal number" << std::endl;
-                                   return -1;
+                                   return returnAndDisplayError(107, yylineno, yycharno);
                                  }
-                                 strBuffer += intLit;
-                                 yycharno += yyleng;
+                                 if (intLit < 32 or intLit == 127) {
+                                   strBuffer += "\\x" + s;
+                                 } else {
+                                   strBuffer += intLit;
+                                 }
                                }
-<STR>\x5C                      { std::cout << "Lexical Error : invalid escape sequence" << std::endl;
-                                 return -1;
+<STR>\x5C                      { yycharnoRefresh();
+                                 return returnAndDisplayError(106, yylineno, yycharno);
                                }
-<STR>\x00                      { std::cout << "Lexical Error : null character in string" << std::endl;
-                                 return -1;
+<STR>\x00                      { yycharnoRefresh();
+                                 return returnAndDisplayError(108, yylineno, yycharno);
                                }
-<STR>\x0A                      { std::cout << "Lexical Error : feed line in string" << std::endl;
-                                 return -1;
+<STR>\x0A                      { yycharnoRefresh();
+                                 return returnAndDisplayError(109, yylineno, yycharno);
                                }
-<STR><<EOF>>                   { std::cout << "Lexical Error : end of file in string" << std::endl;
-                                 return -1;
+<STR><<EOF>>                   { yycharnoRefresh();
+                                 int errorLine = strStartPos.first, errorChar = strStartPos.second;
+                                 return returnAndDisplayError(101, errorLine, errorChar);
                                }
-<STR>.                         { strBuffer += yytext;
-                                 yycharno += yyleng;
+<STR>.                         { yycharnoRefresh();
+                                 strBuffer += yytext;
                                }
 
-{bin-literal}                             { std::string s = yytext; s = s.erase(0,2);
+{bin-literal}                             { yycharnoRefresh();
+                                            std::string s = yytext; s = s.erase(0,2);
                                             int intLit = debinify(s);
                                             if (intLit == -1) {
-                                              std::cout << "Lexical Error : invalid binary number" << std::endl;
-                                              return -1;
+                                              return returnAndDisplayError(102, yylineno, yycharno);
                                             }
-                                            std::cout << "Integer-literal : " << intLit << std::endl;
-                                            yycharno += yyleng;
+                                            yylval.intValue = intLit;
+                                            return returnAndDisplayToken(INTLITERAL);
                                           }
-{digit-literal}                           { int intLit = dedigify(yytext);
+{digit-literal}                           { yycharnoRefresh();
+                                            int intLit = dedigify(yytext);
                                             if (intLit == -1) {
-                                              std::cout << "Lexical Error : invalid number" << std::endl;
-                                              return -1;
+                                              return returnAndDisplayError(103, yylineno, yycharno);
                                             }
-                                            std::cout << "Integer-literal : " << intLit << std::endl;
-                                            yycharno += yyleng;
+                                            yylval.intValue = intLit;
+                                            return returnAndDisplayToken(INTLITERAL);
                                           }
-{hex-literal}                             { std::string s = yytext; s = s.erase(0,2);
+{hex-literal}                             { yycharnoRefresh();
+                                            std::string s = yytext; s = s.erase(0,2);
                                             int intLit = dehexify(s);
                                             if (intLit == -1) {
-                                              std::cout << "Lexical Error : invalid hexadecimal number" << std::endl;
-                                              return -1;
+                                              return returnAndDisplayError(104, yylineno, yycharno);
                                             }
-                                            std::cout << "Integer-literal : " << intLit << std::endl;
-                                            yycharno += yyleng;
+                                            yylval.intValue = intLit;
+                                            return returnAndDisplayToken(INTLITERAL);
                                           }
-{integer-literal}({objectId}|{typeId})    { std::cout << "Lexical Error : missing whitespace between integer and identifier" << std::endl;
-                                            return -1;
+{integer-literal}({objectId}|{typeId})    { yycharnoRefresh();
+                                            return returnAndDisplayError(105, yylineno, yycharno);
                                           }
 
-{typeId}    { std::cout << "Type-Identifier : " << yytext << std::endl;
-              yycharno += yyleng;
+{typeId}    { yycharnoRefresh();
+              return returnAndDisplayToken(TYPEID);
             }
 
-{objectId}    { std::map<std::string, enum yytokentype>::iterator isReserved;
+{objectId}    { yycharnoRefresh();
+                std::map<std::string, int>::iterator isReserved;
                 isReserved = reservedId.find(yytext);
                 if (isReserved != reservedId.end()) {
-                  std::cout << "Reversed Identifier : " << yytext << std::endl;
+                    return returnAndDisplayToken(isReserved->second);
                 } else {
-                  std::cout << "Object-Identifier : " << yytext << std::endl;
+                  return returnAndDisplayToken(OBJECTID);
                 }
-                yycharno += yyleng;
               }
 
-"{"    { std::cout << "L Brace" << std::endl;
-         yycharno += yyleng;
+"{"    { yycharnoRefresh();
+         return returnAndDisplayToken(LBRACE);
        }
-"}"    { std::cout << "R Brace" << std::endl;
-         yycharno += yyleng;
+"}"    { yycharnoRefresh();
+         return returnAndDisplayToken(RBRACE);
        }
-"("    { std::cout << "L Par" << std::endl;
-         yycharno += yyleng;
+"("    { yycharnoRefresh();
+         return returnAndDisplayToken(LPAR);
        }
-")"    { std::cout << "R Par" << std::endl;
-         yycharno += yyleng;
+")"    { yycharnoRefresh();
+         return returnAndDisplayToken(RPAR);
        }
-":"    { std::cout << "Colon" << std::endl;
-         yycharno += yyleng;
+":"    { yycharnoRefresh();
+         return returnAndDisplayToken(COLON);
        }
-";"    { std::cout << "Semi-Colon" << std::endl;
-         yycharno += yyleng;
+";"    { yycharnoRefresh();
+         return returnAndDisplayToken(SEMICOLON);
        }
-","    { std::cout << "Coma" << std::endl;
-         yycharno += yyleng;
+","    { yycharnoRefresh();
+         return returnAndDisplayToken(COMA);
        }
-"+"    { std::cout << "Plus" << std::endl;
-         yycharno += yyleng;
+"+"    { yycharnoRefresh();
+         return returnAndDisplayToken(PLUS);
        }
-"-"    { std::cout << "Minus" << std::endl;
-         yycharno += yyleng;
+"-"    { yycharnoRefresh();
+         return returnAndDisplayToken(MINUS);
        }
-"*"    { std::cout << "Times" << std::endl;
-         yycharno += yyleng;
+"*"    { yycharnoRefresh();
+         return returnAndDisplayToken(TIMES);
        }
-"/"    { std::cout << "Div" << std::endl;
-         yycharno += yyleng;
+"/"    { yycharnoRefresh();
+         return returnAndDisplayToken(DIV);
        }
-"^"    { std::cout << "Pow" << std::endl;
-         yycharno += yyleng;
+"^"    { yycharnoRefresh();
+         return returnAndDisplayToken(POW);
        }
-"."    { std::cout << "Dot" << std::endl;
-         yycharno += yyleng;
+"."    { yycharnoRefresh();
+         return returnAndDisplayToken(DOT);
        }
-"="    { std::cout << "Equal" << std::endl;
-         yycharno += yyleng;
+"="    { yycharnoRefresh();
+         return returnAndDisplayToken(EQUAL);
        }
-"<"    { std::cout << "Lower" << std::endl;
-         yycharno += yyleng;
+"<"    { yycharnoRefresh();
+         return returnAndDisplayToken(LOWER);
        }
-"<="   { std::cout << "Lower or Equal" << std::endl;
-         yycharno += yyleng;
+"<="   { yycharnoRefresh();
+         return returnAndDisplayToken(LOWEREQUAL);
        }
-"<-"   { std::cout << "Assign" << std::endl;
-         yycharno += yyleng;
+"<-"   { yycharnoRefresh();
+         return returnAndDisplayToken(ASSIGN);
        }
 
-{ignored-char}+    { yycharno += yyleng; }
-{lf}+              { yycharno += 0; }
-<<EOF>>            { std::cout << "End of file" << std::endl; }
-
-
+{ignored-char}+    { yycharnoRefresh(); }
+{lf}+              { yycharnoNewline; }
+<<EOF>>            { return returnAndDisplayToken(END);}
+.                  { yycharnoRefresh;
+                     std::string s = yytext;
+                     yylval.strValue = &s;
+                     return returnAndDisplayToken(UNKNOWN);
+                   }
 %%
 int main() {
     reservedId.emplace("bool", BOOL);
@@ -232,6 +244,10 @@ int main() {
     reservedId.emplace("true", TRUE);
     reservedId.emplace("while", WHILE);
 
-    yylex();
+    int tmp = yylex();
+    while (tmp != END and tmp != -1) {
+      std::cout << tmp << std::endl;
+      tmp = yylex();
+    }
     return 0;
 }

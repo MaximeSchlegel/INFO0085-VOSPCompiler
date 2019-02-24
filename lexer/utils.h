@@ -6,6 +6,11 @@
 #include <math.h>
 #include "../vsopc.tab.h"
 
+extern int yylineno, yyleng, yycharno, prevTokenLength;
+extern YYSTYPE yylval;
+
+void yycharnoRefresh();
+void yycharnoNewline();
 int binToDigit (char c);
 int digitToDigit (char c);
 int hexToDigit (char c);
@@ -13,4 +18,5 @@ int debinify (std::string s);
 int dedigify (std::string s);
 int dehexify(char msc, char lsc);
 int dehexify(std::string s);
-void displayToken (int token, int lineno, int charno);
+int returnAndDisplayToken (int token, bool display=true);
+int returnAndDisplayError (int error, int lineno, int charno, bool display=true);

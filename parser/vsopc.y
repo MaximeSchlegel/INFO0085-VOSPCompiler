@@ -1,52 +1,57 @@
-%token END		//  end-of-file
+%union {
+  int intValue;
+  std::string *strValue;
+}
 
-%token BOOL		//  native type : bool
-%token INT32		//  native type : int32
-%token STRING		//  native type : string
-%token UNIT		//  native type : unit
-%token TYPEID		//  user-define type
+%token END			//  end-of-file
 
-%token INTLITERAL
-%token STRLITERAL
+%token BOOL			//  native type : bool
+%token INT32			//  native type : int32
+%token STRING			//  native type : string
+%token UNIT			//  native type : unit
+%token <strValue> TYPEID	//  user-defined type
 
-%token AND		//  and operator
-%token NOT		//  not oprator
+%token <iintValue> INTLITERAL	//
+%token <strValue> STRLITERAL	//
 
-%token CLASS		//  user-define class
-%token DO		//
-%token ELSE		//
-%token EXTENDS		//
-%token FALSE		//
-%token IF		//
-%token IN		//
-%token ISNULL		//
-%token LET		//
-%token NEW		//
-%token THEN		//
-%token TRUE		//
-%token WHILE
+%token AND			//  and operator
+%token NOT			//  not oprator
 
-%token OBJECTID         //  user-define object
+%token CLASS			//  user-defined class
+%token DO			//
+%token ELSE			//
+%token EXTENDS			//
+%token FALSE			//
+%token IF			//
+%token IN			//
+%token ISNULL			//
+%token LET			//
+%token NEW			//
+%token THEN			//
+%token TRUE			//
+%token WHILE			//
 
-%token LBRACE		//  {
-%token RBRACE		//  }
-%token LPAR		//  (
-%token RPAR		//  )
-%token COLON		//  :
-%token SEMICOLON	//  ;
-%token COMA		//  ,
-%token PLUS		//  +
-%token MINUS		//  -
-%token TIMES		//  *
-%token DIV		//  /
-%token POW		//  ^
-%token DOT		//  .
-%token EQUAL		//  =
-%token LOWER		//  <
-%token LOWEREQUAL	//  <=
-%token ASSIGN		//  <-
+%token OBJECTID         	//  user-defined object
 
+%token LBRACE			//  {
+%token RBRACE			//  }
+%token LPAR			//  (
+%token RPAR			//  )
+%token COLON			//  :
+%token SEMICOLON		//  ;
+%token COMA			//  ,
+%token PLUS			//  +
+%token MINUS			//  -
+%token TIMES			//  *
+%token DIV			//  /
+%token POW			//  ^
+%token DOT			//  .
+%token EQUAL			//  =
+%token LOWER			//  <
+%token LOWEREQUAL		//  <=
+%token ASSIGN			//  <-
 
+%token <strValue> UNKNOWN	// unrecognize token
 
 %%
 prog :
