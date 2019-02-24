@@ -9,6 +9,7 @@
 
 extern int yylineno, yyleng, yycharno, prevTokenLength;
 extern YYSTYPE yylval;
+extern std::string filename;
 
 void yycharnoRefresh();
 void yycharnoNewline();

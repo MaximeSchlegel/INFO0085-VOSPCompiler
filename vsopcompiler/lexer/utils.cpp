@@ -111,7 +111,7 @@ int returnAndDisplayToken (int token, int lineno, int charno, bool display) {
 
 int returnAndDisplayError(int error, int lineno, int charno, bool display) {
     if (display) {
-        std::cerr << lineno << ":" << charno << ": lexical error : ";
+        std::cerr << filename << ":" << lineno << ":" << charno << ": lexical error : ";
         switch (error) {
             case 101: std::cerr << "unexpected end-of-file"; break;
             case 102: std::cerr << "invalid binary number"; break;
@@ -122,6 +122,7 @@ int returnAndDisplayError(int error, int lineno, int charno, bool display) {
             case 107: std::cerr << "invalid hexadecimal code"; break;
             case 108: std::cerr << "null char in string"; break;
             case 109: std::cerr << "feed line in string"; break;
+            case 110: std::cerr << "invalid character"; break;
         }
         std::cerr << std::endl;
     }

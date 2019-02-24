@@ -6,6 +6,7 @@
     int yycharno = 1, prevTokenLength = 0;
 
     std::map<std::string, int> reservedId;
+    std::string filename;
 
     std::string strBuffer;
     std::pair<int,int> strStartPosition;
@@ -121,7 +122,7 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                                  return returnAndDisplayError(108, yylineno, yycharno);
                                }
 <STR>\x0A                      { yycharnoRefresh();
-                                 return returnAndDisplayError(109, yylineno, yycharno);
+                                 return returnAndDisplayError(109, yylineno-1, yycharno);
                                }
 <STR><<EOF>>                   { yycharnoRefresh();
                                  int errorLine = strStartPosition.first, errorChar = strStartPosition.second;
@@ -237,9 +238,7 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                      return returnAndDisplayToken(END, yylineno, yycharno, false);
                    }
 .                  { yycharnoRefresh();
-                     std::string s = yytext;
-                     yylval.strValue = &s;
-                     return returnAndDisplayToken(UNKNOWN);
+                     returnAndDisplayError(110, yylineno, yycharno);
                    }
 %%
 int main(int argc, char *argv[]) {
@@ -247,6 +246,7 @@ int main(int argc, char *argv[]) {
 
     if(argc == 3 && param.compare("-lex") == 0)
     {
+      filename = std::string(argv[2]);
       yyin = fopen(argv[2], "r");
     }
 
