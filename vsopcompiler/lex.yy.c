@@ -1138,7 +1138,7 @@ case 49:
 YY_RULE_SETUP
 #line 240 "lexer/vsopc.l"
 { yycharnoRefresh();
-                     returnAndDisplayError(110, yylineno, yycharno);
+                     return returnAndDisplayError(110, yylineno, yycharno);
                    }
 	YY_BREAK
 case 50:
@@ -2065,7 +2065,6 @@ int main(int argc, char *argv[]) {
     }
     fclose(yyin);
     if (token ==-1) {
-      std::cout << -1 << std::endl;
       return -1;
     }
     return 0;

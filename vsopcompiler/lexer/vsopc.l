@@ -238,7 +238,7 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                      return returnAndDisplayToken(END, yylineno, yycharno, false);
                    }
 .                  { yycharnoRefresh();
-                     returnAndDisplayError(110, yylineno, yycharno);
+                     return returnAndDisplayError(110, yylineno, yycharno);
                    }
 %%
 int main(int argc, char *argv[]) {
@@ -276,7 +276,6 @@ int main(int argc, char *argv[]) {
     }
     fclose(yyin);
     if (token ==-1) {
-      std::cout << -1 << std::endl;
       return -1;
     }
     return 0;
