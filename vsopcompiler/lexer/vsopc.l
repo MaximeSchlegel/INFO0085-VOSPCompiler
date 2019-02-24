@@ -234,46 +234,47 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
 int main(int argc, char *argv[]) {
     if(argc < 2)
     {
+      std::cout << "Error" << std::endl;
       return -1;
     }
     std::string param(argv[1]);
 
-    if(argc == 3 && param.compare("-lex"))
+    if(argc == 3 && param.compare("-lex")==0)
     {
       yyin = fopen(argv[2], "r");
-
-      reservedId.emplace("bool", BOOL);
-      reservedId.emplace("int32", INT32);
-      reservedId.emplace("string", STRING);
-      reservedId.emplace("unit", UNIT);
-      reservedId.emplace("and", AND);
-      reservedId.emplace("not", NOT);
-      reservedId.emplace("class", CLASS);
-      reservedId.emplace("do", DO);
-      reservedId.emplace("else", ELSE);
-      reservedId.emplace("extends", EXTENDS);
-      reservedId.emplace("false", FALSE);
-      reservedId.emplace("if", IF);
-      reservedId.emplace("in", IN);
-      reservedId.emplace("isnull", ISNULL);
-      reservedId.emplace("let", LET);
-      reservedId.emplace("new", NEW);
-      reservedId.emplace("then", THEN);
-      reservedId.emplace("true", TRUE);
-      reservedId.emplace("while", WHILE);
-
-      std::vector<std::pair<int, std::pair<int, int>>> tokens;
-      int token = yylex();
-      tokens.push_back(std::pair<int, std::pair<int, int>>(token, std::pair<int, int>(yylineno, yycharno)));
-      while (token != END) {
-        token = yylex();
-        std::cout << token << std::endl;
-        tokens.push_back(std::pair<int, std::pair<int, int>>(token, std::pair<int, int>(yylineno, yycharno)));
-      }
-      std::cout << "End, Display begin" << std::endl << tokens.size() << std::endl << std::endl;
-      displayTokens(tokens);
-
-      fclose(yyin);
-      return 0;
     }
+
+    reservedId.emplace("bool", BOOL);
+    reservedId.emplace("int32", INT32);
+    reservedId.emplace("string", STRING);
+    reservedId.emplace("unit", UNIT);
+    reservedId.emplace("and", AND);
+    reservedId.emplace("not", NOT);
+    reservedId.emplace("class", CLASS);
+    reservedId.emplace("do", DO);
+    reservedId.emplace("else", ELSE);
+    reservedId.emplace("extends", EXTENDS);
+    reservedId.emplace("false", FALSE);
+    reservedId.emplace("if", IF);
+    reservedId.emplace("in", IN);
+    reservedId.emplace("isnull", ISNULL);
+    reservedId.emplace("let", LET);
+    reservedId.emplace("new", NEW);
+    reservedId.emplace("then", THEN);
+    reservedId.emplace("true", TRUE);
+    reservedId.emplace("while", WHILE);
+
+    std::vector<std::pair<int, std::pair<int, int>>> tokens;
+    int token = yylex();
+    tokens.push_back(std::pair<int, std::pair<int, int>>(token, std::pair<int, int>(yylineno, yycharno)));
+    while (token != END) {
+      token = yylex();
+      std::cout << token << std::endl;
+      tokens.push_back(std::pair<int, std::pair<int, int>>(token, std::pair<int, int>(yylineno, yycharno)));
+    }
+    std::cout << "End, Display begin" << std::endl << tokens.size() << std::endl << std::endl;
+    displayTokens(tokens);
+
+    fclose(yyin);
+    return 0;
 }
