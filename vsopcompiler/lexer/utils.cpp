@@ -91,7 +91,7 @@ int returnAndDisplayToken (int token, int lineno, int charno, bool display) {
             case RPAR: std::cout << "rpar"; break;
             case COLON: std::cout << "colon"; break;
             case SEMICOLON: std::cout << "semicolon"; break;
-            case COMA: std::cout << "coma"; break;
+            case COMMA: std::cout << "comma"; break;
             case PLUS: std::cout << "plus"; break;
             case MINUS: std::cout << "minus"; break;
             case TIMES: std::cout << "times"; break;
@@ -113,17 +113,17 @@ int returnAndDisplayError(int error, int lineno, int charno, bool display) {
     if (display) {
         std::cerr << lineno << ":" << charno << ": lexical error : ";
         switch (error) {
-            case 101: std::cout << "unexpected end-of-file"; break;
-            case 102: std::cout << "invalid binary number"; break;
-            case 103: std::cout << "invalid decimal number"; break;
-            case 104: std::cout << "invalid hexadecimal number"; break;
-            case 105: std::cout << "missing whitespace between integer and identifier"; break;
-            case 106: std::cout << "invalid escaped sequence"; break;
-            case 107: std::cout << "invalid hexadecimal code"; break;
-            case 108: std::cout << "null char in string"; break;
-            case 109: std::cout << "feed line in string"; break;
+            case 101: std::cerr << "unexpected end-of-file"; break;
+            case 102: std::cerr << "invalid binary number"; break;
+            case 103: std::cerr << "invalid decimal number"; break;
+            case 104: std::cerr << "invalid hexadecimal number"; break;
+            case 105: std::cerr << "missing whitespace between integer and identifier"; break;
+            case 106: std::cerr << "invalid escaped sequence"; break;
+            case 107: std::cerr << "invalid hexadecimal code"; break;
+            case 108: std::cerr << "null char in string"; break;
+            case 109: std::cerr << "feed line in string"; break;
         }
-        std::cout << std::endl;
+        std::cerr << std::endl;
     }
     return -1;
 }

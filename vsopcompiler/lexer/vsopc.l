@@ -15,7 +15,8 @@
 %option noyywrap
 %option yylineno
 
-%x COMMENT
+%x INLINECOMMENT
+%x MULTILINECOMMENT
 %x STR
 
 space           " "
@@ -43,20 +44,26 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
 
 
 %%
-"//".*\n                  { yycharnoNewline(); }
-<INITIAL,COMMENT>"(*"     { yycharnoRefresh();
+"//"                 { yycharnoRefresh();
+                       BEGIN(INLINECOMMENT);
+                     }
+<INLINECOMMENT>.*    { yycharnoRefresh(); }
+<INLINECOMMENT>\n    { yycharnoNewline();
+                       BEGIN(INITIAL);}
+
+<INITIAL,MULTILINECOMMENT>"(*"     { yycharnoRefresh();
                             openedCommentsPosition.emplace(yylineno, yycharno);
-                            BEGIN(COMMENT);
+                            BEGIN(MULTILINECOMMENT);
                           }
-<COMMENT>"*)"             { yycharnoRefresh();
+<MULTILINECOMMENT>"*)"             { yycharnoRefresh();
                             openedCommentsPosition.pop();
                             if (openedCommentsPosition.empty()) { BEGIN(INITIAL); }
                           }
-<COMMENT>([^*(\n])+       { yycharnoRefresh(); }
-<COMMENT>\*                { yycharnoRefresh(); }
-<COMMENT>\                { yycharnoRefresh(); }
-<COMMENT>\n               { yycharnoNewline(); }
-<COMMENT><<EOF>>          { yycharnoRefresh();
+<MULTILINECOMMENT>([^*(\n])+       { yycharnoRefresh(); }
+<MULTILINECOMMENT>\*                { yycharnoRefresh(); }
+<MULTILINECOMMENT>\                { yycharnoRefresh(); }
+<MULTILINECOMMENT>\n               { yycharnoNewline(); }
+<MULTILINECOMMENT><<EOF>>          { yycharnoRefresh();
                             int errorLine = openedCommentsPosition.top().first, errorChar = openedCommentsPosition.top().second;
                             return returnAndDisplayError(101, errorLine, errorChar);
                           }
@@ -82,15 +89,17 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                                  strBuffer += "\\x09";
                                }
 <STR>\x5Cn                     { yycharnoRefresh();
-                                 strBuffer += "\\x0A";
+                                 strBuffer += "\\x0a";
                                }
 <STR>\x5Cr                     { yycharnoRefresh();
-                                 strBuffer += "\\x0D";
+                                 strBuffer += "\\x0d";
                                }
 <STR>\x5C\x22                  { yycharnoRefresh();
+                                 strBuffer += 92;
                                  strBuffer += 34;
                                }
 <STR>\x5C\x5C                  { yycharnoRefresh();
+                                 strBuffer += 92;
                                  strBuffer += 92;
                                }
 <STR>\x5Cx({hex-digit}{2})     { yycharnoRefresh();
@@ -189,7 +198,7 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
          return returnAndDisplayToken(SEMICOLON);
        }
 ","    { yycharnoRefresh();
-         return returnAndDisplayToken(COMA);
+         return returnAndDisplayToken(COMMA);
        }
 "+"    { yycharnoRefresh();
          return returnAndDisplayToken(PLUS);
@@ -265,7 +274,7 @@ int main(int argc, char *argv[]) {
     while (token != END and token != -1) {
       token = yylex();
     }
-
     fclose(yyin);
+    if (token ==-1) { return -1; }
     return 0;
 }

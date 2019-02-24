@@ -126,7 +126,7 @@
      RPAR = 285,
      COLON = 286,
      SEMICOLON = 287,
-     COMA = 288,
+     COMMA = 288,
      PLUS = 289,
      MINUS = 290,
      TIMES = 291,
@@ -466,7 +466,7 @@ static const char *const yytname[] =
   "TYPEID", "INTLITERAL", "STRLITERAL", "AND", "NOT", "CLASS", "DO",
   "ELSE", "EXTENDS", "FALSE", "IF", "IN", "ISNULL", "LET", "NEW", "THEN",
   "TRUE", "WHILE", "OBJECTID", "LBRACE", "RBRACE", "LPAR", "RPAR", "COLON",
-  "SEMICOLON", "COMA", "PLUS", "MINUS", "TIMES", "DIV", "POW", "DOT",
+  "SEMICOLON", "COMMA", "PLUS", "MINUS", "TIMES", "DIV", "POW", "DOT",
   "EQUAL", "LOWER", "LOWEREQUAL", "ASSIGN", "UNKNOWN", "$accept", "prog", 0
 };
 #endif

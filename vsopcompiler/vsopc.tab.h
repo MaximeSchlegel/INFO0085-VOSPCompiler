@@ -69,7 +69,7 @@
      RPAR = 285,
      COLON = 286,
      SEMICOLON = 287,
-     COMA = 288,
+     COMMA = 288,
      PLUS = 289,
      MINUS = 290,
      TIMES = 291,
