@@ -80,8 +80,8 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                                  BEGIN(INITIAL);
                                  return returnAndDisplayToken(STRLITERAL, strStartPosition.first, strStartPosition.second );
                                }
-<STR>\x5C\x0A([ '\x09'])*      { yyleng -= 2;
-                                 yycharnoRefresh();
+<STR>\x5C\x0A([ '\x09'])*      { yycharnoNewline();
+                                  prevTokenLength = yyleng - 2;
                                }
 <STR>\x5Cb                     { yycharnoRefresh();
                                  strBuffer += "\\x08";
