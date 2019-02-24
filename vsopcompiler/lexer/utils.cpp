@@ -57,9 +57,9 @@ int dehexify(std::string s) {
     return res;
 }
 
-int returnAndDisplayToken (int token, bool display) {
+int returnAndDisplayToken (int token, int lineno, int charno, bool display) {
     if (display) {
-        std::cout << yylineno << "," << yycharno << ",";
+        std::cout << lineno << "," << charno << ",";
         switch (token) {
             case END: std::cout << "end-of-file"; break;
             case BOOL: std::cout << "bool"; break;
@@ -75,7 +75,7 @@ int returnAndDisplayToken (int token, bool display) {
             case DO: std::cout << "do"; break;
             case ELSE: std::cout << "else"; break;
             case EXTENDS: std::cout << "extends"; break;
-            case FALSE: std::cout << "flase"; break;
+            case FALSE: std::cout << "false"; break;
             case IF: std::cout << "if"; break;
             case IN: std::cout << "in"; break;
             case ISNULL: std::cout << "isnull"; break;

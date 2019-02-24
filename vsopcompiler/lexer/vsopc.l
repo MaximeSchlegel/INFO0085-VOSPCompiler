@@ -8,7 +8,7 @@
     std::map<std::string, int> reservedId;
 
     std::string strBuffer;
-    std::pair<int,int> strStartPos;
+    std::pair<int,int> strStartPosition;
     std::stack<std::pair<int, int>> openedCommentsPosition;
 %}
 
@@ -53,6 +53,8 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                             if (openedCommentsPosition.empty()) { BEGIN(INITIAL); }
                           }
 <COMMENT>([^*(\n])+       { yycharnoRefresh(); }
+<COMMENT>\*                { yycharnoRefresh(); }
+<COMMENT>\                { yycharnoRefresh(); }
 <COMMENT>\n               { yycharnoNewline(); }
 <COMMENT><<EOF>>          { yycharnoRefresh();
                             int errorLine = openedCommentsPosition.top().first, errorChar = openedCommentsPosition.top().second;
@@ -60,7 +62,7 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                           }
 
 \x22                           { yycharnoRefresh();
-                                 strStartPos = std::pair<int , int>(yylineno, yycharno);
+                                 strStartPosition = std::pair<int , int>(yylineno, yycharno);
                                  strBuffer = yytext;
                                  BEGIN(STR);
                                }
@@ -68,7 +70,7 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                                  strBuffer += yytext;
                                  yylval.strValue = &strBuffer;
                                  BEGIN(INITIAL);
-                                 return returnAndDisplayToken(STRLITERAL);
+                                 return returnAndDisplayToken(STRLITERAL, strStartPosition.first, strStartPosition.second );
                                }
 <STR>\x5C\x0A([ '\x09'])*      { yyleng -= 2;
                                  yycharnoRefresh();
@@ -113,7 +115,7 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                                  return returnAndDisplayError(109, yylineno, yycharno);
                                }
 <STR><<EOF>>                   { yycharnoRefresh();
-                                 int errorLine = strStartPos.first, errorChar = strStartPos.second;
+                                 int errorLine = strStartPosition.first, errorChar = strStartPosition.second;
                                  return returnAndDisplayError(101, errorLine, errorChar);
                                }
 <STR>.                         { yycharnoRefresh();
@@ -223,7 +225,7 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
 {ignored-char}+    { yycharnoRefresh(); }
 {lf}+              { yycharnoNewline(); }
 <<EOF>>            { yycharnoRefresh();
-                     return returnAndDisplayToken(END);
+                     return returnAndDisplayToken(END, yylineno, yycharno, false);
                    }
 .                  { yycharnoRefresh();
                      std::string s = yytext;
@@ -264,16 +266,10 @@ int main(int argc, char *argv[]) {
     reservedId.emplace("true", TRUE);
     reservedId.emplace("while", WHILE);
 
-    std::vector<std::pair<int, std::pair<int, int>>> tokens;
     int token = yylex();
-    tokens.push_back(std::pair<int, std::pair<int, int>>(token, std::pair<int, int>(yylineno, yycharno)));
-    while (token != END) {
+    while (token != END and token != -1) {
       token = yylex();
-      std::cout << token << std::endl;
-      tokens.push_back(std::pair<int, std::pair<int, int>>(token, std::pair<int, int>(yylineno, yycharno)));
     }
-    std::cout << "End, Display begin" << std::endl << tokens.size() << std::endl << std::endl;
-    displayTokens(tokens);
 
     fclose(yyin);
     return 0;

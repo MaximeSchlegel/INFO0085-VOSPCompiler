@@ -289,38 +289,39 @@ static void yy_fatal_error YY_PROTO(( yyconst char msg[] ));
 	*yy_cp = '\0'; \
 	yy_c_buf_p = yy_cp;
 
-#define YY_NUM_RULES 46
-#define YY_END_OF_BUFFER 47
-static yyconst short int yy_acclist[140] =
+#define YY_NUM_RULES 48
+#define YY_END_OF_BUFFER 49
+static yyconst short int yy_acclist[144] =
     {   0,
-       47,   45,   46,   43,   45,   46,   44,   46,    6,   45,
-       46,   28,   45,   46,   29,   45,   46,   35,   45,   46,
-       33,   45,   46,   32,   45,   46,   34,   45,   46,   38,
-       45,   46,   36,   45,   46,   21,   45,   46,   21,   45,
-       46,   30,   45,   46,   31,   45,   46,   40,   45,   46,
-       39,   45,   46,   24,   45,   46,   37,   45,   46,   25,
-       45,   46,   26,   45,   46,   27,   45,   46,    4,   46,
-        5,   46,   46,   46,   19,   46,   18,   46,    7,   19,
-       46,   16,   19,   46,   17,   19,   46,   43,   44,    2,
-       21,   23,   23,   23,   23,   42,   41,   24,   24,   25,
+       49,   47,   48,   45,   47,   48,   46,   48,    8,   47,
+       48,   30,   47,   48,   31,   47,   48,   37,   47,   48,
+       35,   47,   48,   34,   47,   48,   36,   47,   48,   40,
+       47,   48,   38,   47,   48,   23,   47,   48,   23,   47,
+       48,   32,   47,   48,   33,   47,   48,   42,   47,   48,
+       41,   47,   48,   26,   47,   48,   39,   47,   48,   27,
+       47,   48,   28,   47,   48,   29,   47,   48,    4,   48,
+        7,   48,    4,    6,   48,   48,    5,   48,   21,   48,
+       20,   48,    9,   21,   48,   18,   21,   48,   19,   21,
+       48,   45,   46,    2,   23,   25,   25,   25,   25,   44,
 
-       25,    4,    3,    8,   13,   14,    9,   11,   12,   10,
-        1,   23,   23,   23,   23,   20,   23,   22,   23,   22,
-       23,    8,   23,   23,   22,   23,   22,   23,   15,   23,
-       23,   22,   23,   22,   23,   23,   22,   23,   23
+       43,   26,   26,   27,   27,    4,    3,   10,   15,   16,
+       11,   13,   14,   12,    1,   25,   25,   25,   25,   22,
+       25,   24,   25,   24,   25,   10,   25,   25,   24,   25,
+       24,   25,   17,   25,   25,   24,   25,   24,   25,   25,
+       24,   25,   25
     } ;
 
-static yyconst short int yy_accept[90] =
+static yyconst short int yy_accept[91] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    2,    4,    7,
         9,   12,   15,   18,   21,   24,   27,   30,   33,   36,
        39,   42,   45,   48,   51,   54,   57,   60,   63,   66,
-       69,   71,   73,   74,   75,   77,   79,   82,   85,   88,
-       89,   90,   91,   91,   92,   93,   94,   95,   96,   97,
-       98,   99,  100,  101,  102,  103,  104,  105,  106,  107,
-      108,  109,  110,  111,  111,  111,  112,  113,  114,  115,
-      116,  118,  120,  122,  123,  123,  124,  125,  127,  129,
-      130,  131,  132,  134,  136,  137,  139,  140,  140
+       69,   71,   73,   76,   77,   79,   81,   83,   86,   89,
+       92,   93,   94,   95,   95,   96,   97,   98,   99,  100,
+      101,  102,  103,  104,  105,  106,  107,  108,  109,  110,
+      111,  112,  113,  114,  115,  115,  115,  116,  117,  118,
+      119,  120,  122,  124,  126,  127,  127,  128,  129,  131,
+      133,  134,  135,  136,  138,  140,  141,  143,  144,  144
     } ;
 
 static yyconst int yy_ec[256] =
@@ -363,33 +364,33 @@ static yyconst int yy_meta[39] =
         3,    3,    3,    3,    3,    1,    1,    1
     } ;
 
-static yyconst short int yy_base[98] =
+static yyconst short int yy_base[99] =
     {   0,
-        0,    0,   36,   37,   46,   47,  146,  244,   53,  141,
-      244,  132,  244,  244,  244,  244,  244,  244,  126,   69,
-       21,  244,  244,   29,  244,   43,  244,   46,  244,  244,
-        0,  244,  130,  123,  244,  244,  244,  102,  244,   64,
-      128,  244,  127,   41,   60,   63,   72,  121,  244,  244,
-       78,    0,   89,    0,    0,  244,  108,  244,  244,  244,
-      244,  244,  244,  135,  126,  244,   94,    0,   24,   57,
-      149,  168,    0,  113,  182,  105,  100,  196,    0,  244,
-      108,    0,    0,    0,    0,    0,    0,  244,  231,  234,
-      117,   89,  237,  240,   80,   64,   41
+        0,    0,   36,   37,   46,   47,  148,  244,   53,  144,
+      244,  135,  244,  244,  244,  244,  244,  244,  128,   69,
+       21,  244,  244,   38,  244,   45,  244,   48,  244,  244,
+        0,  244,    0,  132,  132,  244,  244,  244,  102,  244,
+       72,  138,  244,  130,   40,   62,   72,   78,  121,  244,
+      244,   89,    0,   93,    0,    0,  244,  111,  244,  244,
+      244,  244,  244,  244,  135,  120,  244,   97,    0,   51,
+       65,  149,  168,    0,  116,  182,  108,  103,  196,    0,
+      244,  112,    0,    0,    0,    0,    0,    0,  244,  231,
+      234,   89,   68,  237,  240,   57,   41,   38
 
     } ;
 
-static yyconst short int yy_def[98] =
+static yyconst short int yy_def[99] =
     {   0,
-       88,    1,   89,   89,   90,   90,   88,   88,   88,   88,
-       88,   88,   88,   88,   88,   88,   88,   88,   88,   88,
-       20,   88,   88,   88,   88,   91,   88,   92,   88,   88,
-       93,   88,   88,   88,   88,   88,   88,   88,   88,   88,
-       88,   88,   94,   20,   95,   96,   96,   96,   88,   88,
-       91,   51,   92,   53,   93,   88,   88,   88,   88,   88,
-       88,   88,   88,   88,   94,   88,   95,   67,   47,   47,
-       88,   71,   72,   88,   88,   97,   47,   88,   72,   88,
-       97,   81,   78,   78,   81,   78,   81,    0,   88,   88,
-       88,   88,   88,   88,   88,   88,   88
+       89,    1,   90,   90,   91,   91,   89,   89,   89,   89,
+       89,   89,   89,   89,   89,   89,   89,   89,   89,   89,
+       20,   89,   89,   89,   89,   92,   89,   93,   89,   89,
+       94,   89,   94,   89,   89,   89,   89,   89,   89,   89,
+       89,   89,   89,   95,   20,   96,   97,   97,   97,   89,
+       89,   92,   52,   93,   54,   94,   89,   89,   89,   89,
+       89,   89,   89,   89,   89,   95,   89,   96,   68,   48,
+       48,   89,   72,   73,   89,   89,   98,   48,   89,   73,
+       89,   98,   82,   79,   79,   82,   79,   82,    0,   89,
+       89,   89,   89,   89,   89,   89,   89,   89
 
     } ;
 
@@ -399,33 +400,33 @@ static yyconst short int yy_nxt[283] =
        14,   15,   16,   17,   18,   19,   20,   21,   21,   22,
        23,   24,   25,   26,   26,    8,   27,    8,   28,   28,
        28,   28,   28,   28,   28,   29,   30,    8,   32,   32,
-       69,   69,   49,   82,   33,   33,   34,   34,   36,   36,
-       46,   50,   37,   37,   40,   46,   40,   40,   40,   51,
-       51,   51,   53,   53,   53,   40,   70,   40,   40,   40,
-       46,   38,   38,   69,   69,   46,   67,   67,   67,   69,
-       69,   69,   68,   39,   39,   44,   44,   44,   71,   71,
-       69,   54,   45,   45,   51,   51,   51,   46,   47,   46,
+       83,   33,   33,   71,   34,   34,   35,   35,   37,   37,
+       47,   50,   38,   38,   41,   47,   41,   41,   41,   69,
+       51,   52,   52,   52,   54,   54,   54,   70,   70,   47,
+       55,   39,   39,   41,   47,   41,   41,   41,   68,   68,
+       68,   70,   70,   40,   40,   45,   45,   45,   70,   70,
+       70,   53,   46,   46,   72,   72,   70,   47,   48,   47,
 
-       46,   46,   46,   48,   57,   53,   53,   53,   58,   74,
-       67,   67,   67,   74,   74,   74,   69,   69,   74,   52,
-       74,   81,   81,   81,   81,   81,   81,   59,   66,   66,
-       41,   60,   56,   61,   62,   63,   64,   72,   72,   72,
-       42,   43,   42,   41,   73,   88,   88,   88,   88,   73,
-       73,   75,   75,   75,   88,   88,   88,   88,   75,   88,
-       88,   88,   88,   75,   75,   71,   71,   69,   88,   88,
-       88,   88,   76,   76,   88,   88,   70,   77,   77,   77,
-       77,   77,   77,   77,   72,   72,   72,   88,   88,   88,
-       88,   78,   88,   88,   88,   88,   79,   79,   80,   80,
+       47,   47,   47,   49,   58,   52,   52,   52,   59,   54,
+       54,   54,   75,   68,   68,   68,   75,   75,   75,   70,
+       70,   75,   67,   75,   82,   82,   82,   60,   82,   82,
+       82,   61,   67,   62,   63,   64,   65,   73,   73,   73,
+       42,   57,   43,   44,   74,   43,   42,   89,   89,   74,
+       74,   76,   76,   76,   89,   89,   89,   89,   76,   89,
+       89,   89,   89,   76,   76,   72,   72,   70,   89,   89,
+       89,   89,   77,   77,   89,   89,   71,   78,   78,   78,
+       78,   78,   78,   78,   73,   73,   73,   89,   89,   89,
+       89,   79,   89,   89,   89,   89,   80,   80,   81,   81,
 
-       80,   88,   88,   88,   88,   80,   88,   88,   88,   88,
-       80,   80,   83,   83,   83,   88,   88,   88,   88,   84,
-       85,   88,   88,   82,   86,   86,   87,   87,   87,   87,
-       87,   31,   31,   31,   35,   35,   35,   55,   88,   55,
-       65,   65,   65,    7,   88,   88,   88,   88,   88,   88,
-       88,   88,   88,   88,   88,   88,   88,   88,   88,   88,
-       88,   88,   88,   88,   88,   88,   88,   88,   88,   88,
-       88,   88,   88,   88,   88,   88,   88,   88,   88,   88,
-       88,   88
+       81,   89,   89,   89,   89,   81,   89,   89,   89,   89,
+       81,   81,   84,   84,   84,   89,   89,   89,   89,   85,
+       86,   89,   89,   83,   87,   87,   88,   88,   88,   88,
+       88,   31,   31,   31,   36,   36,   36,   56,   89,   56,
+       66,   66,   66,    7,   89,   89,   89,   89,   89,   89,
+       89,   89,   89,   89,   89,   89,   89,   89,   89,   89,
+       89,   89,   89,   89,   89,   89,   89,   89,   89,   89,
+       89,   89,   89,   89,   89,   89,   89,   89,   89,   89,
+       89,   89
     } ;
 
 static yyconst short int yy_chk[283] =
@@ -434,33 +435,33 @@ static yyconst short int yy_chk[283] =
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    3,    4,
-       69,   69,   24,   97,    3,    4,    3,    4,    5,    6,
-       21,   24,    5,    6,    9,   21,    9,    9,    9,   26,
-       26,   26,   28,   28,   28,   40,   96,   40,   40,   40,
-       44,    5,    6,   70,   70,   44,   45,   45,   45,   46,
-       46,   46,   95,    5,    6,   20,   20,   20,   47,   47,
-       47,   92,   20,   20,   51,   51,   51,   20,   20,   20,
+       98,    3,    4,   97,    3,    4,    3,    4,    5,    6,
+       21,   24,    5,    6,    9,   21,    9,    9,    9,   96,
+       24,   26,   26,   26,   28,   28,   28,   70,   70,   45,
+       93,    5,    6,   41,   45,   41,   41,   41,   46,   46,
+       46,   71,   71,    5,    6,   20,   20,   20,   47,   47,
+       47,   92,   20,   20,   48,   48,   48,   20,   20,   20,
 
-       20,   20,   20,   20,   38,   53,   53,   53,   38,   57,
-       67,   67,   67,   57,   74,   57,   77,   77,   74,   91,
-       74,   76,   76,   76,   81,   81,   81,   38,   65,   43,
-       41,   38,   34,   38,   38,   38,   38,   48,   48,   48,
-       33,   19,   12,   10,   48,    7,    0,    0,    0,   48,
-       48,   64,   64,   64,    0,    0,    0,    0,   64,    0,
-        0,    0,    0,   64,   64,   71,   71,   71,    0,    0,
-        0,    0,   71,   71,    0,    0,   71,   71,   71,   71,
-       71,   71,   71,   71,   72,   72,   72,    0,    0,    0,
-        0,   72,    0,    0,    0,    0,   72,   72,   75,   75,
+       20,   20,   20,   20,   39,   52,   52,   52,   39,   54,
+       54,   54,   58,   68,   68,   68,   58,   75,   58,   78,
+       78,   75,   66,   75,   77,   77,   77,   39,   82,   82,
+       82,   39,   44,   39,   39,   39,   39,   49,   49,   49,
+       42,   35,   34,   19,   49,   12,   10,    7,    0,   49,
+       49,   65,   65,   65,    0,    0,    0,    0,   65,    0,
+        0,    0,    0,   65,   65,   72,   72,   72,    0,    0,
+        0,    0,   72,   72,    0,    0,   72,   72,   72,   72,
+       72,   72,   72,   72,   73,   73,   73,    0,    0,    0,
+        0,   73,    0,    0,    0,    0,   73,   73,   76,   76,
 
-       75,    0,    0,    0,    0,   75,    0,    0,    0,    0,
-       75,   75,   78,   78,   78,    0,    0,    0,    0,   78,
-       78,    0,    0,   78,   78,   78,   78,   78,   78,   78,
-       78,   89,   89,   89,   90,   90,   90,   93,    0,   93,
-       94,   94,   94,   88,   88,   88,   88,   88,   88,   88,
-       88,   88,   88,   88,   88,   88,   88,   88,   88,   88,
-       88,   88,   88,   88,   88,   88,   88,   88,   88,   88,
-       88,   88,   88,   88,   88,   88,   88,   88,   88,   88,
-       88,   88
+       76,    0,    0,    0,    0,   76,    0,    0,    0,    0,
+       76,   76,   79,   79,   79,    0,    0,    0,    0,   79,
+       79,    0,    0,   79,   79,   79,   79,   79,   79,   79,
+       79,   90,   90,   90,   91,   91,   91,   94,    0,   94,
+       95,   95,   95,   89,   89,   89,   89,   89,   89,   89,
+       89,   89,   89,   89,   89,   89,   89,   89,   89,   89,
+       89,   89,   89,   89,   89,   89,   89,   89,   89,   89,
+       89,   89,   89,   89,   89,   89,   89,   89,   89,   89,
+       89,   89
     } ;
 
 static yy_state_type yy_state_buf[YY_BUF_SIZE + 2], *yy_state_ptr;
@@ -489,13 +490,13 @@ char *yytext;
     std::map<std::string, int> reservedId;
 
     std::string strBuffer;
-    std::pair<int,int> strStartPos;
+    std::pair<int,int> strStartPosition;
     std::stack<std::pair<int, int>> openedCommentsPosition;
 #define COMMENT 1
 
 #define STR 2
 
-#line 499 "lex.yy.c"
+#line 500 "lex.yy.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -648,7 +649,7 @@ YY_DECL
 
 #line 45 "lexer/vsopc.l"
 
-#line 652 "lex.yy.c"
+#line 653 "lex.yy.c"
 
 	if ( yy_init )
 		{
@@ -696,7 +697,7 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 89 )
+				if ( yy_current_state >= 90 )
 					yy_c = yy_meta[(unsigned int) yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
@@ -768,86 +769,96 @@ YY_RULE_SETUP
 case 5:
 YY_RULE_SETUP
 #line 56 "lexer/vsopc.l"
+{ yycharnoRefresh(); }
+	YY_BREAK
+case 6:
+YY_RULE_SETUP
+#line 57 "lexer/vsopc.l"
+{ yycharnoRefresh(); }
+	YY_BREAK
+case 7:
+YY_RULE_SETUP
+#line 58 "lexer/vsopc.l"
 { yycharnoNewline(); }
 	YY_BREAK
 case YY_STATE_EOF(COMMENT):
-#line 57 "lexer/vsopc.l"
+#line 59 "lexer/vsopc.l"
 { yycharnoRefresh();
                             int errorLine = openedCommentsPosition.top().first, errorChar = openedCommentsPosition.top().second;
                             return returnAndDisplayError(101, errorLine, errorChar);
                           }
 	YY_BREAK
-case 6:
+case 8:
 YY_RULE_SETUP
-#line 62 "lexer/vsopc.l"
+#line 64 "lexer/vsopc.l"
 { yycharnoRefresh();
-                                 strStartPos = std::pair<int , int>(yylineno, yycharno);
+                                 strStartPosition = std::pair<int , int>(yylineno, yycharno);
                                  strBuffer = yytext;
                                  BEGIN(STR);
                                }
 	YY_BREAK
-case 7:
+case 9:
 YY_RULE_SETUP
-#line 67 "lexer/vsopc.l"
+#line 69 "lexer/vsopc.l"
 { yycharnoRefresh();
                                  strBuffer += yytext;
                                  yylval.strValue = &strBuffer;
                                  BEGIN(INITIAL);
-                                 return returnAndDisplayToken(STRLITERAL);
-                               }
-	YY_BREAK
-case 8:
-YY_RULE_SETUP
-#line 73 "lexer/vsopc.l"
-{ yyleng -= 2;
-                                 yycharnoRefresh();
-                               }
-	YY_BREAK
-case 9:
-YY_RULE_SETUP
-#line 76 "lexer/vsopc.l"
-{ yycharnoRefresh();
-                                 strBuffer += "\\x08";
+                                 return returnAndDisplayToken(STRLITERAL, strStartPosition.first, strStartPosition.second );
                                }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 79 "lexer/vsopc.l"
-{ yycharnoRefresh();
-                                 strBuffer += "\\x09";
+#line 75 "lexer/vsopc.l"
+{ yyleng -= 2;
+                                 yycharnoRefresh();
                                }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 82 "lexer/vsopc.l"
+#line 78 "lexer/vsopc.l"
 { yycharnoRefresh();
-                                 strBuffer += "\\x0A";
+                                 strBuffer += "\\x08";
                                }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 85 "lexer/vsopc.l"
+#line 81 "lexer/vsopc.l"
 { yycharnoRefresh();
-                                 strBuffer += "\\x0D";
+                                 strBuffer += "\\x09";
                                }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 88 "lexer/vsopc.l"
+#line 84 "lexer/vsopc.l"
 { yycharnoRefresh();
-                                 strBuffer += 34;
+                                 strBuffer += "\\x0A";
                                }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 91 "lexer/vsopc.l"
+#line 87 "lexer/vsopc.l"
 { yycharnoRefresh();
-                                 strBuffer += 92;
+                                 strBuffer += "\\x0D";
                                }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 94 "lexer/vsopc.l"
+#line 90 "lexer/vsopc.l"
+{ yycharnoRefresh();
+                                 strBuffer += 34;
+                               }
+	YY_BREAK
+case 16:
+YY_RULE_SETUP
+#line 93 "lexer/vsopc.l"
+{ yycharnoRefresh();
+                                 strBuffer += 92;
+                               }
+	YY_BREAK
+case 17:
+YY_RULE_SETUP
+#line 96 "lexer/vsopc.l"
 { yycharnoRefresh();
                                  std::string s = yytext; s = s.erase(0,2);
                                  int intLit = dehexify(s);
@@ -861,44 +872,44 @@ YY_RULE_SETUP
                                  }
                                }
 	YY_BREAK
-case 16:
+case 18:
 YY_RULE_SETUP
-#line 106 "lexer/vsopc.l"
+#line 108 "lexer/vsopc.l"
 { yycharnoRefresh();
                                  return returnAndDisplayError(106, yylineno, yycharno);
                                }
 	YY_BREAK
-case 17:
+case 19:
 YY_RULE_SETUP
-#line 109 "lexer/vsopc.l"
+#line 111 "lexer/vsopc.l"
 { yycharnoRefresh();
                                  return returnAndDisplayError(108, yylineno, yycharno);
                                }
 	YY_BREAK
-case 18:
+case 20:
 YY_RULE_SETUP
-#line 112 "lexer/vsopc.l"
+#line 114 "lexer/vsopc.l"
 { yycharnoRefresh();
                                  return returnAndDisplayError(109, yylineno, yycharno);
                                }
 	YY_BREAK
 case YY_STATE_EOF(STR):
-#line 115 "lexer/vsopc.l"
+#line 117 "lexer/vsopc.l"
 { yycharnoRefresh();
-                                 int errorLine = strStartPos.first, errorChar = strStartPos.second;
+                                 int errorLine = strStartPosition.first, errorChar = strStartPosition.second;
                                  return returnAndDisplayError(101, errorLine, errorChar);
                                }
 	YY_BREAK
-case 19:
+case 21:
 YY_RULE_SETUP
-#line 119 "lexer/vsopc.l"
+#line 121 "lexer/vsopc.l"
 { yycharnoRefresh();
                                  strBuffer += yytext;
                                }
 	YY_BREAK
-case 20:
+case 22:
 YY_RULE_SETUP
-#line 123 "lexer/vsopc.l"
+#line 125 "lexer/vsopc.l"
 { yycharnoRefresh();
                                             std::string s = yytext; s = s.erase(0,2);
                                             int intLit = debinify(s);
@@ -909,9 +920,9 @@ YY_RULE_SETUP
                                             return returnAndDisplayToken(INTLITERAL);
                                           }
 	YY_BREAK
-case 21:
+case 23:
 YY_RULE_SETUP
-#line 132 "lexer/vsopc.l"
+#line 134 "lexer/vsopc.l"
 { yycharnoRefresh();
                                             int intLit = dedigify(yytext);
                                             if (intLit == -1) {
@@ -921,9 +932,9 @@ YY_RULE_SETUP
                                             return returnAndDisplayToken(INTLITERAL);
                                           }
 	YY_BREAK
-case 22:
+case 24:
 YY_RULE_SETUP
-#line 140 "lexer/vsopc.l"
+#line 142 "lexer/vsopc.l"
 { yycharnoRefresh();
                                             std::string s = yytext; s = s.erase(0,2);
                                             int intLit = dehexify(s);
@@ -934,25 +945,25 @@ YY_RULE_SETUP
                                             return returnAndDisplayToken(INTLITERAL);
                                           }
 	YY_BREAK
-case 23:
+case 25:
 YY_RULE_SETUP
-#line 149 "lexer/vsopc.l"
+#line 151 "lexer/vsopc.l"
 { yycharnoRefresh();
                                             return returnAndDisplayError(105, yylineno, yycharno);
                                           }
 	YY_BREAK
-case 24:
+case 26:
 YY_RULE_SETUP
-#line 153 "lexer/vsopc.l"
+#line 155 "lexer/vsopc.l"
 { yycharnoRefresh();
               std::string s = yytext;
               yylval.strValue = &s;
               return returnAndDisplayToken(TYPEID);
             }
 	YY_BREAK
-case 25:
+case 27:
 YY_RULE_SETUP
-#line 159 "lexer/vsopc.l"
+#line 161 "lexer/vsopc.l"
 { yycharnoRefresh();
                 std::map<std::string, int>::iterator isReserved;
                 isReserved = reservedId.find(yytext);
@@ -965,156 +976,156 @@ YY_RULE_SETUP
                 }
               }
 	YY_BREAK
-case 26:
+case 28:
 YY_RULE_SETUP
-#line 171 "lexer/vsopc.l"
+#line 173 "lexer/vsopc.l"
 { yycharnoRefresh();
          return returnAndDisplayToken(LBRACE);
        }
 	YY_BREAK
-case 27:
+case 29:
 YY_RULE_SETUP
-#line 174 "lexer/vsopc.l"
+#line 176 "lexer/vsopc.l"
 { yycharnoRefresh();
          return returnAndDisplayToken(RBRACE);
        }
 	YY_BREAK
-case 28:
+case 30:
 YY_RULE_SETUP
-#line 177 "lexer/vsopc.l"
+#line 179 "lexer/vsopc.l"
 { yycharnoRefresh();
          return returnAndDisplayToken(LPAR);
        }
 	YY_BREAK
-case 29:
+case 31:
 YY_RULE_SETUP
-#line 180 "lexer/vsopc.l"
+#line 182 "lexer/vsopc.l"
 { yycharnoRefresh();
          return returnAndDisplayToken(RPAR);
        }
 	YY_BREAK
-case 30:
+case 32:
 YY_RULE_SETUP
-#line 183 "lexer/vsopc.l"
+#line 185 "lexer/vsopc.l"
 { yycharnoRefresh();
          return returnAndDisplayToken(COLON);
        }
 	YY_BREAK
-case 31:
+case 33:
 YY_RULE_SETUP
-#line 186 "lexer/vsopc.l"
+#line 188 "lexer/vsopc.l"
 { yycharnoRefresh();
          return returnAndDisplayToken(SEMICOLON);
        }
 	YY_BREAK
-case 32:
+case 34:
 YY_RULE_SETUP
-#line 189 "lexer/vsopc.l"
+#line 191 "lexer/vsopc.l"
 { yycharnoRefresh();
          return returnAndDisplayToken(COMA);
        }
 	YY_BREAK
-case 33:
+case 35:
 YY_RULE_SETUP
-#line 192 "lexer/vsopc.l"
+#line 194 "lexer/vsopc.l"
 { yycharnoRefresh();
          return returnAndDisplayToken(PLUS);
        }
 	YY_BREAK
-case 34:
+case 36:
 YY_RULE_SETUP
-#line 195 "lexer/vsopc.l"
+#line 197 "lexer/vsopc.l"
 { yycharnoRefresh();
          return returnAndDisplayToken(MINUS);
        }
 	YY_BREAK
-case 35:
+case 37:
 YY_RULE_SETUP
-#line 198 "lexer/vsopc.l"
+#line 200 "lexer/vsopc.l"
 { yycharnoRefresh();
          return returnAndDisplayToken(TIMES);
        }
 	YY_BREAK
-case 36:
+case 38:
 YY_RULE_SETUP
-#line 201 "lexer/vsopc.l"
+#line 203 "lexer/vsopc.l"
 { yycharnoRefresh();
          return returnAndDisplayToken(DIV);
        }
 	YY_BREAK
-case 37:
+case 39:
 YY_RULE_SETUP
-#line 204 "lexer/vsopc.l"
+#line 206 "lexer/vsopc.l"
 { yycharnoRefresh();
          return returnAndDisplayToken(POW);
        }
 	YY_BREAK
-case 38:
+case 40:
 YY_RULE_SETUP
-#line 207 "lexer/vsopc.l"
+#line 209 "lexer/vsopc.l"
 { yycharnoRefresh();
          return returnAndDisplayToken(DOT);
        }
 	YY_BREAK
-case 39:
+case 41:
 YY_RULE_SETUP
-#line 210 "lexer/vsopc.l"
+#line 212 "lexer/vsopc.l"
 { yycharnoRefresh();
          return returnAndDisplayToken(EQUAL);
        }
 	YY_BREAK
-case 40:
+case 42:
 YY_RULE_SETUP
-#line 213 "lexer/vsopc.l"
+#line 215 "lexer/vsopc.l"
 { yycharnoRefresh();
          return returnAndDisplayToken(LOWER);
        }
 	YY_BREAK
-case 41:
+case 43:
 YY_RULE_SETUP
-#line 216 "lexer/vsopc.l"
+#line 218 "lexer/vsopc.l"
 { yycharnoRefresh();
          return returnAndDisplayToken(LOWEREQUAL);
        }
 	YY_BREAK
-case 42:
+case 44:
 YY_RULE_SETUP
-#line 219 "lexer/vsopc.l"
+#line 221 "lexer/vsopc.l"
 { yycharnoRefresh();
          return returnAndDisplayToken(ASSIGN);
        }
 	YY_BREAK
-case 43:
+case 45:
 YY_RULE_SETUP
-#line 223 "lexer/vsopc.l"
+#line 225 "lexer/vsopc.l"
 { yycharnoRefresh(); }
 	YY_BREAK
-case 44:
+case 46:
 YY_RULE_SETUP
-#line 224 "lexer/vsopc.l"
+#line 226 "lexer/vsopc.l"
 { yycharnoNewline(); }
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
-#line 225 "lexer/vsopc.l"
+#line 227 "lexer/vsopc.l"
 { yycharnoRefresh();
-                     return returnAndDisplayToken(END);
+                     return returnAndDisplayToken(END, yylineno, yycharno, false);
                    }
 	YY_BREAK
-case 45:
+case 47:
 YY_RULE_SETUP
-#line 228 "lexer/vsopc.l"
+#line 230 "lexer/vsopc.l"
 { yycharnoRefresh();
                      std::string s = yytext;
                      yylval.strValue = &s;
                      return returnAndDisplayToken(UNKNOWN);
                    }
 	YY_BREAK
-case 46:
+case 48:
 YY_RULE_SETUP
-#line 233 "lexer/vsopc.l"
+#line 235 "lexer/vsopc.l"
 ECHO;
 	YY_BREAK
-#line 1118 "lex.yy.c"
+#line 1129 "lex.yy.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -1401,7 +1412,7 @@ static yy_state_type yy_get_previous_state()
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 89 )
+			if ( yy_current_state >= 90 )
 				yy_c = yy_meta[(unsigned int) yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
@@ -1431,11 +1442,11 @@ yy_state_type yy_current_state;
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 89 )
+		if ( yy_current_state >= 90 )
 			yy_c = yy_meta[(unsigned int) yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-	yy_is_jam = (yy_current_state == 88);
+	yy_is_jam = (yy_current_state == 89);
 	if ( ! yy_is_jam )
 		*yy_state_ptr++ = yy_current_state;
 
@@ -1996,9 +2007,21 @@ int main()
 	return 0;
 	}
 #endif
-#line 233 "lexer/vsopc.l"
+#line 235 "lexer/vsopc.l"
 
-int main() {
+int main(int argc, char *argv[]) {
+    if(argc < 2)
+    {
+      std::cout << "Error" << std::endl;
+      return -1;
+    }
+    std::string param(argv[1]);
+
+    if(argc == 3 && param.compare("-lex")==0)
+    {
+      yyin = fopen(argv[2], "r");
+    }
+
     reservedId.emplace("bool", BOOL);
     reservedId.emplace("int32", INT32);
     reservedId.emplace("string", STRING);
@@ -2019,15 +2042,11 @@ int main() {
     reservedId.emplace("true", TRUE);
     reservedId.emplace("while", WHILE);
 
-    std::vector<std::pair<int, std::pair<int, int>>> tokens;
     int token = yylex();
-    tokens.push_back(std::pair<int, std::pair<int, int>>(token, std::pair<int, int>(yylineno, yycharno)));
-    while (token != END) {
+    while (token != END and token != -1) {
       token = yylex();
-      std::cout << token << std::endl;
-      tokens.push_back(std::pair<int, std::pair<int, int>>(token, std::pair<int, int>(yylineno, yycharno)));
     }
-    std::cout << "End, Display begin" << std::endl << tokens.size() << std::endl << std::endl;
-    displayTokens(tokens);
+
+    fclose(yyin);
     return 0;
 }
