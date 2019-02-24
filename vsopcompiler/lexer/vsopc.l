@@ -252,13 +252,15 @@ int main() {
     reservedId.emplace("true", TRUE);
     reservedId.emplace("while", WHILE);
 
+    std::vector<std::pair<int, std::pair<int, int>>> tokens;
     int token = yylex();
-    while (token != END and token != -1) {
+    tokens.push_back(std::pair<int, std::pair<int, int>>(token, std::pair<int, int>(yylineno, yycharno)));
+    while (token != END) {
       token = yylex();
+      std::cout << token << std::endl;
+      tokens.push_back(std::pair<int, std::pair<int, int>>(token, std::pair<int, int>(yylineno, yycharno)));
     }
-    if (token == -1) {
-      return -1;
-    } else {
-      return 0;
-    }
+    std::cout << "End, Display begin" << std::endl << tokens.size() << std::endl << std::endl;
+    displayTokens(tokens);
+    return 0;
 }

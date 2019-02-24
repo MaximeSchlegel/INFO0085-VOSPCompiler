@@ -1,4 +1,5 @@
 #include <map>
+#include <vector>
 #include <stack>
 #include <utility>
 #include <string>
@@ -19,4 +20,5 @@ int dedigify (std::string s);
 int dehexify(char msc, char lsc);
 int dehexify(std::string s);
 int returnAndDisplayToken (int token, bool display=true);
-int returnAndDisplayError (int error, int lineno, int charno, bool display=true);
+int returnAndDisplayError (int error, int lineno, int charno, bool display=false);
+void displayTokens(std::vector<std::pair<int, std::pair<int, int>>> v);
