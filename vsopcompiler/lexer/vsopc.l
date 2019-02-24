@@ -51,22 +51,22 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
 <INLINECOMMENT>\n    { yycharnoNewline();
                        BEGIN(INITIAL);}
 
-<INITIAL,MULTILINECOMMENT>"(*"     { yycharnoRefresh();
-                            openedCommentsPosition.emplace(yylineno, yycharno);
-                            BEGIN(MULTILINECOMMENT);
-                          }
-<MULTILINECOMMENT>"*)"             { yycharnoRefresh();
-                            openedCommentsPosition.pop();
-                            if (openedCommentsPosition.empty()) { BEGIN(INITIAL); }
-                          }
-<MULTILINECOMMENT>([^*(\n])+       { yycharnoRefresh(); }
-<MULTILINECOMMENT>\*                { yycharnoRefresh(); }
-<MULTILINECOMMENT>\                { yycharnoRefresh(); }
-<MULTILINECOMMENT>\n               { yycharnoNewline(); }
-<MULTILINECOMMENT><<EOF>>          { yycharnoRefresh();
-                            int errorLine = openedCommentsPosition.top().first, errorChar = openedCommentsPosition.top().second;
-                            return returnAndDisplayError(101, errorLine, errorChar);
-                          }
+<INITIAL,MULTILINECOMMENT>"(*"    { yycharnoRefresh();
+                                    openedCommentsPosition.emplace(yylineno, yycharno);
+                                    BEGIN(MULTILINECOMMENT);
+                                  }
+<MULTILINECOMMENT>"*)"            { yycharnoRefresh();
+                                    openedCommentsPosition.pop();
+                                    if (openedCommentsPosition.empty()) { BEGIN(INITIAL); }
+                                  }
+<MULTILINECOMMENT>([^*(\n])+      { yycharnoRefresh(); }
+<MULTILINECOMMENT>\*              { yycharnoRefresh(); }
+<MULTILINECOMMENT>\               { yycharnoRefresh(); }
+<MULTILINECOMMENT>\n              { yycharnoNewline(); }
+<MULTILINECOMMENT><<EOF>>         { yycharnoRefresh();
+                                    int errorLine = openedCommentsPosition.top().first, errorChar = openedCommentsPosition.top().second;
+                                    return returnAndDisplayError(101, errorLine, errorChar);
+                                  }
 
 \x22                           { yycharnoRefresh();
                                  strStartPosition = std::pair<int , int>(yylineno, yycharno);
@@ -275,6 +275,9 @@ int main(int argc, char *argv[]) {
       token = yylex();
     }
     fclose(yyin);
-    if (token ==-1) { return -1; }
+    if (token ==-1) {
+      std::cout << -1 << std::endl;
+      return -1;
+    }
     return 0;
 }

@@ -768,17 +768,17 @@ case 4:
 YY_RULE_SETUP
 #line 54 "lexer/vsopc.l"
 { yycharnoRefresh();
-                            openedCommentsPosition.emplace(yylineno, yycharno);
-                            BEGIN(MULTILINECOMMENT);
-                          }
+                                    openedCommentsPosition.emplace(yylineno, yycharno);
+                                    BEGIN(MULTILINECOMMENT);
+                                  }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 58 "lexer/vsopc.l"
 { yycharnoRefresh();
-                            openedCommentsPosition.pop();
-                            if (openedCommentsPosition.empty()) { BEGIN(INITIAL); }
-                          }
+                                    openedCommentsPosition.pop();
+                                    if (openedCommentsPosition.empty()) { BEGIN(INITIAL); }
+                                  }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
@@ -803,9 +803,9 @@ YY_RULE_SETUP
 case YY_STATE_EOF(MULTILINECOMMENT):
 #line 66 "lexer/vsopc.l"
 { yycharnoRefresh();
-                            int errorLine = openedCommentsPosition.top().first, errorChar = openedCommentsPosition.top().second;
-                            return returnAndDisplayError(101, errorLine, errorChar);
-                          }
+                                    int errorLine = openedCommentsPosition.top().first, errorChar = openedCommentsPosition.top().second;
+                                    return returnAndDisplayError(101, errorLine, errorChar);
+                                  }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
@@ -2064,6 +2064,9 @@ int main(int argc, char *argv[]) {
       token = yylex();
     }
     fclose(yyin);
-    if (token ==-1) { return -1; }
+    if (token ==-1) {
+      std::cout << -1 << std::endl;
+      return -1;
+    }
     return 0;
 }

@@ -127,16 +127,3 @@ int returnAndDisplayError(int error, int lineno, int charno, bool display) {
     }
     return -1;
 }
-
-void displayTokens(std::vector<std::pair<int, std::pair<int, int>>> v) {
-    for (std::vector<std::pair<int, std::pair<int, int>>>::iterator it=v.begin(); it!=v.end(); it++) {
-        int token = (*it).first, lineno = (*it).second.first, charno = (*it).second.second;
-        if (token == -1) {
-            returnAndDisplayError(token, lineno, charno);
-        } else {
-            std::string s = "Hello World";
-            yylval.strValue = &s; yylval.intValue = 10;
-            returnAndDisplayToken(token);
-        }
-    }
-}
