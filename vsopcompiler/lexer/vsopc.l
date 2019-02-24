@@ -234,14 +234,9 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                    }
 %%
 int main(int argc, char *argv[]) {
-    if(argc < 2)
-    {
-      std::cout << "Error" << std::endl;
-      return -1;
-    }
     std::string param(argv[1]);
 
-    if(argc == 3 && param.compare("-lex")==0)
+    if(argc == 3 && param.compare("-lex") == 0)
     {
       yyin = fopen(argv[2], "r");
     }
