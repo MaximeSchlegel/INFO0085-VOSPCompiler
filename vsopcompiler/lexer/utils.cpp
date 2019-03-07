@@ -102,7 +102,6 @@ int returnAndDisplayToken (int token, int lineno, int charno, bool display) {
             case LOWER: std::cout << "lower"; break;
             case LOWEREQUAL: std::cout << "lower-equal"; break;
             case ASSIGN: std::cout << "assign"; break;
-            case UNKNOWN: std::cout << "Mystery Char," << yylval.strValue; break;
         }
         std::cout << std::endl;
     }

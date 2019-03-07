@@ -22,4 +22,3 @@ int dehexify(char msc, char lsc);
 int dehexify(std::string s);
 int returnAndDisplayToken (int token, int lineno=yylineno, int charno=yycharno, bool display=true);
 int returnAndDisplayError (int error, int lineno, int charno, bool display=true);
-void displayTokens(std::vector<std::pair<int, std::pair<int, int>>> v);
