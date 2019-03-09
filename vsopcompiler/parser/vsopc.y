@@ -1,5 +1,5 @@
 %{
-    #include "../utils/parser_header.h"
+    #include "utils/parser_header.h"
 %}
 %language "c++"
 %defines
@@ -8,49 +8,22 @@
 
 %token <Symbol> END "end-of-file"		//
 
-%token <Symbol> BOOL				//
-%token <Symbol> INT32				//
-%token <Symbol> STRING				//
-%token <Symbol> UNIT				//
-%token <Symbol>  TYPEID		//  user-defined type
+%token <Symbol> BOOL INT32 STRING UNIT		//
+%token <Symbol>  TYPEID				//  user-defined type
 
-%token <Symbol> TRUE				//
-%token <Symbol> FALSE				//
-%token <Symbol> INTLITERAL		//
-%token <Symbol> STRLITERAL		//
+%token <Symbol> TRUE FALSE 			//
+%token <Symbol> INTLITERAL STRLITERAL		//
 
-%token <Symbol> AND				//
-%token <Symbol> NOT				//
+%token <Symbol> AND NOT				//
 
-%token <Symbol> CLASS				//
-%token <Symbol> DO				//
-%token <Symbol> ELSE				//
-%token <Symbol> EXTENDS				//
-%token <Symbol> IF				//
-%token <Symbol> IN				//
-%token <Symbol> ISNULL				//
-%token <Symbol> LET				//
-%token <Symbol> NEW				//
-%token <Symbol> THEN				//
-%token <Symbol> WHILE				//
+%token <Symbol> CLASS DO ELSE EXTENDS IF IN	//
+%token <Symbol> ISNULL LET NEW THEN WHILE	//
 %token <Symbol> OBJECTID      			//  user-defined object
 
-%token <Symbol> LBRACE				//  {
-%token <Symbol> RBRACE				//  }
-%token <Symbol> LPAR				//  (
-%token <Symbol> RPAR				//  )
-%token <Symbol> COLON				//  :
-%token <Symbol> SEMICOLON			//  ;
-%token <Symbol> COMMA				//  ,
-%token <Symbol> PLUS				//  +
-%token <Symbol> MINUS				//  -
-%token <Symbol> TIMES				//  *
-%token <Symbol> DIV				//  /
-%token <Symbol> POW				//  ^
-%token <Symbol> DOT				//  .
-%token <Symbol> EQUAL				//  =
-%token <Symbol> LOWER				//  <
-%token <Symbol> LOWEREQUAL			//  <=
+%token <Symbol> LBRACE RBRACE LPAR RPAR		//  { } ( )
+%token <Symbol> COLON SEMICOLON COMMA		//  : ; ,
+%token <Symbol> PLUS MINUS TIMES DIV POW DOT	//  + - * / ^ .
+%token <Symbol> EQUAL LOWER LOWEREQUAL		//  = < <=
 %token <Symbol> ASSIGN				//  <-
 
 %start program

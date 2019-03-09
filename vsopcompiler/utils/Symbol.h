@@ -21,8 +21,8 @@ public:
     Symbol(int type, std::string fileName, int line, int column);
     Symbol(int type, int value, std::string fileName, int line, int column);
     Symbol(int type, std::string value, std::string fileName, int line, int column);
-    friend ostream &operator<<(ostream &os, const Symbol &symbol);
-
+    friend std::ostream &operator<<(std::ostream &os, const Symbol &symbol);
+    ~Symbol();
 };
 
 

@@ -75,3 +75,5 @@ ostream & Symbol::operator<<(ostream &os, const Symbol &symbol) {
         filename << ":" << lineno << ":" << charno << ": lexical error : " << symbol.sValue;
     }
 }
+
+Symbol::~Symbol() {}
