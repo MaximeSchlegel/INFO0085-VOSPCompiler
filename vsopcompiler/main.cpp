@@ -1,4 +1,4 @@
-#include "lex.yy.c"
+#include "lex.yy.cc"
 
 //TODO: make that -lex without a file name, work correctly (use the sdin from the console)
 //TODO: make that the -lex display the symbole recevied
