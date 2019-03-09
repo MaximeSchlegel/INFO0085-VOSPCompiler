@@ -1,30 +1,56 @@
-%{
-    #include "utils/parser_header.h"
-%}
+%define api.value.type variant
+%define api.token.constructor
+
 %language "c++"
-%defines
 
-%token <Symbol> ERROR				// lexical error token
+%token ERROR                           // lexical error token
 
-%token <Symbol> END "end-of-file"		//
+%token END "end-of-file"                //
 
-%token <Symbol> BOOL INT32 STRING UNIT		//
-%token <Symbol>  TYPEID				//  user-defined type
+%token BOOL
+%token INT32
+%token STRING
+%token UNIT           //
+%token TYPEID                           //  user-defined type
 
-%token <Symbol> TRUE FALSE 			//
-%token <Symbol> INTLITERAL STRLITERAL		//
+%token TRUE
+%token FALSE 			            //
+%token INTLITERAL                      //
+%token STRLITERAL		                //
 
-%token <Symbol> AND NOT				//
+%token AND
+%token NOT				            //
 
-%token <Symbol> CLASS DO ELSE EXTENDS IF IN	//
-%token <Symbol> ISNULL LET NEW THEN WHILE	//
-%token <Symbol> OBJECTID      			//  user-defined object
+%token CLASS
+%token DO
+%token ELSE
+%token EXTENDS
+%token IF
+%token IN	    //
+%token ISNULL
+%token LET
+%token NEW
+%token THEN
+%token WHILE	    //
+%token OBJECTID      			        //  user-defined object
 
-%token <Symbol> LBRACE RBRACE LPAR RPAR		//  { } ( )
-%token <Symbol> COLON SEMICOLON COMMA		//  : ; ,
-%token <Symbol> PLUS MINUS TIMES DIV POW DOT	//  + - * / ^ .
-%token <Symbol> EQUAL LOWER LOWEREQUAL		//  = < <=
-%token <Symbol> ASSIGN				//  <-
+%token LBRACE
+%token RBRACE
+%token LPAR
+%token RPAR		    //  { } ( )
+%token COLON
+%token SEMICOLON
+%token COMMA		    //  : ; ,
+%token PLUS
+%token MINUS
+%token TIMES
+%token DIV
+%token POW
+%token DOT	    //  + - * / ^ .
+%token EQUAL
+%token LOWER
+%token LOWEREQUAL		    //  = < <=
+%token ASSIGN				            //  <-
 
 %start program
 

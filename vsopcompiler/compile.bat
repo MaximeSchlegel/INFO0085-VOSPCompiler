@@ -1,3 +1,3 @@
 bison parser/vsopc.y -d
 flex lexer/vsopc.l
-g++ main.cpp -o vsopc
+g++ main.cpp lexer/lexer_header.cpp parser/parser_header.cpp -o vsopc

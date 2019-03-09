@@ -5,7 +5,7 @@
 #include <string>
 #include <iostream>
 #include <math.h>
-#include "../vsopc.tab.hh"
+#include "../vsopc.tab.h"
 
 extern int yylineno, yyleng, yycharno, prevTokenLength;
 extern YYSTYPE yylval;
