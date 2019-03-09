@@ -16,13 +16,7 @@
  *   - add prop
  *   - display
 */
-class ASTNode {
-private:
-    int line;
-    int column;
-    int type;
-    std::vector<ASTNode> children;
-};
+//TODO: create the class and it's methods
 
 
 #endif //VSOPCOMPILER_ASTNODE_H

@@ -1,5 +1,9 @@
 #include "lex.yy.c"
 
+//TODO: make that -lex without a file name, work correctly (use the sdin from the console)
+//TODO: make that the -lex display the symbole recevied
+//TODO: add the -parse option with and without filename
+
 int main(int argc, char *argv[]) {
     std::string param(argv[1]);
 
