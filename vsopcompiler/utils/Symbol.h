@@ -12,7 +12,7 @@ private:
     int line;
     int column;
     //type and value of the symbole
-    //use -1 for error and error message in sValue
+    //use negative value (from -100 to -199) for error for error and error message in sValue
     int type;
     int iValue;
     std::string sValue;
@@ -21,7 +21,7 @@ public:
     Symbol(int type, std::string fileName, int line, int column);
     Symbol(int type, int value, std::string fileName, int line, int column);
     Symbol(int type, std::string value, std::string fileName, int line, int column);
-    std::iostream
+    friend ostream &operator<<(ostream &os, const Symbol &symbol);
 
 };
 

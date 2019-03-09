@@ -1,59 +1,57 @@
+%{
+    #include "../utils/parser_header.h"
+%}
 %language "c++"
 %defines
 
-%token-table
+%token <Symbol> ERROR				// lexical error token
 
-%union {
-  int intValue;
-  std::string *strValue;
-}
+%token <Symbol> END "end-of-file"		//
 
-%token END "end-of-file"	    //
+%token <Symbol> BOOL				//
+%token <Symbol> INT32				//
+%token <Symbol> STRING				//
+%token <Symbol> UNIT				//
+%token <Symbol>  TYPEID		//  user-defined type
 
-%token BOOL			            //
-%token INT32			        //
-%token STRING			        //
-%token UNIT			            //
-%token <strValue> TYPEID	    //  user-defined type
+%token <Symbol> TRUE				//
+%token <Symbol> FALSE				//
+%token <Symbol> INTLITERAL		//
+%token <Symbol> STRLITERAL		//
 
-%token TRUE			            //
-%token FALSE			        //
-%token <intValue> INTLITERAL	//
-%token <strValue> STRLITERAL	//
+%token <Symbol> AND				//
+%token <Symbol> NOT				//
 
-%token AND			            //
-%token NOT			            //
+%token <Symbol> CLASS				//
+%token <Symbol> DO				//
+%token <Symbol> ELSE				//
+%token <Symbol> EXTENDS				//
+%token <Symbol> IF				//
+%token <Symbol> IN				//
+%token <Symbol> ISNULL				//
+%token <Symbol> LET				//
+%token <Symbol> NEW				//
+%token <Symbol> THEN				//
+%token <Symbol> WHILE				//
+%token <Symbol> OBJECTID      			//  user-defined object
 
-%token CLASS			        //
-%token DO			            //
-%token ELSE			            //
-%token EXTENDS			        //
-%token IF			            //
-%token IN			            //
-%token ISNULL			        //
-%token LET			            //
-%token NEW			            //
-%token THEN			            //
-%token WHILE			        //
-%token OBJECTID         	    //  user-defined object
-
-%token LBRACE			        //  {
-%token RBRACE			        //  }
-%token LPAR			            //  (
-%token RPAR			            //  )
-%token COLON			        //  :
-%token SEMICOLON		//  ;
-%token COMMA			//  ,
-%token PLUS			//  +
-%token MINUS			//  -
-%token TIMES			//  *
-%token DIV			//  /
-%token POW			//  ^
-%token DOT			//  .
-%token EQUAL			//  =
-%token LOWER			//  <
-%token LOWEREQUAL		//  <=
-%token ASSIGN			//  <-
+%token <Symbol> LBRACE				//  {
+%token <Symbol> RBRACE				//  }
+%token <Symbol> LPAR				//  (
+%token <Symbol> RPAR				//  )
+%token <Symbol> COLON				//  :
+%token <Symbol> SEMICOLON			//  ;
+%token <Symbol> COMMA				//  ,
+%token <Symbol> PLUS				//  +
+%token <Symbol> MINUS				//  -
+%token <Symbol> TIMES				//  *
+%token <Symbol> DIV				//  /
+%token <Symbol> POW				//  ^
+%token <Symbol> DOT				//  .
+%token <Symbol> EQUAL				//  =
+%token <Symbol> LOWER				//  <
+%token <Symbol> LOWEREQUAL			//  <=
+%token <Symbol> ASSIGN				//  <-
 
 %start program
 
