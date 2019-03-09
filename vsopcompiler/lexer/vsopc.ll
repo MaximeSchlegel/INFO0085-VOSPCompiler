@@ -1,6 +1,6 @@
 %{
     //TODO relove the Return and display, just return the corresponding symbol
-    #include "lexer/lexer_header.h"
+    #include "lexer/header_lexer.h"
 
     #define YY_DECL extern "C" int yylex()
 

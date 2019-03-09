@@ -1,4 +1,4 @@
-#include "lexer_header.h"
+#include "header_lexer.h"
 
 void yycharnoRefresh() {
     yycharno += prevTokenLength;

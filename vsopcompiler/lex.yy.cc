@@ -512,10 +512,10 @@ static const flex_int32_t yy_rule_can_match_eol[51] =
 #define yymore() yymore_used_but_not_detected
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
-#line 1 "lexer/vsopc.l"
-#line 2 "lexer/vsopc.l"
+#line 1 "lexer/vsopc.ll"
+#line 2 "lexer/vsopc.ll"
     //TODO relove the Return and display, just return the corresponding symbol
-    #include "lexer/lexer_header.h"
+    #include "lexer/header_lexer.h"
 
     #define YY_DECL extern "C" int yylex()
 
@@ -665,7 +665,7 @@ YY_DECL
 		}
 
 	{
-#line 49 "lexer/vsopc.l"
+#line 49 "lexer/vsopc.ll"
 
 #line 670 "lex.yy.cc"
 
@@ -736,26 +736,26 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 50 "lexer/vsopc.l"
+#line 50 "lexer/vsopc.ll"
 { yycharnoRefresh();
                        BEGIN(INLINECOMMENT);
                      }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 53 "lexer/vsopc.l"
+#line 53 "lexer/vsopc.ll"
 { yycharnoRefresh(); }
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 54 "lexer/vsopc.l"
+#line 54 "lexer/vsopc.ll"
 { yycharnoNewline();
                        BEGIN(INITIAL);}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 57 "lexer/vsopc.l"
+#line 57 "lexer/vsopc.ll"
 { yycharnoRefresh();
                                     openedCommentsPosition.emplace(yylineno, yycharno);
                                     BEGIN(MULTILINECOMMENT);
@@ -763,7 +763,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 61 "lexer/vsopc.l"
+#line 61 "lexer/vsopc.ll"
 { yycharnoRefresh();
                                     openedCommentsPosition.pop();
                                     if (openedCommentsPosition.empty()) { BEGIN(INITIAL); }
@@ -771,27 +771,27 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 65 "lexer/vsopc.l"
+#line 65 "lexer/vsopc.ll"
 { yycharnoRefresh(); }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 66 "lexer/vsopc.l"
+#line 66 "lexer/vsopc.ll"
 { yycharnoRefresh(); }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 67 "lexer/vsopc.l"
+#line 67 "lexer/vsopc.ll"
 { yycharnoRefresh(); }
 	YY_BREAK
 case 9:
 /* rule 9 can match eol */
 YY_RULE_SETUP
-#line 68 "lexer/vsopc.l"
+#line 68 "lexer/vsopc.ll"
 { yycharnoNewline(); }
 	YY_BREAK
 case YY_STATE_EOF(MULTILINECOMMENT):
-#line 69 "lexer/vsopc.l"
+#line 69 "lexer/vsopc.ll"
 { yycharnoRefresh();
                                     int errorLine = openedCommentsPosition.top().first, errorChar = openedCommentsPosition.top().second;
                                     return returnAndDisplayError(101, errorLine, errorChar);
@@ -799,7 +799,7 @@ case YY_STATE_EOF(MULTILINECOMMENT):
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 74 "lexer/vsopc.l"
+#line 74 "lexer/vsopc.ll"
 { yycharnoRefresh();
                                  strStartPosition = std::pair<int , int>(yylineno, yycharno);
                                  strBuffer = yytext;
@@ -808,7 +808,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 79 "lexer/vsopc.l"
+#line 79 "lexer/vsopc.ll"
 { yycharnoRefresh();
                                  strBuffer += yytext;
                                  yylval.strValue = &strBuffer;
@@ -819,7 +819,7 @@ YY_RULE_SETUP
 case 12:
 /* rule 12 can match eol */
 YY_RULE_SETUP
-#line 85 "lexer/vsopc.l"
+#line 85 "lexer/vsopc.ll"
 { yycharnoNewline();
                                  std::cout << "here";
                                   prevTokenLength = yyleng - 2;
@@ -827,35 +827,35 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 89 "lexer/vsopc.l"
+#line 89 "lexer/vsopc.ll"
 { yycharnoRefresh();
                                  strBuffer += "\\x08";
                                }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 92 "lexer/vsopc.l"
+#line 92 "lexer/vsopc.ll"
 { yycharnoRefresh();
                                  strBuffer += "\\x09";
                                }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 95 "lexer/vsopc.l"
+#line 95 "lexer/vsopc.ll"
 { yycharnoRefresh();
                                  strBuffer += "\\x0a";
                                }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 98 "lexer/vsopc.l"
+#line 98 "lexer/vsopc.ll"
 { yycharnoRefresh();
                                  strBuffer += "\\x0d";
                                }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 101 "lexer/vsopc.l"
+#line 101 "lexer/vsopc.ll"
 { yycharnoRefresh();
                                  strBuffer += 92;
                                  strBuffer += 34;
@@ -863,7 +863,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 105 "lexer/vsopc.l"
+#line 105 "lexer/vsopc.ll"
 { yycharnoRefresh();
                                  strBuffer += 92;
                                  strBuffer += 92;
@@ -871,7 +871,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 109 "lexer/vsopc.l"
+#line 109 "lexer/vsopc.ll"
 { yycharnoRefresh();
                                  std::string s = yytext; s = s.erase(0,2);
                                  int intLit = dehexify(s);
@@ -887,14 +887,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 121 "lexer/vsopc.l"
+#line 121 "lexer/vsopc.ll"
 { yycharnoRefresh();
                                  return returnAndDisplayError(106, yylineno, yycharno);
                                }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 124 "lexer/vsopc.l"
+#line 124 "lexer/vsopc.ll"
 { yycharnoRefresh();
                                  return returnAndDisplayError(108, yylineno, yycharno);
                                }
@@ -902,13 +902,13 @@ YY_RULE_SETUP
 case 22:
 /* rule 22 can match eol */
 YY_RULE_SETUP
-#line 127 "lexer/vsopc.l"
+#line 127 "lexer/vsopc.ll"
 { yycharnoRefresh();
                                  return returnAndDisplayError(109, yylineno-1, yycharno);
                                }
 	YY_BREAK
 case YY_STATE_EOF(STR):
-#line 130 "lexer/vsopc.l"
+#line 130 "lexer/vsopc.ll"
 { yycharnoRefresh();
                                  int errorLine = strStartPosition.first, errorChar = strStartPosition.second;
                                  return returnAndDisplayError(101, errorLine, errorChar);
@@ -916,14 +916,14 @@ case YY_STATE_EOF(STR):
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 134 "lexer/vsopc.l"
+#line 134 "lexer/vsopc.ll"
 { yycharnoRefresh();
                                  strBuffer += yytext;
                                }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 138 "lexer/vsopc.l"
+#line 138 "lexer/vsopc.ll"
 { yycharnoRefresh();
                                             std::string s = yytext; s = s.erase(0,2);
                                             int intLit = debinify(s);
@@ -936,7 +936,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 147 "lexer/vsopc.l"
+#line 147 "lexer/vsopc.ll"
 { yycharnoRefresh();
                                             int intLit = dedigify(yytext);
                                             if (intLit == -1) {
@@ -948,7 +948,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 155 "lexer/vsopc.l"
+#line 155 "lexer/vsopc.ll"
 { yycharnoRefresh();
                                             std::string s = yytext; s = s.erase(0,2);
                                             int intLit = dehexify(s);
@@ -961,14 +961,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 164 "lexer/vsopc.l"
+#line 164 "lexer/vsopc.ll"
 { yycharnoRefresh();
                                             return returnAndDisplayError(105, yylineno, yycharno);
                                           }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 168 "lexer/vsopc.l"
+#line 168 "lexer/vsopc.ll"
 { yycharnoRefresh();
               std::string s = yytext;
               yylval.strValue = &s;
@@ -977,7 +977,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 174 "lexer/vsopc.l"
+#line 174 "lexer/vsopc.ll"
 { yycharnoRefresh();
                 std::map<std::string, int>::iterator isReserved;
                 isReserved = reservedId.find(yytext);
@@ -992,151 +992,151 @@ YY_RULE_SETUP
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 186 "lexer/vsopc.l"
+#line 186 "lexer/vsopc.ll"
 { yycharnoRefresh();
          return returnAndDisplayToken(LBRACE);
        }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 189 "lexer/vsopc.l"
+#line 189 "lexer/vsopc.ll"
 { yycharnoRefresh();
          return returnAndDisplayToken(RBRACE);
        }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 192 "lexer/vsopc.l"
+#line 192 "lexer/vsopc.ll"
 { yycharnoRefresh();
          return returnAndDisplayToken(LPAR);
        }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 195 "lexer/vsopc.l"
+#line 195 "lexer/vsopc.ll"
 { yycharnoRefresh();
          return returnAndDisplayToken(RPAR);
        }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 198 "lexer/vsopc.l"
+#line 198 "lexer/vsopc.ll"
 { yycharnoRefresh();
          return returnAndDisplayToken(COLON);
        }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 201 "lexer/vsopc.l"
+#line 201 "lexer/vsopc.ll"
 { yycharnoRefresh();
          return returnAndDisplayToken(SEMICOLON);
        }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 204 "lexer/vsopc.l"
+#line 204 "lexer/vsopc.ll"
 { yycharnoRefresh();
          return returnAndDisplayToken(COMMA);
        }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 207 "lexer/vsopc.l"
+#line 207 "lexer/vsopc.ll"
 { yycharnoRefresh();
          return returnAndDisplayToken(PLUS);
        }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 210 "lexer/vsopc.l"
+#line 210 "lexer/vsopc.ll"
 { yycharnoRefresh();
          return returnAndDisplayToken(MINUS);
        }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 213 "lexer/vsopc.l"
+#line 213 "lexer/vsopc.ll"
 { yycharnoRefresh();
          return returnAndDisplayToken(TIMES);
        }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 216 "lexer/vsopc.l"
+#line 216 "lexer/vsopc.ll"
 { yycharnoRefresh();
          return returnAndDisplayToken(DIV);
        }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 219 "lexer/vsopc.l"
+#line 219 "lexer/vsopc.ll"
 { yycharnoRefresh();
          return returnAndDisplayToken(POW);
        }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 222 "lexer/vsopc.l"
+#line 222 "lexer/vsopc.ll"
 { yycharnoRefresh();
          return returnAndDisplayToken(DOT);
        }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 225 "lexer/vsopc.l"
+#line 225 "lexer/vsopc.ll"
 { yycharnoRefresh();
          return returnAndDisplayToken(EQUAL);
        }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 228 "lexer/vsopc.l"
+#line 228 "lexer/vsopc.ll"
 { yycharnoRefresh();
          return returnAndDisplayToken(LOWER);
        }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 231 "lexer/vsopc.l"
+#line 231 "lexer/vsopc.ll"
 { yycharnoRefresh();
          return returnAndDisplayToken(LOWEREQUAL);
        }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 234 "lexer/vsopc.l"
+#line 234 "lexer/vsopc.ll"
 { yycharnoRefresh();
          return returnAndDisplayToken(ASSIGN);
        }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 238 "lexer/vsopc.l"
+#line 238 "lexer/vsopc.ll"
 { yycharnoRefresh(); }
 	YY_BREAK
 case 48:
 /* rule 48 can match eol */
 YY_RULE_SETUP
-#line 239 "lexer/vsopc.l"
+#line 239 "lexer/vsopc.ll"
 { yycharnoNewline(); }
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(INLINECOMMENT):
-#line 240 "lexer/vsopc.l"
+#line 240 "lexer/vsopc.ll"
 { yycharnoRefresh();
                      return returnAndDisplayToken(END, yylineno, yycharno, false);
                    }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 243 "lexer/vsopc.l"
+#line 243 "lexer/vsopc.ll"
 { yycharnoRefresh();
                      return returnAndDisplayError(110, yylineno, yycharno);
                    }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 248 "lexer/vsopc.l"
+#line 248 "lexer/vsopc.ll"
 ECHO;
 	YY_BREAK
 #line 1142 "lex.yy.cc"
@@ -2109,6 +2109,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 248 "lexer/vsopc.l"
+#line 248 "lexer/vsopc.ll"
 
 
