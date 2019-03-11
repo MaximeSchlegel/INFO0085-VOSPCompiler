@@ -26,4 +26,5 @@ void ASTNode::addChild(ASTNode * child) {
 
 ostream & ASTNode::operator<<(ostream &os, const ASTNode &node) {
     os << node.type << ", " << node.line << ", " << node.column;
+    return os;
 }
