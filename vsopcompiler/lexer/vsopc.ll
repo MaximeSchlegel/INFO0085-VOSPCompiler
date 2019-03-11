@@ -80,7 +80,7 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                                  strBuffer += yytext;
                                  yylval.strValue = &strBuffer;
                                  BEGIN(INITIAL);
-                                 return returnAndDisplayToken(STRLITERAL, strStartPosition.first, strStartPosition.second );
+                                 return returnAndDisplayToken(268, strStartPosition.first, strStartPosition.second );
                                }
 <STR>\x5C\x0A([ '\x09'])*      { yycharnoNewline();
                                  std::cout << "here";
@@ -142,7 +142,7 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                                               return returnAndDisplayError(102, yylineno, yycharno);
                                             }
                                             yylval.intValue = intLit;
-                                            return returnAndDisplayToken(INTLITERAL);
+                                            return returnAndDisplayToken(267);
                                           }
 {digit-literal}                           { yycharnoRefresh();
                                             int intLit = dedigify(yytext);
@@ -150,7 +150,7 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                                               return returnAndDisplayError(103, yylineno, yycharno);
                                             }
                                             yylval.intValue = intLit;
-                                            return returnAndDisplayToken(INTLITERAL);
+                                            return returnAndDisplayToken(267);
                                           }
 {hex-literal}                             { yycharnoRefresh();
                                             std::string s = yytext; s = s.erase(0,2);
@@ -159,7 +159,7 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                                               return returnAndDisplayError(104, yylineno, yycharno);
                                             }
                                             yylval.intValue = intLit;
-                                            return returnAndDisplayToken(INTLITERAL);
+                                            return returnAndDisplayToken(267);
                                           }
 {integer-literal}({objectId}|{typeId})    { yycharnoRefresh();
                                             return returnAndDisplayError(105, yylineno, yycharno);
@@ -168,7 +168,7 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
 {typeId}    { yycharnoRefresh();
               std::string s = yytext;
               yylval.strValue = &s;
-              return returnAndDisplayToken(TYPEID);
+              return returnAndDisplayToken(264);
             }
 
 {objectId}    { yycharnoRefresh();
@@ -179,66 +179,66 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                 } else {
                   std::string s = yytext;
                   yylval.strValue = &s;
-                  return returnAndDisplayToken(OBJECTID);
+                  return returnAndDisplayToken(282);
                 }
               }
 
 "{"    { yycharnoRefresh();
-         return returnAndDisplayToken(LBRACE);
+         return returnAndDisplayToken(283);
        }
 "}"    { yycharnoRefresh();
-         return returnAndDisplayToken(RBRACE);
+         return returnAndDisplayToken(284);
        }
 "("    { yycharnoRefresh();
-         return returnAndDisplayToken(LPAR);
+         return returnAndDisplayToken(285);
        }
 ")"    { yycharnoRefresh();
-         return returnAndDisplayToken(RPAR);
+         return returnAndDisplayToken(286);
        }
 ":"    { yycharnoRefresh();
-         return returnAndDisplayToken(COLON);
+         return returnAndDisplayToken(287);
        }
 ";"    { yycharnoRefresh();
-         return returnAndDisplayToken(SEMICOLON);
+         return returnAndDisplayToken(288);
        }
 ","    { yycharnoRefresh();
-         return returnAndDisplayToken(COMMA);
+         return returnAndDisplayToken(289);
        }
 "+"    { yycharnoRefresh();
-         return returnAndDisplayToken(PLUS);
+         return returnAndDisplayToken(290);
        }
 "-"    { yycharnoRefresh();
-         return returnAndDisplayToken(MINUS);
+         return returnAndDisplayToken(291);
        }
 "*"    { yycharnoRefresh();
-         return returnAndDisplayToken(TIMES);
+         return returnAndDisplayToken(292);
        }
 "/"    { yycharnoRefresh();
-         return returnAndDisplayToken(DIV);
+         return returnAndDisplayToken(293);
        }
 "^"    { yycharnoRefresh();
-         return returnAndDisplayToken(POW);
+         return returnAndDisplayToken(294);
        }
 "."    { yycharnoRefresh();
-         return returnAndDisplayToken(DOT);
+         return returnAndDisplayToken(295);
        }
 "="    { yycharnoRefresh();
-         return returnAndDisplayToken(EQUAL);
+         return returnAndDisplayToken(296);
        }
 "<"    { yycharnoRefresh();
-         return returnAndDisplayToken(LOWER);
+         return returnAndDisplayToken(297);
        }
 "<="   { yycharnoRefresh();
-         return returnAndDisplayToken(LOWEREQUAL);
+         return returnAndDisplayToken(298);
        }
 "<-"   { yycharnoRefresh();
-         return returnAndDisplayToken(ASSIGN);
+         return returnAndDisplayToken(299);
        }
 
 {ignored-char}+    { yycharnoRefresh(); }
 {lf}+              { yycharnoNewline(); }
 <<EOF>>            { yycharnoRefresh();
-                     return returnAndDisplayToken(END, yylineno, yycharno, false);
+                     return returnAndDisplayToken(258, yylineno, yycharno, false);
                    }
 .                  { yycharnoRefresh();
                      return returnAndDisplayError(110, yylineno, yycharno);
