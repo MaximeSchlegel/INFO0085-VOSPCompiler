@@ -1,8 +1,6 @@
 #include "lex.yy.c"
 
 int main(int argc, char *argv[]) {
-    std::string param(argv[1]);
-
     reservedId.emplace("bool", BOOL);
     reservedId.emplace("int32", INT32);
     reservedId.emplace("string", STRING);
@@ -23,7 +21,7 @@ int main(int argc, char *argv[]) {
     reservedId.emplace("true", TRUE);
     reservedId.emplace("while", WHILE);
 
-    if(argc == 3 && param.compare("-lex") == 0)
+    if(argc == 3 && std::string(argv[1]).compare("-lex") == 0)
     {
         filename = std::string(argv[2]);
         yyin = fopen(argv[2], "r");
@@ -35,6 +33,15 @@ int main(int argc, char *argv[]) {
         if (token ==-1) {
             return -1;
         }
+        return 0;
+    }
+    else if(argc == 2)
+    {
+        filename = std::string(argv[1]);
+        yyin = fopen(argv[2], "r");
+        int token = yylex();
+        // Lexer and parser main here
+
         return 0;
     }
 
