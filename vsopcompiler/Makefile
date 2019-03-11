@@ -1,8 +1,8 @@
 all: install-tools vsopc
 
 install-tools:
-	flex -+ lexer/vsopc.ll
-	bison parser/vsopc.yy -d
+	flex lexer/vsopc.l
+	bison -d parser/vsopc.y
 
-vsopc: lex.yy.cc vsopc.tab.hh
-	g++ main.cpp lex.yy.cc lexer/header_lexer.cpp vsopc.tab.cc parser/header_parser.cpp -o vsopc
+vsopc: lex.yy.c vsopc.tab.h
+	g++ lex.yy.c lexer/utils.cpp -o vsopc
