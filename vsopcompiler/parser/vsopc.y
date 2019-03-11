@@ -1,67 +1,57 @@
+%code requires { #include "utils/ASTNode.h" }
+
+%token-table
+
+%locations
+
+
 %union {
   int intValue;
-  std::string *strValue;
+  std::string * strValue;
+  ASTNode * astNode;
 }
 
+//Declare Terminal Tokens
 %token ERROR                    // lexical error token
 
 %token END "end-of-file"	    //
 
-%token BOOL			            //
-%token INT32			        //
-%token STRING			        //
-%token UNIT			            //
+%token BOOL INT32 STRING UNIT			            //
 %token <strValue> TYPEID	    //  user-defined type
 
-%token TRUE			            //
-%token FALSE			        //
+%token TRUE FALSE			        //
 %token <intValue> INTLITERAL	//
 %token <strValue> STRLITERAL	//
 
-%token AND			            //
-%token NOT			            //
+%token AND NOT			            //
 
-%token CLASS			        //
-%token DO			            //
-%token ELSE			            //
-%token EXTENDS			        //
-%token IF			            //
-%token IN			            //
-%token ISNULL			        //
-%token LET			            //
-%token NEW			            //
-%token THEN			            //
-%token WHILE			        //
-%token OBJECTID         	    //  user-defined object
+%token CLASS DO ELSE EXTENDS IF IN ISNULL LET NEW
+%token THEN WHILE			        //
+%token <strValue> OBJECTID         	    //  user-defined object
 
-%token LBRACE			        //  {
-%token RBRACE			        //  }
-%token LPAR			            //  (
-%token RPAR			            //  )
-%token COLON			        //  :
-%token SEMICOLON		        //  ;
-%token COMMA			        //  ,
-%token PLUS			            //  +
-%token MINUS			        //  -
-%token TIMES			        //  *
-%token DIV			            //  /
-%token POW			            //  ^
-%token DOT			            //  .
-%token EQUAL			        //  =
-%token LOWER			        //  <
-%token LOWEREQUAL		        //  <=
-%token ASSIGN			        //  <-
+
+//Declare Non-Terminals
+%token LBRACE RBRACE LPAR RPAR COLON SEMICOLON			        //  ,
+%token COMMA PLUS MINUS TIMES DIV POW DOT EQUAL			        //  <
+%token LOWER LOWEREQUAL ASSIGN			        //  <-
+
+%type <astNode> type literal program class class_body
+%type <astNode> method formals formal block field
+%type <astNode> expr args
+
+//Precedence
+
 
 %start program
 
 
 %%
 type:
-    BOOL
-  | INT32
-  | STRING
-  | UNIT
-  | TYPEID
+    BOOL    {  }
+  | INT32    {  }
+  | STRING    {  }
+  | UNIT    {  }
+  | TYPEID    {  }
 
 literal:
     TRUE

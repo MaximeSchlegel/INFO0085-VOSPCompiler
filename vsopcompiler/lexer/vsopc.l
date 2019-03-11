@@ -2,7 +2,6 @@
     #include "lexer/utils.h"
     #define YY_DECL extern "C" int yylex()
 
-    YYSTYPE yylval;
     int yycharno = 1, prevTokenLength = 0;
 
     std::map<std::string, int> reservedId;
@@ -11,6 +10,21 @@
     std::string strBuffer;
     std::pair<int,int> strStartPosition;
     std::stack<std::pair<int, int>> openedCommentsPosition;
+
+    extern YYLTYPE yylloc;
+
+    #define YY_USER_ACTION \
+        yylloc.first_line = yylloc.last_line; \
+        yylloc.first_column = yylloc.last_column; \
+        for(int i = 0; yytext[i] != '\0'; i++) { \
+            if(yytext[i] == '\n') { \
+                yylloc.last_line++; \
+                yylloc.last_column = 0; \
+            } \
+            else { \
+                yylloc.last_column++; \
+            } \
+        }
 %}
 
 %option noyywrap
@@ -78,7 +92,7 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                                  strBuffer += yytext;
                                  yylval.strValue = &strBuffer;
                                  BEGIN(INITIAL);
-                                 return returnAndDisplayToken(268, strStartPosition.first, strStartPosition.second );
+                                 return returnAndDisplayToken(STRLITERAL, strStartPosition.first, strStartPosition.second );
                                }
 <STR>\x5C\x0A([ '\x09'])*      { yycharnoNewline();
                                  std::cout << "here";
@@ -140,7 +154,7 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                                               return returnAndDisplayError(102, yylineno, yycharno);
                                             }
                                             yylval.intValue = intLit;
-                                            return returnAndDisplayToken(267);
+                                            return returnAndDisplayToken(INTLITERAL);
                                           }
 {digit-literal}                           { yycharnoRefresh();
                                             int intLit = dedigify(yytext);
@@ -148,7 +162,7 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                                               return returnAndDisplayError(103, yylineno, yycharno);
                                             }
                                             yylval.intValue = intLit;
-                                            return returnAndDisplayToken(267);
+                                            return returnAndDisplayToken(INTLITERAL);
                                           }
 {hex-literal}                             { yycharnoRefresh();
                                             std::string s = yytext; s = s.erase(0,2);
@@ -157,7 +171,7 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                                               return returnAndDisplayError(104, yylineno, yycharno);
                                             }
                                             yylval.intValue = intLit;
-                                            return returnAndDisplayToken(267);
+                                            return returnAndDisplayToken(INTLITERAL);
                                           }
 {integer-literal}({objectId}|{typeId})    { yycharnoRefresh();
                                             return returnAndDisplayError(105, yylineno, yycharno);
@@ -166,7 +180,7 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
 {typeId}    { yycharnoRefresh();
               std::string s = yytext;
               yylval.strValue = &s;
-              return returnAndDisplayToken(264);
+              return returnAndDisplayToken(TYPEID);
             }
 
 {objectId}    { yycharnoRefresh();
@@ -177,66 +191,66 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                 } else {
                   std::string s = yytext;
                   yylval.strValue = &s;
-                  return returnAndDisplayToken(282);
+                  return returnAndDisplayToken(OBJECTID);
                 }
               }
 
 "{"    { yycharnoRefresh();
-         return returnAndDisplayToken(283);
+         return returnAndDisplayToken(LBRACE);
        }
 "}"    { yycharnoRefresh();
-         return returnAndDisplayToken(284);
+         return returnAndDisplayToken(RBRACE);
        }
 "("    { yycharnoRefresh();
-         return returnAndDisplayToken(285);
+         return returnAndDisplayToken(LPAR);
        }
 ")"    { yycharnoRefresh();
-         return returnAndDisplayToken(286);
+         return returnAndDisplayToken(RPAR);
        }
 ":"    { yycharnoRefresh();
-         return returnAndDisplayToken(287);
+         return returnAndDisplayToken(COLON);
        }
 ";"    { yycharnoRefresh();
-         return returnAndDisplayToken(288);
+         return returnAndDisplayToken(SEMICOLON);
        }
 ","    { yycharnoRefresh();
-         return returnAndDisplayToken(289);
+         return returnAndDisplayToken(COMMA);
        }
 "+"    { yycharnoRefresh();
-         return returnAndDisplayToken(290);
+         return returnAndDisplayToken(PLUS);
        }
 "-"    { yycharnoRefresh();
-         return returnAndDisplayToken(291);
+         return returnAndDisplayToken(MINUS);
        }
 "*"    { yycharnoRefresh();
-         return returnAndDisplayToken(292);
+         return returnAndDisplayToken(TIMES);
        }
 "/"    { yycharnoRefresh();
-         return returnAndDisplayToken(293);
+         return returnAndDisplayToken(DIV);
        }
 "^"    { yycharnoRefresh();
-         return returnAndDisplayToken(294);
+         return returnAndDisplayToken(POW);
        }
 "."    { yycharnoRefresh();
-         return returnAndDisplayToken(295);
+         return returnAndDisplayToken(DOT);
        }
 "="    { yycharnoRefresh();
-         return returnAndDisplayToken(296);
+         return returnAndDisplayToken(EQUAL);
        }
 "<"    { yycharnoRefresh();
-         return returnAndDisplayToken(297);
+         return returnAndDisplayToken(LOWER);
        }
 "<="   { yycharnoRefresh();
-         return returnAndDisplayToken(298);
+         return returnAndDisplayToken(LOWEREQUAL);
        }
 "<-"   { yycharnoRefresh();
-         return returnAndDisplayToken(299);
+         return returnAndDisplayToken(ASSIGN);
        }
 
 {ignored-char}+    { yycharnoRefresh(); }
 {lf}+              { yycharnoNewline(); }
 <<EOF>>            { yycharnoRefresh();
-                     return returnAndDisplayToken(258, yylineno, yycharno, false);
+                     return returnAndDisplayToken(END, yylineno, yycharno, false);
                    }
 .                  { yycharnoRefresh();
                      return returnAndDisplayError(110, yylineno, yycharno);

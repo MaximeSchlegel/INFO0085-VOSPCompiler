@@ -5,9 +5,9 @@
 #ifndef VSOPCOMPILER_ASTNODE_H
 #define VSOPCOMPILER_ASTNODE_H
 
-#include <vextor>
+#include <vector>
 #include <string>
-#include <iostrem>
+#include <iostream>
 
 class ASTNode {
 private:
@@ -16,15 +16,15 @@ private:
     int type;
     int iValue;
     std::string strValue;
-    std::vector<* ASTNode> children;
+    std::vector<ASTNode *> children;
 
 public:
+    ASTNode();
     ASTNode(int type, int line, int column);
     ASTNode(int type, int iValue, int line, int column);
-    ASTNode(int type, std::strValue Value, int line, int column);
+    ASTNode(int type, std::string strValue, int line, int column);
     void addChild (ASTNode * child);
-    ostream &operator<<(ostream &os, const ASTNode & node);
-
+    friend std::ostream &operator<<(std::ostream &os, const ASTNode &node);
 };
 
 

@@ -1,5 +1,6 @@
 #include "ASTNode.h"
 
+
 ASTNode::ASTNode(int type, int line, int column) {
     this->type = type;
     this->line = line;
@@ -24,7 +25,6 @@ void ASTNode::addChild(ASTNode * child) {
     this->children.pushback(child);
 }
 
-ostream & ASTNode::operator<<(ostream &os, const ASTNode &node) {
+std::ostream & ASTNode::operator<<(std::ostream &os, const ASTNode &node) {
     os << node.type << ", " << node.line << ", " << node.column;
-    return os;
 }

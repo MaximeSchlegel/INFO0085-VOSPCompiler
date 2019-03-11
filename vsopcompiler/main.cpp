@@ -1,5 +1,8 @@
 #include "lex.yy.c"
 
+YYLTYPE yylloc;
+YYSTYPE yylval;
+
 int main(int argc, char *argv[]) {
     reservedId.emplace("bool", BOOL);
     reservedId.emplace("int32", INT32);
@@ -21,6 +24,11 @@ int main(int argc, char *argv[]) {
     reservedId.emplace("true", TRUE);
     reservedId.emplace("while", WHILE);
 
+    yylloc.first_column = 1;
+    yylloc.first_line =1;
+    yylloc.last_column = 1;
+    yylloc.last_line = 1;
+
     if(argc == 3 && std::string(argv[1]).compare("-lex") == 0)
     {
         filename = std::string(argv[2]);
@@ -28,6 +36,7 @@ int main(int argc, char *argv[]) {
         int token = yylex();
         while (token != END and token != -1) {
             token = yylex();
+            std::cout << yylloc.first_line << ", " << yylloc.first_column << std::endl;
         }
         fclose(yyin);
         if (token ==-1) {
