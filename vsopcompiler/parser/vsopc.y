@@ -1,56 +1,56 @@
-%define api.value.type variant
-%define api.token.constructor
+%union {
+  int intValue;
+  std::string *strValue;
+}
 
-%language "c++"
+%token ERROR                    // lexical error token
 
-%token ERROR                           // lexical error token
+%token END "end-of-file"	    //
 
-%token END "end-of-file"                //
+%token BOOL			            //
+%token INT32			        //
+%token STRING			        //
+%token UNIT			            //
+%token <strValue> TYPEID	    //  user-defined type
 
-%token BOOL
-%token INT32
-%token STRING
-%token UNIT           //
-%token TYPEID                           //  user-defined type
+%token TRUE			            //
+%token FALSE			        //
+%token <intValue> INTLITERAL	//
+%token <strValue> STRLITERAL	//
 
-%token TRUE
-%token FALSE 			            //
-%token INTLITERAL                      //
-%token STRLITERAL		                //
+%token AND			            //
+%token NOT			            //
 
-%token AND
-%token NOT				            //
+%token CLASS			        //
+%token DO			            //
+%token ELSE			            //
+%token EXTENDS			        //
+%token IF			            //
+%token IN			            //
+%token ISNULL			        //
+%token LET			            //
+%token NEW			            //
+%token THEN			            //
+%token WHILE			        //
+%token OBJECTID         	    //  user-defined object
 
-%token CLASS
-%token DO
-%token ELSE
-%token EXTENDS
-%token IF
-%token IN	    //
-%token ISNULL
-%token LET
-%token NEW
-%token THEN
-%token WHILE	    //
-%token OBJECTID      			        //  user-defined object
-
-%token LBRACE
-%token RBRACE
-%token LPAR
-%token RPAR		    //  { } ( )
-%token COLON
-%token SEMICOLON
-%token COMMA		    //  : ; ,
-%token PLUS
-%token MINUS
-%token TIMES
-%token DIV
-%token POW
-%token DOT	    //  + - * / ^ .
-%token EQUAL
-%token LOWER
-%token LOWEREQUAL		    //  = < <=
-%token ASSIGN				            //  <-
+%token LBRACE			        //  {
+%token RBRACE			        //  }
+%token LPAR			            //  (
+%token RPAR			            //  )
+%token COLON			        //  :
+%token SEMICOLON		        //  ;
+%token COMMA			        //  ,
+%token PLUS			            //  +
+%token MINUS			        //  -
+%token TIMES			        //  *
+%token DIV			            //  /
+%token POW			            //  ^
+%token DOT			            //  .
+%token EQUAL			        //  =
+%token LOWER			        //  <
+%token LOWEREQUAL		        //  <=
+%token ASSIGN			        //  <-
 
 %start program
 
