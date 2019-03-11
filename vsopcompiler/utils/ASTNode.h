@@ -5,7 +5,7 @@
 #ifndef VSOPCOMPILER_ASTNODE_H
 #define VSOPCOMPILER_ASTNODE_H
 
-#include <array>
+#include <vextor>
 #include <string>
 #include <iostrem>
 
@@ -16,7 +16,7 @@ private:
     int type;
     int iValue;
     std::string strValue;
-    std::array<* ASTNode> children;
+    std::vector<* ASTNode> children;
 
 public:
     ASTNode(int type, int line, int column);
