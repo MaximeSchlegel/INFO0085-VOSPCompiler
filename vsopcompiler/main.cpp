@@ -40,7 +40,6 @@ int main(int argc, char *argv[]) {
 
     if(argc == 2 and std::string(argv[1]).compare("-lex") == 0)
     {
-        filename = "stdin";
         int token = yylex();
         while (token != END and token != -1) {
             token = yylex();
@@ -49,20 +48,16 @@ int main(int argc, char *argv[]) {
     }
 
     if (argc == 2 and std::string(argv[1]).compare("-parse") == 0) {
-        filename ="stdin";
-        std::cout << "Hello" << std::endl;
         int r = yyparse();
         std::cout << r << std::endl << *astResult;
         return r;
     }
 
     if(argc == 3 && std::string(argv[1]).compare("-lex") == 0) {
-        filename = std::string(argv[2]);
         yyin = fopen(argv[2], "r");
         int token = yylex();
         while (token != END and token != -1) {
             token = yylex();
-            std::cout << yylloc.first_line << ", " << yylloc.first_column << std::endl;
         }
         fclose(yyin);
         if (token ==-1) {
@@ -72,12 +67,10 @@ int main(int argc, char *argv[]) {
     }
 
     if(argc == 3 && std::string(argv[1]).compare("-parse") == 0) {
-        filename = std::string(argv[2]);
         yyin = fopen(argv[2], "r");
         int token = yylex();
         while (token != END and token != -1) {
             token = yylex();
-            std::cout << yylloc.first_line << ", " << yylloc.first_column << std::endl;
         }
         fclose(yyin);
         if (token ==-1) {
