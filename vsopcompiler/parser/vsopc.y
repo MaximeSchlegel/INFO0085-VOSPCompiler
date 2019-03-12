@@ -203,7 +203,7 @@ method:
   ;
 
 formals:
-    /*empty*/               { $$ = 0; }
+    /*empty*/               { $$ = NULL; }
   | formal                  { ASTNode * f = new ASTNode("formals");
                               f->setPosition(@1.first_line, @1.first_column);
                               @$ = @1;
@@ -379,21 +379,75 @@ expr:
                                                      e->addChild($2);
                                                      $$ = e;
                                                      astResult = e; }
-  | ISNULL expr                                    {  }
-  | OBJECTID LPAR args RPAR                        {  }
-  | expr DOT OBJECTID LPAR args RPAR               {  }
-  | NEW TYPEID                                     {  }
-  | OBJECTID                                       {  }
-  | literal                                        {  }
-  | LPAR RPAR                                      {  }
-  | LPAR expr RPAR                                 {  }
-  | LBRACE block RBRACE                            {  }
+  | ISNULL expr                                    { ASTNode * e = new ASTNode("isnull");
+                                                     e->setPosition(@1.first_line, @1.first_column);
+                                                     @$ = @1; @$.last_line = @2.last_line; @$.last_column = @2.last_column;
+                                                     e->addChild($2);
+                                                     $$ = e;
+                                                     astResult = e; }
+  | OBJECTID LPAR args RPAR                        { ASTNode * e = new ASTNode("call");
+                                                     ASTNode * o = new ASTNode(OBJECTID, $1);
+                                                     std::string * self = new std::string("self");
+                                                     ASTNode * s = new ASTNode(OBJECTID, self);
+                                                     e->setPosition(@2.first_line, @2.first_column);
+                                                     o->setPosition(@1.first_line, @1.first_column);
+                                                     @$ = @1; @$.last_line = @4.last_line; @$.last_column = @4.last_column;
+                                                     e->addChild(o);
+                                                     e->addChild(s);
+                                                     if ($3) { e->addChild($3); }
+                                                     $$ = e;
+                                                     astResult = e; }
+  | expr DOT OBJECTID LPAR args RPAR               { ASTNode * e = new ASTNode("call");
+                                                     ASTNode * o = new ASTNode(OBJECTID, $3);
+                                                     e->setPosition(@4.first_line, @4.first_column);
+                                                     o->setPosition(@3.first_line, @3.first_column);
+                                                     @$ = @1; @$.last_line = @6.last_line; @$.last_column = @6.last_column;
+                                                     e->addChild($1);
+                                                     e->addChild(o);
+                                                     if ($5) { e->addChild($5); }
+                                                     $$ = e;
+                                                     astResult = e; }
+  | NEW TYPEID                                     { ASTNode * e = new ASTNode("new");
+                                                     ASTNode * t = new ASTNode(TYPEID, $2);
+                                                     e->setPosition(@1.first_line, @1.first_column);
+                                                     t->setPosition(@2.first_line, @2.first_column);
+                                                     @$ = @1; @$.last_line = @2.last_line; @$.last_column = @2.last_column;
+                                                     e->addChild(t);
+                                                     $$ = e;
+                                                     astResult = e; }
+  | OBJECTID                                       { ASTNode * e = new ASTNode(OBJECTID, $1);
+                                                     e->setPosition(@1.first_line, @1.first_column);
+                                                     @$ = @1;
+                                                     $$ = e;
+                                                     astResult = e; }
+  | literal                                        { @$ = @1;
+                                                     $$ = $1;
+                                                     astResult = $1; }
+  | LPAR expr RPAR                                 { @$ = @1; @$.last_line = @3.last_line; @$.last_column = @3.last_column;
+                                                     $$ = $2;
+                                                      astResult = $2; }
+  | LPAR RPAR                                      { ASTNode * e = new ASTNode(UNIT);
+                                                     e->setPosition(@1.first_line, @1.first_column);
+                                                     @$ = @1; @$.last_line = @2.last_line; @$.last_column = @2.last_column;
+                                                     $$ = e;
+                                                     astResult = e; }
+  | LBRACE block RBRACE                            { @$ = @1; @$.last_line = @3.last_line; @$.last_column = @3.last_column;
+                                                     $$ = $2;
+                                                     astResult = $2 }
   ;
 
 args:
-    /*empty*/          {  }
-  | expr               {  }
-  | args COMMA expr    {  }
+    /*empty*/          { $$ = NULL; }
+  | expr               { ASTNode * a = new ASTNode("args");
+                         a->setPosition(@1.first_line, @1.first_column);
+                         @$ = @1;
+                         a->addChild($1);
+                         $$ = a;
+                         astResult = a; }
+  | args COMMA expr    { @$ = @1; @$.last_line = @3.last_line; @$.last_column = @3.last_column;
+                         $1->addChild($3);
+                         $$ = $1;
+                         astResult = $1; }
   ;
 
 
