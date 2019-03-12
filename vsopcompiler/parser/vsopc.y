@@ -198,8 +198,7 @@ method:
                                                                    m->addChild($8);
                                                                    if ($3) { m->addChild($3); }
                                                                    $$ = m;
-                                                                   astResult = m;
-                                                                 }
+                                                                   astResult = m; }
   ;
 
 formals:
@@ -213,7 +212,7 @@ formals:
   | formals COMMA formal    { $1->addChild($3);
                               @$ = @1; @$.last_line = @3.last_line; @$.last_column = @3.last_column;
                               $$ = $1;
-                              astResult = $1;}
+                              astResult = $1; }
   ;
 
 formal:
@@ -241,11 +240,59 @@ block:		//put the L/RBARCE in the parent rule
   ;
 
 expr:
-    IF expr THEN expr                              {  }
-  | IF expr THEN expr ELSE expr                    {  }
-  | WHILE expr DO expr                             {  }
-  | LET OBJECTID COLON type IN expr                {  }
-  | LET OBJECTID COLON type ASSIGN expr IN expr    {  }
+    IF expr THEN expr                              { ASTNode * e = new ASTNode("if");
+                                                     e->setPosition(@1.first_line, @1.first_column);
+                                                     @$ = @1; @$.last_line = @4.last_line; @$.last_column = @4.last_column;
+                                                     // Child Order : Cond - Then
+                                                     e->addChild($2);
+                                                     e->addChild($4);
+                                                     $$ = e;
+                                                     astResult = e; }
+  | IF expr THEN expr ELSE expr                    { ASTNode * e = new ASTNode("if");
+                                                     e->setPosition(@1.first_line, @1.first_column);
+                                                     @$ = @1; @$.last_line = @6.last_line; @$.last_column = @6.last_column;
+                                                     // Child Order : Cond - Then - Else
+                                                     e->addChild($2);
+                                                     e->addChild($4);
+                                                     e->addChild($6);
+                                                     $$ = e;
+                                                     astResult = e; }
+  | WHILE expr DO expr                             { ASTNode * e = new ASTNode("while");
+                                                     e->setPosition(@1.first_line, @1.first_column);
+                                                     @$ = @1; @$.last_line = @4.last_line; @$.last_column = @4.last_column;
+                                                     // Child Order : Cond - do
+                                                     e->addChild($2);
+                                                     e->addChild($4);
+                                                     $$ = e;
+                                                     astResult = e; }
+  | LET OBJECTID COLON type IN expr                { ASTNode * e = new ASTNode("let");
+                                                     ASTNode * o = new ASTNode(OBJECTID, $2);
+                                                     o->setType($4->getType());
+                                                     e->setPosition(@1.first_line, @2.first_column);
+                                                     o->setPosition(@1.first_line, @2.first_column);
+                                                     @$ = @1; @$.last_line = @6.last_line; @$.last_column = @6.last_column;
+                                                     //Child Order : Object - Type - In
+                                                     e->addChild(o);
+                                                     e->addChild($4);
+                                                     e->addChild($6);
+                                                     $$ = e;
+                                                     astResult = e; }
+  | LET OBJECTID COLON type ASSIGN expr IN expr    { ASTNode * e = new ASTNode("let");
+                                                     ASTNode * o = new ASTNode(OBJECTID, $2);
+                                                     o->setType($4->getType());
+                                                     ASTNode * a = new ASTNode("assign");
+                                                     e->setPosition(@1.first_line, @1.first_column);
+                                                     o->setPosition(@2.first_line, @2.first_column);
+                                                     a->setPosition(@5.first_line, @5.first_column);
+                                                     @$ = @1; @$.last_line = @8.last_line; @$.last_column = @8.last_column;
+                                                     a->addChild($6);
+                                                     //Child's Order : Obj - Type - Assign - Expr
+                                                     e->addChild(o);
+                                                     e->addChild($4);
+                                                     e->addChild(a);
+                                                     e->addChild($8);
+                                                     $$ = e;
+                                                     astResult = e; }
   | OBJECTID ASSIGN expr                           {  }
   | NOT expr                                       {  }
   | expr AND expr                                  {  }
@@ -259,9 +306,7 @@ expr:
   | expr POW expr                                  {  }
   | MINUS expr                                     {  }
   | ISNULL expr                                    {  }
-  | OBJECTID LPAR RPAR                             {  }
   | OBJECTID LPAR args RPAR                        {  }
-  | expr DOT OBJECTID LPAR RPAR                    {  }
   | expr DOT OBJECTID LPAR args RPAR               {  }
   | NEW TYPEID                                     {  }
   | OBJECTID                                       {  }
@@ -271,8 +316,9 @@ expr:
   | LBRACE block RBRACE                            {  }
   ;
 
-args:		// if use duplicate the rule with /*empty*/
-    expr               {  }
+args:
+    /*empty*/          {  }
+  | expr               {  }
   | args COMMA expr    {  }
   ;
 
