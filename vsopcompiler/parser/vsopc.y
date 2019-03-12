@@ -434,7 +434,7 @@ expr:
                                                      astResult = e; }
   | LBRACE block RBRACE                            { @$ = @1; @$.last_line = @3.last_line; @$.last_column = @3.last_column;
                                                      $$ = $2;
-                                                     astResult = $2 }
+                                                     astResult = $2; }
   ;
 
 args:
