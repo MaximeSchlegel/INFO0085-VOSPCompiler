@@ -76,7 +76,7 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                                   }
 <MULTILINECOMMENT>([^*(\n])+      { yycharnoRefresh(); }
 <MULTILINECOMMENT>\*              { yycharnoRefresh(); }
-<MULTILINECOMMENT>*\              { yycharnoRefresh(); }
+<MULTILINECOMMENT>\               { yycharnoRefresh(); }
 <MULTILINECOMMENT>\n              { yycharnoNewline(); }
 <MULTILINECOMMENT><<EOF>>         { yycharnoRefresh();
                                     int errorLine = openedCommentsPosition.top().first, errorChar = openedCommentsPosition.top().second;
