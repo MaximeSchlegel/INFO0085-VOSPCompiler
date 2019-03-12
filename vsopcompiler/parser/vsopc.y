@@ -47,6 +47,7 @@
 //Precedence
 %nonassoc THEN
 %nonassoc ELSE
+%nonassoc DO IN
 %right ASSIGN
 %left AND
 %right NOT
@@ -58,7 +59,6 @@
 %left DOT
 %nonassoc LPAR RPAR
 %nonassoc LBRACE RBRACE
-%nonassoc DO IN
 
 //start state
 %start program
