@@ -177,24 +177,56 @@ field:
                                                    o->setPosition(@1.first_line, @1.first_column);
                                                    a->setPosition(@4.first_line, @4.first_column);
                                                    @$ = @1; @$.last_line = @6.last_line; @$.last_column = @6.last_column;
+                                                   a->addChild($5);
                                                    f->addChild(o);
                                                    f->addChild($3);
-                                                   a->addChild($5);
+                                                   f->addChild(a);
                                                    $$ = f;
                                                    astResult = f; }
   ;
 
 method:
-    OBJECTID LPAR formals RPAR COLON type LBRACE block RBRACE    {  }
+    OBJECTID LPAR formals RPAR COLON type LBRACE block RBRACE    { ASTNode * m = new ASTNode("method");
+                                                                   m->setType($6->getType());
+                                                                   ASTNode * o = new ASTNode(OBJECTID, $1);
+                                                                   o->setType($6->getType());
+                                                                   m->setPosition(@1.first_line, @1.first_column);
+                                                                   o->setPosition(@1.first_line, @1.first_column);
+                                                                   @$ = @1; @$.last_line = @9.last_line; @$.last_column = @9.last_column;
+                                                                   m->addChild(o);
+                                                                   m->addChild($6);
+                                                                   m->addChild($8);
+                                                                   if ($3) { m->addChild($3); }
+                                                                   $$ = m;
+                                                                   astResult = m;
+                                                                 }
   ;
 
 formals:
-    formal                  {  }
-  | formals COMMA formal    {  }
+    /*empty*/               { $$ = 0; }
+  | formal                  { ASTNode * f = new ASTNode("formals");
+                              f->setPosition(@1.first_line, @1.first_column);
+                              @$ = @1;
+                              f->addChild($1);
+                              $$ = f;
+                              astResult = f; }
+  | formals COMMA formal    { $1->addChild($3);
+                              @$ = @1; @$.last_line = @3.last_line; @$.last_column = @3.last_column;
+                              $$ = $1;
+                              astResult = $1;}
   ;
 
 formal:
-    OBJECTID COLON type    {  }
+    OBJECTID COLON type    { ASTNode * f = new ASTNode("formal");
+                             ASTNode * o = new ASTNode(OBJECTID, $1);
+                             f->setType($3->getType());
+                             f->setPosition(@1.first_line, @1.first_column);
+                             o->setPosition(@1.first_line, @1.first_column);
+                             @$ = @1; @$.last_line = @3.last_line; @$.last_column = @3.last_column;
+                             f->addChild(o);
+                             f->addChild($3);
+                             $$ = f;
+                             astResult = f; }
   ;
 
 block:		//put the L/RBARCE in the parent rule

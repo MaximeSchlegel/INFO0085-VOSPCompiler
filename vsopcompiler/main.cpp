@@ -50,8 +50,9 @@ int main(int argc, char *argv[]) {
 
     if (argc == 2 and std::string(argv[1]).compare("-parse") == 0) {
         filename ="stdin";
+        std::cout << "Hello" << std::endl;
         int r = yyparse();
-        std::cout << r << std::endl << astResult;
+        std::cout << r << std::endl << *astResult;
         return r;
     }
 
