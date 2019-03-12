@@ -69,16 +69,13 @@ int main(int argc, char *argv[]) {
     if(argc == 3 && std::string(argv[1]).compare("-parse") == 0) {
         yyin = fopen(argv[2], "r");
         int token = yyparse();
-        std::cout << "first " << token << std::endl;
         while (token != 1 and token != 2) {
             token = yyparse();
-            std::cout << "=======================>" << token << std::endl;
         }
         fclose(yyin);
         if (token == 1) {
             return -1;
         }
-        std::cout << "Result" << std::endl;
         std::cout << *astResult;
         return 0;
     }

@@ -117,16 +117,16 @@ literal:
   ;
 
 program:
-    class            { ASTNode * p = new ASTNode("program");
-    		       p->setPosition(@1.first_line, @1.first_column);
-                       p->addChild($1);
-                       @$ = @1;
-                       $$ = p;
-                       astResult = p; }
-  | program class    { $1->addChild($2);
-                       @$ = @1; @$.last_line = @2.last_line; @$.last_column = @2.last_column;
-                       $$ = $1;
-                       astResult = $1; }
+    class END           { ASTNode * p = new ASTNode("program");
+    		        p->setPosition(@1.first_line, @1.first_column);
+                        p->addChild($1);
+                        @$ = @1;
+                        $$ = p;
+                        astResult = p; }
+  | program class END   { $1->addChild($2);
+                        @$ = @1; @$.last_line = @2.last_line; @$.last_column = @2.last_column;
+                        $$ = $1;
+                        astResult = $1; }
   ;
 
 class:

@@ -5,4 +5,4 @@ install-tools:
 	bison -d parser/vsopc.y
 
 vsopc: lex.yy.c vsopc.tab.h
-	g++ lex.yy.c lexer/utils.cpp -o vsopc
+	g++ main.cpp lexer/utils.cpp utils/ASTNode.cpp -o vsopc
