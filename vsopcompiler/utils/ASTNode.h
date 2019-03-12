@@ -13,18 +13,21 @@ class ASTNode {
 private:
     int line;
     int column;
-    int type;
+    int iType;
+    std::string sType;
     int iValue;
-    std::string strValue;
+    std::string * sValue;
     std::vector<ASTNode *> children;
+    bool isTerminal;
 
 public:
-    ASTNode();
     ASTNode(int type, int line, int column);
     ASTNode(int type, int iValue, int line, int column);
-    ASTNode(int type, std::string strValue, int line, int column);
+    ASTNode(int type, std::string * sValue, int line, int column);
+    ASTNode(std::string type, int line, int column);
     void addChild (ASTNode * child);
-    friend std::ostream &operator<<(std::ostream &os, const ASTNode &node);
+    friend std::ostream & operator<<(std::ostream & os, const ASTNode & node);
+    ~ASTNode();
 };
 
 
