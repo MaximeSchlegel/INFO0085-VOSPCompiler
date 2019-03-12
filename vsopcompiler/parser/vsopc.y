@@ -230,8 +230,14 @@ formal:
   ;
 
 block:		//put the L/RBARCE in the parent rule
-    expr                    {  }
-  | block SEMICOLON expr    {  }
+    expr                    { ASTNode * b = new ASTNode("block");
+                              b->setPosition(@1.first_line, @1.first_column);
+                              @$ = @1;
+                              b->addChild($1); }
+  | block SEMICOLON expr    { @$ = @1; @$.last_line = @3.last_line; @$.last_column = @1.last_column;
+                              $1->addChild($3);
+                              $$ = $1;
+                              astResult = $1; }
   ;
 
 expr:
