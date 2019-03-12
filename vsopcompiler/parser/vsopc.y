@@ -105,7 +105,7 @@ literal:
   ;
 
 program:
-    class            { ASTNode * p = new ASTNode("Program", @1.first_line, @1.first_column);
+    class            { ASTNode * p = new ASTNode("program", @1.first_line, @1.first_column);
                        p->addChild($1);
                        @$ = @1;
                        $$ = p;
@@ -117,7 +117,7 @@ program:
   ;
 
 class:
-    CLASS TYPEID LBRACE class_body RBRACE                   { ASTNode * p = new ASTNode("Object", @1.first_line, @1.first_column);
+    CLASS TYPEID LBRACE class_body RBRACE                   { ASTNode * p = new ASTNode("object", @1.first_line, @1.first_column);
                                                               ASTNode * t = new ASTNode(TYPEID, $2, @2.first_line, @2.first_column);
                                                               $4->addChild(p); $4->addChild(t);
                                                               @$ = @1; @$.last_line = @5.last_line; @$.last_column = @5.last_column;
@@ -131,8 +131,19 @@ class:
                                                               astResult = $6; }
   ;
 class_body:
-    /*empty*/            {  }
-  | class_body method    {  }
+    method               { ASTNode * c = new ASTNode("class", @1.first_line, @1.first_column);
+                           c->addChild($1);
+                           @$ = @1;
+                           $$ = c;
+                           astResult = c; }
+  | field                { ASTNode * c = new ASTNode("field", @1.first_line, @1.first_column);
+                           c->addChild($1);
+                           @$ = @1;
+                           $$ = c;
+                           astResult = c; }
+  | class_body method    { $1->addChild($2);
+                           @$ = @1; @$.last_line = @2.last_line; @$.last_column = @2.last_column;
+                           astResult = $1; }
   | class_body field     { $1->addChild($2);
                            @$ = @1; @$.last_line = @2.last_line; @$.last_column = @2.last_column;
                            astResult = $1; }
