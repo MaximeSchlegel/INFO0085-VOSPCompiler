@@ -1,5 +1,13 @@
 #include "ASTNode.h"
-
+std::string ttos (int token) {
+    switch (token) {
+        case 260: return "bool";
+        case 261: return "int32";
+        case 262: return "string";
+        case 263: return "unit";
+    }
+    return "error";
+}
 
 ASTNode::ASTNode(int type) {
     this->iType = type;
@@ -29,6 +37,15 @@ void ASTNode::setPosition(int line, int column) {
 void ASTNode::setType(std::string type) {
     prop t; t.sProp = type;
     this->properties.emplace("type", t);
+}
+
+std::string ASTNode::getType() {
+    if (this->iType) {
+        return ttos(this->iType);
+    } else if (this->iType == 264) {
+        this->sValue;
+    }
+    return "error";
 }
 
 void ASTNode::addChild(ASTNode * child) {

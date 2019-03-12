@@ -161,9 +161,27 @@ class_body:
 field:
     OBJECTID COLON type SEMICOLON                { ASTNode * f = new ASTNode("field");
                                                    ASTNode * o = new ASTNode(OBJECTID, $1);
-
-                                                    }
-  | OBJECTID COLON type ASSIGN expr SEMICOLON    {  }
+                                                   o->setType($3->getType());
+                                                   f->setPosition(@1.first_line, @1.first_column);
+                                                   o->setPosition(@1.first_line, @1.first_column);
+                                                   f->addChild(o);
+                                                   f->addChild($3);
+                                                   @$ = @1; @$.last_line = @4.last_line; @$.last_column = @4.last_column;
+                                                   $$ = f;
+                                                   astResult = f; }
+  | OBJECTID COLON type ASSIGN expr SEMICOLON    { ASTNode * f = new ASTNode("field");
+                                                   ASTNode * o = new ASTNode(OBJECTID, $1);
+                                                   o->setType($3->getType());
+                                                   ASTNode * a = new ASTNode("assign");
+                                                   f->setPosition(@1.first_line, @1.first_column);
+                                                   o->setPosition(@1.first_line, @1.first_column);
+                                                   a->setPosition(@4.first_line, @4.first_column);
+                                                   @$ = @1; @$.last_line = @6.last_line; @$.last_column = @6.last_column;
+                                                   f->addChild(o);
+                                                   f->addChild($3);
+                                                   a->addChild($5);
+                                                   $$ = f;
+                                                   astResult = f; }
   ;
 
 method:
