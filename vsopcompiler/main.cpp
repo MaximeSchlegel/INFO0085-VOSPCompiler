@@ -8,7 +8,7 @@
 //
 //extern YYLTYPE yylloc;
 //extern YYSTYPE yylval;
-//extern ASTNode * astResult;
+extern ASTNode * astResult;
 
 int main(int argc, char *argv[]) {
     reservedId.emplace("bool", BOOL);
@@ -46,7 +46,12 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
-    if (argc == 2 and std::string(argv[1]).compare("-parse") == 0) {}
+    if (argc == 2 and std::string(argv[1]).compare("-parse") == 0) {
+        filename ="stdin";
+        int r = yyparse();
+        std::cout << r << std::endl << astResult;
+        return r;
+    }
 
     if(argc == 3 && std::string(argv[1]).compare("-lex") == 0) {
         filename = std::string(argv[2]);

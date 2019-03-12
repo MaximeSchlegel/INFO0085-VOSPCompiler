@@ -63,57 +63,79 @@
 
 %%
 type:
-    BOOL      { ASTNode * n = new ASTNode(BOOL, @1.first_line, @1.first_column);
-                @$ = @1; $$ = n;
-                astResult = n; }
-  | INT32     { ASTNode * n = new ASTNode(INT32, @1.first_line, @1.first_column);
-                @$ = @1; $$ = n;
-                astResult = n; }
-  | STRING    { ASTNode * n = new ASTNode(STRING, @1.first_line, @1.first_column);
-                @$ = @1; $$ = n;
-                astResult = n; }
-  | UNIT      { ASTNode * n = new ASTNode(UNIT, @1.first_line, @1.first_column);
-                @$ = @1; $$ = n;
-                astResult = n; }
-  | TYPEID    { ASTNode * n = new ASTNode(TYPEID, $1, @1.first_line, @1.first_column);
-                @$ = @1; $$ = n;
-                astResult = n; }
+    BOOL      { ASTNode * t = new ASTNode(BOOL, @1.first_line, @1.first_column);
+                @$ = @1;
+                $$ = t;
+                astResult = t; }
+  | INT32     { ASTNode * t = new ASTNode(INT32, @1.first_line, @1.first_column);
+                @$ = @1;
+                $$ = t;
+                astResult = t; }
+  | STRING    { ASTNode * t = new ASTNode(STRING, @1.first_line, @1.first_column);
+                @$ = @1;
+                $$ = t;
+                astResult = t; }
+  | UNIT      { ASTNode * t = new ASTNode(UNIT, @1.first_line, @1.first_column);
+                @$ = @1;
+                $$ = t;
+                astResult = t; }
+  | TYPEID    { ASTNode * t = new ASTNode(TYPEID, $1, @1.first_line, @1.first_column);
+                @$ = @1;
+                $$ = t;
+                astResult = t; }
   ;
 
 literal:
-    TRUE          { ASTNode * n = new ASTNode(TRUE, @1.first_line, @1.first_column);
-                    @$ = @1;$$ = n;
-                    astResult = n; }
-  | FALSE         { ASTNode * n = new ASTNode(FALSE, @1.first_line, @1.first_column);
-                    @$ = @1; $$ = n;
-                    astResult = n; }
-  | INTLITERAL    { ASTNode * n = new ASTNode(TRUE, $1, @1.first_line, @1.first_column);
-                    @$ = @1; $$ = n;
-                    astResult = n; }
-  | STRLITERAL    { ASTNode * n = new ASTNode(TRUE, $1, @1.first_line, @1.first_column);
-                    @$ = @1; $$ = n;
-                    astResult = n; }
+    TRUE          { ASTNode * l = new ASTNode(TRUE, @1.first_line, @1.first_column);
+                    @$ = @1;
+                    $$ = l;
+                    astResult = l; }
+  | FALSE         { ASTNode * l = new ASTNode(FALSE, @1.first_line, @1.first_column);
+                    @$ = @1;
+                    $$ = l;
+                    astResult = l; }
+  | INTLITERAL    { ASTNode * l = new ASTNode(INTLITERAL, $1, @1.first_line, @1.first_column);
+                    @$ = @1;
+                    $$ = l;
+                    astResult = l; }
+  | STRLITERAL    { ASTNode * l = new ASTNode(STRLITERAL, $1, @1.first_line, @1.first_column);
+                    @$ = @1;
+                    $$ = l;
+                    astResult = l; }
   ;
 
 program:
-    class            { ASTNode * n = new ASTNode("program", @1.first_line, @1.first_column);
-                       n->addChild($1);
-                       @$ = @1; $$ = n;
-                       astResult = n; }
-  | program class    { ASTNode * n = new ASTNode("program", @1.first_line, @1.first_column);
-                       n->addChild($1);
-                       @$ = @1; $$ = n;
-                       astResult = n; }
+    class            { ASTNode * p = new ASTNode("Program", @1.first_line, @1.first_column);
+                       p->addChild($1);
+                       @$ = @1;
+                       $$ = p;
+                       astResult = p; }
+  | program class    { $1->addChild($2);
+                       @$ = @1; @$.last_line = @2.last_line; @$.last_column = @2.last_column;
+                       $$ = $1;
+                       astResult = $1; }
   ;
 
 class:
-    CLASS TYPEID LBRACE class_body RBRACE                   {  }
-  | CLASS TYPEID EXTENDS TYPEID LBRACE class_body RBRACE    {  }
+    CLASS TYPEID LBRACE class_body RBRACE                   { ASTNode * p = new ASTNode("Object", @1.first_line, @1.first_column);
+                                                              ASTNode * t = new ASTNode(TYPEID, $2, @2.first_line, @2.first_column);
+                                                              $4->addChild(p); $4->addChild(t);
+                                                              @$ = @1; @$.last_line = @5.last_line; @$.last_column = @5.last_column;
+                                                              $$ = $4;
+                                                              astResult = $4; }
+  | CLASS TYPEID EXTENDS TYPEID LBRACE class_body RBRACE    { ASTNode * p = new ASTNode(TYPEID, $4, @1.first_line, @1.first_column);
+                                                              ASTNode * t = new ASTNode(TYPEID, $2, @2.first_line, @2.first_column);
+                                                              $6->addChild(p); $6->addChild(t);
+                                                              @$ = @1; @$.last_line = @7.last_line; @$.last_column = @7.last_column;
+                                                              $$ = $6;
+                                                              astResult = $6; }
   ;
 class_body:
     /*empty*/            {  }
   | class_body method    {  }
-  | class_body field     {  }
+  | class_body field     { $1->addChild($2);
+                           @$ = @1; @$.last_line = @2.last_line; @$.last_column = @2.last_column;
+                           astResult = $1; }
   ;
 
 method:
