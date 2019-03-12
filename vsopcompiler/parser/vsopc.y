@@ -45,14 +45,15 @@
 %type <astNode> expr args
 
 //Precedence
+%nonassoc THEN
+%nonassoc ELSE
 %right ASSIGN
 %left AND
 %right NOT
 %nonassoc LOWER LOWEREQUAL EQUAL
 %left PLUS MINUS
 %left TIMES DIV
-%left ISNULL
-//%precedence NEG
+%left ISNULL NEG
 %right POW
 %left DOT
 %nonassoc LPAR RPAR
@@ -293,18 +294,91 @@ expr:
                                                      e->addChild($8);
                                                      $$ = e;
                                                      astResult = e; }
-  | OBJECTID ASSIGN expr                           {  }
-  | NOT expr                                       {  }
-  | expr AND expr                                  {  }
-  | expr EQUAL expr                                {  }
-  | expr LOWER expr                                {  }
-  | expr LOWEREQUAL expr                           {  }
-  | expr PLUS expr                                 {  }
-  | expr MINUS expr                                {  }
-  | expr TIMES expr                                {  }
-  | expr DIV expr                                  {  }
-  | expr POW expr                                  {  }
-  | MINUS expr                                     {  }
+  | OBJECTID ASSIGN expr                           { ASTNode * e = new ASTNode("assign");
+                                                     ASTNode * o = new ASTNode(OBJECTID, $1);
+                                                     ASTNode * a = new ASTNode("assign");
+                                                     e->setPosition(@1.first_line, @1.first_column);
+                                                     o->setPosition(@2.first_line, @2.first_column);
+                                                     @$ = @1; @$.last_line = @3.last_line; @$.last_column = @3.last_column;
+                                                     e->addChild(o);
+                                                     e->addChild($3);
+                                                     $$ = e;
+                                                     astResult = e; }
+  | NOT expr                                       { ASTNode * e = new ASTNode("not");
+                                                     e->setPosition(@1.first_line, @1.first_column);
+                                                     @$ = @1; @$.last_line = @2.last_line; @$.last_column = @2.last_column;
+                                                     e->addChild($2);
+                                                     $$ = e;
+                                                     astResult = e; }
+  | expr AND expr                                  { ASTNode * e = new ASTNode("and");
+                                                     e->setPosition(@2.first_line, @2.first_column);
+                                                     @$ = @1; @$.last_line = @3.last_line; @$.last_column = @3.last_column;
+                                                     e->addChild($1);
+                                                     e->addChild($3);
+                                                     $$ = e;
+                                                     astResult = e; }
+  | expr EQUAL expr                                { ASTNode * e = new ASTNode("equal");
+                                                     e->setPosition(@2.first_line, @2.first_column);
+                                                     @$ = @1; @$.last_line = @3.last_line; @$.last_column = @3.last_column;
+                                                     e->addChild($1);
+                                                     e->addChild($3);
+                                                     $$ = e;
+                                                     astResult = e; }
+  | expr LOWER expr                                { ASTNode * e = new ASTNode("lower");
+                                                     e->setPosition(@2.first_line, @2.first_column);
+                                                     @$ = @1; @$.last_line = @3.last_line; @$.last_column = @3.last_column;
+                                                     e->addChild($1);
+                                                     e->addChild($3);
+                                                     $$ = e;
+                                                     astResult = e; }
+  | expr LOWEREQUAL expr                           { ASTNode * e = new ASTNode("lowerequal");
+                                                     e->setPosition(@2.first_line, @2.first_column);
+                                                     @$ = @1; @$.last_line = @3.last_line; @$.last_column = @3.last_column;
+                                                     e->addChild($1);
+                                                     e->addChild($3);
+                                                     $$ = e;
+                                                     astResult = e; }
+  | expr PLUS expr                                 { ASTNode * e = new ASTNode("plus");
+                                                     e->setPosition(@2.first_line, @2.first_column);
+                                                     @$ = @1; @$.last_line = @3.last_line; @$.last_column = @3.last_column;
+                                                     e->addChild($1);
+                                                     e->addChild($3);
+                                                     $$ = e;
+                                                     astResult = e; }
+  | expr MINUS expr                                { ASTNode * e = new ASTNode("minus");
+                                                     e->setPosition(@2.first_line, @2.first_column);
+                                                     @$ = @1; @$.last_line = @3.last_line; @$.last_column = @3.last_column;
+                                                     e->addChild($1);
+                                                     e->addChild($3);
+                                                     $$ = e;
+                                                     astResult = e; }
+  | expr TIMES expr                                { ASTNode * e = new ASTNode("times");
+                                                     e->setPosition(@2.first_line, @2.first_column);
+                                                     @$ = @1; @$.last_line = @3.last_line; @$.last_column = @3.last_column;
+                                                     e->addChild($1);
+                                                     e->addChild($3);
+                                                     $$ = e;
+                                                     astResult = e; }
+  | expr DIV expr                                  { ASTNode * e = new ASTNode("div");
+                                                     e->setPosition(@2.first_line, @2.first_column);
+                                                     @$ = @1; @$.last_line = @3.last_line; @$.last_column = @3.last_column;
+                                                     e->addChild($1);
+                                                     e->addChild($3);
+                                                     $$ = e;
+                                                     astResult = e; }
+  | expr POW expr                                  { ASTNode * e = new ASTNode("and");
+                                                     e->setPosition(@2.first_line, @2.first_column);
+                                                     @$ = @1; @$.last_line = @3.last_line; @$.last_column = @3.last_column;
+                                                     e->addChild($1);
+                                                     e->addChild($3);
+                                                     $$ = e;
+                                                     astResult = e; }
+  | MINUS expr  %prec NEG                          { ASTNode * e = new ASTNode("neg");
+                                                     e->setPosition(@1.first_line, @1.first_column);
+                                                     @$ = @1; @$.last_line = @2.last_line; @$.last_column = @2.last_column;
+                                                     e->addChild($2);
+                                                     $$ = e;
+                                                     astResult = e; }
   | ISNULL expr                                    {  }
   | OBJECTID LPAR args RPAR                        {  }
   | expr DOT OBJECTID LPAR args RPAR               {  }
