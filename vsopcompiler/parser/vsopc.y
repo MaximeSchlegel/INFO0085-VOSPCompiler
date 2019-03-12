@@ -15,6 +15,7 @@
 
 %code requires { #include "utils/ASTNode.h" }
 %locations
+%debug
 
 %union {
   int intValue;
@@ -63,49 +64,59 @@
 
 %%
 type:
-    BOOL      { ASTNode * t = new ASTNode(BOOL, @1.first_line, @1.first_column);
+    BOOL      { ASTNode * t = new ASTNode(BOOL);
+    		t->setPosition(@1.first_line, @1.first_column);
                 @$ = @1;
                 $$ = t;
                 astResult = t; }
-  | INT32     { ASTNode * t = new ASTNode(INT32, @1.first_line, @1.first_column);
+  | INT32     { ASTNode * t = new ASTNode(INT32);
+    		t->setPosition(@1.first_line, @1.first_column);
                 @$ = @1;
                 $$ = t;
                 astResult = t; }
-  | STRING    { ASTNode * t = new ASTNode(STRING, @1.first_line, @1.first_column);
+  | STRING    { ASTNode * t = new ASTNode(STRING);
+    		t->setPosition(@1.first_line, @1.first_column);
                 @$ = @1;
                 $$ = t;
                 astResult = t; }
-  | UNIT      { ASTNode * t = new ASTNode(UNIT, @1.first_line, @1.first_column);
+  | UNIT      { ASTNode * t = new ASTNode(UNIT);
+    		t->setPosition(@1.first_line, @1.first_column);
                 @$ = @1;
                 $$ = t;
                 astResult = t; }
-  | TYPEID    { ASTNode * t = new ASTNode(TYPEID, $1, @1.first_line, @1.first_column);
+  | TYPEID    { ASTNode * t = new ASTNode(TYPEID, $1);
+    		t->setPosition(@1.first_line, @1.first_column);
                 @$ = @1;
                 $$ = t;
                 astResult = t; }
   ;
 
 literal:
-    TRUE          { ASTNode * l = new ASTNode(TRUE, @1.first_line, @1.first_column);
+    TRUE          { ASTNode * l = new ASTNode(TRUE);
+    		    l->setPosition(@1.first_line, @1.first_column);
                     @$ = @1;
                     $$ = l;
                     astResult = l; }
-  | FALSE         { ASTNode * l = new ASTNode(FALSE, @1.first_line, @1.first_column);
+  | FALSE         { ASTNode * l = new ASTNode(FALSE);
+    		    l->setPosition(@1.first_line, @1.first_column);
                     @$ = @1;
                     $$ = l;
                     astResult = l; }
-  | INTLITERAL    { ASTNode * l = new ASTNode(INTLITERAL, $1, @1.first_line, @1.first_column);
+  | INTLITERAL    { ASTNode * l = new ASTNode(INTLITERAL, $1);
+    		    l->setPosition(@1.first_line, @1.first_column);
                     @$ = @1;
                     $$ = l;
                     astResult = l; }
-  | STRLITERAL    { ASTNode * l = new ASTNode(STRLITERAL, $1, @1.first_line, @1.first_column);
+  | STRLITERAL    { ASTNode * l = new ASTNode(STRLITERAL, $1);
+    		    l->setPosition(@1.first_line, @1.first_column);
                     @$ = @1;
                     $$ = l;
                     astResult = l; }
   ;
 
 program:
-    class            { ASTNode * p = new ASTNode("program", @1.first_line, @1.first_column);
+    class            { ASTNode * p = new ASTNode("program");
+    		       p->setPosition(@1.first_line, @1.first_column);
                        p->addChild($1);
                        @$ = @1;
                        $$ = p;
@@ -117,28 +128,26 @@ program:
   ;
 
 class:
-    CLASS TYPEID LBRACE class_body RBRACE                   { ASTNode * p = new ASTNode("object", @1.first_line, @1.first_column);
-                                                              ASTNode * t = new ASTNode(TYPEID, $2, @2.first_line, @2.first_column);
+    CLASS TYPEID LBRACE class_body RBRACE                   { ASTNode * p = new ASTNode("object");
+                                                              ASTNode * t = new ASTNode(TYPEID, $2);
+    		                                              p->setPosition(@1.first_line, @1.first_column);
+    		                                              t->setPosition(@2.first_line, @2.first_column);
                                                               $4->addChild(p); $4->addChild(t);
                                                               @$ = @1; @$.last_line = @5.last_line; @$.last_column = @5.last_column;
                                                               $$ = $4;
                                                               astResult = $4; }
-  | CLASS TYPEID EXTENDS TYPEID LBRACE class_body RBRACE    { ASTNode * p = new ASTNode(TYPEID, $4, @1.first_line, @1.first_column);
-                                                              ASTNode * t = new ASTNode(TYPEID, $2, @2.first_line, @2.first_column);
+  | CLASS TYPEID EXTENDS TYPEID LBRACE class_body RBRACE    { ASTNode * p = new ASTNode(TYPEID, $4);
+                                                              ASTNode * t = new ASTNode(TYPEID, $2);
+    		                                              p->setPosition(@1.first_line, @1.first_column);
+    		                                              t->setPosition(@2.first_line, @2.first_column);
                                                               $6->addChild(p); $6->addChild(t);
                                                               @$ = @1; @$.last_line = @7.last_line; @$.last_column = @7.last_column;
                                                               $$ = $6;
                                                               astResult = $6; }
   ;
 class_body:
-    method               { ASTNode * c = new ASTNode("class", @1.first_line, @1.first_column);
-                           c->addChild($1);
-                           @$ = @1;
-                           $$ = c;
-                           astResult = c; }
-  | field                { ASTNode * c = new ASTNode("field", @1.first_line, @1.first_column);
-                           c->addChild($1);
-                           @$ = @1;
+    /*empty*/            { ASTNode * c = new ASTNode("class");
+                           c->setPosition(yylloc.first_line, yylloc.first_column);
                            $$ = c;
                            astResult = c; }
   | class_body method    { $1->addChild($2);
@@ -147,6 +156,14 @@ class_body:
   | class_body field     { $1->addChild($2);
                            @$ = @1; @$.last_line = @2.last_line; @$.last_column = @2.last_column;
                            astResult = $1; }
+  ;
+
+field:
+    OBJECTID COLON type SEMICOLON                { ASTNode * f = new ASTNode("field");
+                                                   ASTNode * o = new ASTNode(OBJECTID, $1);
+
+                                                    }
+  | OBJECTID COLON type ASSIGN expr SEMICOLON    {  }
   ;
 
 method:
@@ -165,11 +182,6 @@ formal:
 block:		//put the L/RBARCE in the parent rule
     expr                    {  }
   | block SEMICOLON expr    {  }
-  ;
-
-field:
-    OBJECTID COLON type SEMICOLON                {  }
-  | OBJECTID COLON type ASSIGN expr SEMICOLON    {  }
   ;
 
 expr:

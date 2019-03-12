@@ -1,34 +1,34 @@
 #include "ASTNode.h"
 
 
-ASTNode::ASTNode(int type, int line, int column) {
+ASTNode::ASTNode(int type) {
     this->iType = type;
-    this->isTerminal = true;
-    this->line = line;
-    this->column = column;
 }
 
-ASTNode::ASTNode(int type, int iValue, int line, int column) {
+ASTNode::ASTNode(int type, int iValue) {
     this->iType = type;
-    this->isTerminal = true;
     this->iValue = iValue;
-    this->line = line;
-    this->column = column;
 }
 
-ASTNode::ASTNode(int type, std::string * sValue, int line, int column) {
+ASTNode::ASTNode(int type, std::string * sValue) {
     this->iType = type;
     this->sValue = sValue;
-    this->isTerminal = true;
-    this->line = line;
-    this->column = column;
 }
 
-ASTNode::ASTNode(std::string type, int line, int column) {
+ASTNode::ASTNode(std::string type) {
     this->sType = type;
-    this->isTerminal = false;
-    this->line = line;
-    this->column = column;
+}
+
+void ASTNode::setPosition(int line, int column) {
+    prop l; l.iProp = line;
+    prop c; c.iProp = column;
+    this->properties.emplace("line", l);
+    this->properties.emplace("column", c);
+}
+
+void ASTNode::setType(std::string type) {
+    prop t; t.sProp = type;
+    this->properties.emplace("type", t);
 }
 
 void ASTNode::addChild(ASTNode * child) {
@@ -36,10 +36,10 @@ void ASTNode::addChild(ASTNode * child) {
 }
 
 std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
-    if (node.isTerminal) {
-        os << node.iType << ", " << node.line << ", " << node.column;
+    if (node.iType) {
+        os << node.iType;
     } else {
-        os << node.sType << ", " << node.line << ", " << node.column;
+        os << node.sType;
     }
     return os;
 }
