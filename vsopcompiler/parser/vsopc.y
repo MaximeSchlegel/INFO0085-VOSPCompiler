@@ -393,8 +393,8 @@ expr:
                                                      e->setPosition(@2.first_line, @2.first_column);
                                                      o->setPosition(@1.first_line, @1.first_column);
                                                      @$ = @1; @$.last_line = @4.last_line; @$.last_column = @4.last_column;
-                                                     e->addChild(o);
                                                      e->addChild(s);
+                                                     e->addChild(o);
                                                      if ($3) { e->addChild($3); }
                                                      $$ = e;
                                                      astResult = e; }
