@@ -39,7 +39,7 @@ void ASTNode::setType(std::string type) {
     this->properties.emplace("type", t);
 }
 
-std::string ASTNode::getType() {
+std::string ASTNode::getType() const {
     if (this->iType) {
         if (this->iType == 264) {
             this->sValue;
@@ -66,18 +66,18 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
     } else if (node.sType.compare("class") == 0) {
         os << "Class(" << node.children[0] << ", " << node.children[1] << ", ";
         for (auto const& child: node.children) {
-            if (child.sType.compare("field") == 0) {
+            if (child->sType.compare("field") == 0) {
                 os << child;
             }
         }
         for (auto const& child: node.children) {
-            if (child.sType.compare("method") == 0) {
+            if (child->sType.compare("method") == 0) {
                 os << child;
             }
         }
         os << ")";
     } else if (node.sType.compare("field") == 0) {
-        if (node.children.size == 4) {
+        if (node.children.size() == 4) {
             os << "Field(" << node.children[1] << ", " << node.children[2] << ", " << node.children[0] << ")";
         } else {
             os << "Field(" << node.children[0] << ", " << node.children[1] << ")";
@@ -95,7 +95,7 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
             os << child;
         }
     } else if (node.sType.compare("if") == 0) {
-        if (node.children.size == 3) {
+        if (node.children.size() == 3) {
             os << "If(" << node.children[0] << ", " << node.children[1] << ", " << node.children[2] << ")";
         } else {
             os << "If(" << node.children[0] << ", " << node.children[1] << ")";
@@ -103,7 +103,7 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
     } else if (node.sType.compare("while") == 0) {
         os << "While(" << node.children[0] << ", " << node.children[1] << ")";
     } else if (node.sType.compare("let") == 0) {
-        if (node.children.size == 4) {
+        if (node.children.size() == 4) {
             os << "Let(" << node.children[0] << ", " << node.children[1] << ", " << node.children[2] << ", " << node.children[3] <<")";
         } else {
             os << "Let(" << node.children[0] << ", " << node.children[1] << ", " << node.children[2] << ")";
@@ -136,7 +136,7 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
         os << "UnOp(isnull, " << node.children[0] << ")";
     } else if (node.sType.compare("call") == 0) {
         os << "Call(" << node.children[0] << ", " << node.children[1] << ", [";
-        for (int i = 2; i < node.children.size; i++) {
+        for (int i = 2; i < node.children.size(); i++) {
             if (i != 2) {
                 os << " ,";
             }

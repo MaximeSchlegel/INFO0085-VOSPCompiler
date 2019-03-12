@@ -31,7 +31,7 @@ public:
     ASTNode(std::string type);
     void setPosition(int line, int column);
     void setType(std::string type);
-    std::string getType();
+    std::string getType()const ;
     void addChild (ASTNode * child);
     friend std::ostream & operator<<(std::ostream & os, const ASTNode & node);
     ~ASTNode();
