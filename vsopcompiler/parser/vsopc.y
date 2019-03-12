@@ -58,6 +58,7 @@
 %left DOT
 %nonassoc LPAR RPAR
 %nonassoc LBRACE RBRACE
+%nonassoc DO IN
 
 //start state
 %start program
