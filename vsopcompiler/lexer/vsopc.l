@@ -95,7 +95,6 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                                  return returnAndDisplayToken(STRLITERAL, strStartPosition.first, strStartPosition.second );
                                }
 <STR>\x5C\x0A([ '\x09'])*      { yycharnoNewline();
-                                 std::cout << "here";
                                   prevTokenLength = yyleng - 2;
                                }
 <STR>\x5Cb                     { yycharnoRefresh();
