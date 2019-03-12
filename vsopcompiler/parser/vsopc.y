@@ -367,7 +367,7 @@ expr:
                                                      e->addChild($3);
                                                      $$ = e;
                                                      astResult = e; }
-  | expr POW expr                                  { ASTNode * e = new ASTNode("and");
+  | expr POW expr                                  { ASTNode * e = new ASTNode("pow");
                                                      e->setPosition(@2.first_line, @2.first_column);
                                                      @$ = @1; @$.last_line = @3.last_line; @$.last_column = @3.last_column;
                                                      e->addChild($1);
