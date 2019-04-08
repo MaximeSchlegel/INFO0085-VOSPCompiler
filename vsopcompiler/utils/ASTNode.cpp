@@ -55,24 +55,29 @@ void ASTNode::addChild(ASTNode * child) {
 
 std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
     // Same order as in vsopc.y
-    if (node.iType) {
+    os << "in print";
+    os << node.iType << "/" << node.iValue << "/" << node.sType << "/" << node.sValue << std::endl;
+
+    if (node.iType == 260 or node.iType == 261 or node.iType == 262 or node.iType == 263 or node.iType == 264) {
+        os << "const";
+        os << node.iType;
         os << node.getType(); // Problem with the const
     } else if (node.sType.compare("program") == 0) {
         os << "[";
         for (auto const& child: node.children) {
-            os << child;
+            os << *child;
         }
         os << "]";
     } else if (node.sType.compare("class") == 0) {
-        os << "Class(" << node.children[0] << ", " << node.children[1] << ", ";
+        os << "Class(" << *(node.children[node.children.size()-2]) << ", " << node.children[1] << ", ";
         for (auto const& child: node.children) {
             if (child->sType.compare("field") == 0) {
-                os << child;
+                os << *child;
             }
         }
         for (auto const& child: node.children) {
             if (child->sType.compare("method") == 0) {
-                os << child;
+                os << *child;
             }
         }
         os << ")";
@@ -86,13 +91,13 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
         os << "Method(" << node.children[0] << ", " << node.children[3] << ", " << node.children[1] << ", " << node.children[2] <<")";
     } else if (node.sType.compare("formals") == 0) {
         for (auto const& child: node.children) {
-            os << child;
+            os << *child;
         }
     } else if (node.sType.compare("formal") == 0) {
         os << node.children[0] << " : " << node.children[1];
     } else if (node.sType.compare("block") == 0) {
         for (auto const& child: node.children) {
-            os << child;
+            os << *child;
         }
     } else if (node.sType.compare("if") == 0) {
         if (node.children.size() == 3) {
@@ -147,7 +152,7 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
         os << "New(" << node.children[0] << ")";
     } else if (node.sType.compare("args") == 0) {
         for (auto const& child: node.children) {
-            os << child;
+            os << *child;
         }
     } else {
         os << node.sType;

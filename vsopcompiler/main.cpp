@@ -73,9 +73,11 @@ int main(int argc, char *argv[]) {
             token = yyparse();
         }
         fclose(yyin);
-        if (token == 1) {
-            return -1;
-        }
+        // if (token == 1) {
+        //     std::cout << "here" << std::endl;
+        //     return -1;
+        // }
+        std::cout << "here" << std::endl;
         std::cout << *astResult;
         return 0;
     }
