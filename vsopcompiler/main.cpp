@@ -10,6 +10,8 @@
 //extern YYSTYPE yylval;
 extern ASTNode * astResult;
 
+int DISPLAY;
+
 int main(int argc, char *argv[]) {
     reservedId.emplace("bool", BOOL);
     reservedId.emplace("int32", INT32);
@@ -40,6 +42,7 @@ int main(int argc, char *argv[]) {
 
     if(argc == 2 and std::string(argv[1]).compare("-lex") == 0)
     {
+        DISPLAY = true;
         int token = yylex();
         while (token != END and token != -1) {
             token = yylex();
@@ -48,16 +51,19 @@ int main(int argc, char *argv[]) {
     }
 
     if (argc == 2 and std::string(argv[1]).compare("-parse") == 0) {
+        DISPLAY = false;
         int r = yyparse();
         std::cout << r << std::endl << *astResult;
         return r;
     }
 
     if(argc == 3 && std::string(argv[1]).compare("-lex") == 0) {
+        DISPLAY = true;
         yyin = fopen(argv[2], "r");
         int token = yylex();
         while (token != END and token != -1) {
             token = yylex();
+//            std::cout << "Hello";
         }
         fclose(yyin);
         if (token ==-1) {
@@ -67,6 +73,7 @@ int main(int argc, char *argv[]) {
     }
 
     if(argc == 3 && std::string(argv[1]).compare("-parse") == 0) {
+        DISPLAY = false;
         yyin = fopen(argv[2], "r");
         int token = yyparse();
         while (token != 1 and token != 2) {
@@ -81,6 +88,10 @@ int main(int argc, char *argv[]) {
         std::cout << *astResult;
         return 0;
     }
+
+    ASTNode * node = new ASTNode("class");
+    std::cout << * node << std::endl;
+    std::cout << "Hello";
 
     return -1;
 }

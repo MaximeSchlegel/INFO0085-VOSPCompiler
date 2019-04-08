@@ -57,8 +57,9 @@ int dehexify(std::string s) {
     return res;
 }
 
-int returnAndDisplayToken (int token, int lineno, int charno, bool display) {
-    if (display) {
+int returnAndDisplayToken (int token, int lineno, int charno) {
+    extern bool DISPLAY;
+    if (DISPLAY) {
         std::cout << lineno << "," << charno << ",";
         switch (token) {
             case END: std::cout << "end-of-file"; break;
@@ -108,8 +109,9 @@ int returnAndDisplayToken (int token, int lineno, int charno, bool display) {
     return token;
 }
 
-int returnAndDisplayError(int error, int lineno, int charno, bool display) {
-    if (display) {
+int returnAndDisplayError(int error, int lineno, int charno) {
+    extern bool DISPLAY;
+    if (DISPLAY) {
         std::cerr << filename << ":" << lineno << ":" << charno << ": lexical error : ";
         switch (error) {
             case 101: std::cerr << "unexpected end-of-file"; break;
@@ -125,5 +127,5 @@ int returnAndDisplayError(int error, int lineno, int charno, bool display) {
         }
         std::cerr << std::endl;
     }
-    return -1;
+    return ERROR;
 }

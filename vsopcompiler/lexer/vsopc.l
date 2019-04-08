@@ -90,7 +90,7 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                                }
 <STR>\x22                      { yycharnoRefresh();
                                  strBuffer += yytext;
-                                 yylval.strValue = &strBuffer;
+                                 yylval.strValue = new std::string(strBuffer);
                                  BEGIN(INITIAL);
                                  return returnAndDisplayToken(STRLITERAL, strStartPosition.first, strStartPosition.second );
                                }
@@ -177,8 +177,7 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                                           }
 
 {typeId}    { yycharnoRefresh();
-              std::string s = yytext;
-              yylval.strValue = &s;
+              yylval.strValue = new std::string(yytext);
               return returnAndDisplayToken(TYPEID);
             }
 
@@ -188,8 +187,7 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                 if (isReserved != reservedId.end()) {
                   return returnAndDisplayToken(isReserved->second);
                 } else {
-                  std::string s = yytext;
-                  yylval.strValue = &s;
+                  yylval.strValue = new std::string(yytext);
                   return returnAndDisplayToken(OBJECTID);
                 }
               }
@@ -249,7 +247,7 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
 {ignored-char}+    { yycharnoRefresh(); }
 {lf}+              { yycharnoNewline(); }
 <<EOF>>            { yycharnoRefresh();
-                     return returnAndDisplayToken(END, yylineno, yycharno, false);
+                     return returnAndDisplayToken(END, yylineno, yycharno);
                    }
 .                  { yycharnoRefresh();
                      return returnAndDisplayError(110, yylineno, yycharno);

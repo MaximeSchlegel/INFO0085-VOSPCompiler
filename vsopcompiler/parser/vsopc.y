@@ -45,9 +45,6 @@
 %type <astNode> expr args
 
 //Precedence
-%nonassoc THEN
-%nonassoc ELSE
-%nonassoc DO IN
 %right ASSIGN
 %left AND
 %right NOT
@@ -57,6 +54,9 @@
 %left ISNULL NEG
 %right POW
 %left DOT
+%nonassoc THEN
+%nonassoc ELSE
+%nonassoc DO IN
 %nonassoc LPAR RPAR
 %nonassoc LBRACE RBRACE
 
@@ -116,21 +116,25 @@ literal:
                     astResult = l; }
   ;
 
+
 program:
-    class END           { ASTNode * p = new ASTNode("program");
-    		        p->setPosition(@1.first_line, @1.first_column);
-                        p->addChild($1);
-                        @$ = @1;
-                        $$ = p;
-                        astResult = p; }
-  | program class END   { $1->addChild($2);
-                        @$ = @1; @$.last_line = @2.last_line; @$.last_column = @2.last_column;
-                        $$ = $1;
-                        astResult = $1; }
+    class           { ASTNode * p = new ASTNode("program");
+    		      p->setPosition(@1.first_line, @1.first_column);
+                      p->addChild($1);
+                      @$ = @1;
+                      $$ = p;
+                      astResult = p; }
+  | program class   { $1->addChild($2);
+                      @$ = @1; @$.last_line = @2.last_line; @$.last_column = @2.last_column;
+                      $$ = $1;
+                      astResult = $1; }
+  | program END     { $$ = $1;
+  		      astResult = $1;
+  		      YYACCEPT; }
   ;
 
 class:
-    CLASS TYPEID LBRACE class_body RBRACE                   { ASTNode * p = new ASTNode("object");
+    CLASS TYPEID LBRACE class_body RBRACE                   { ASTNode * p = new ASTNode("Object");
                                                               ASTNode * t = new ASTNode(TYPEID, $2);
     		                                              p->setPosition(@1.first_line, @1.first_column);
     		                                              t->setPosition(@2.first_line, @2.first_column);
@@ -147,6 +151,7 @@ class:
                                                               $$ = $6;
                                                               astResult = $6; }
   ;
+
 class_body:
     /*empty*/            { ASTNode * c = new ASTNode("class");
                            c->setPosition(yylloc.first_line, yylloc.first_column);
@@ -163,7 +168,7 @@ class_body:
 field:
     OBJECTID COLON type SEMICOLON                { ASTNode * f = new ASTNode("field");
                                                    ASTNode * o = new ASTNode(OBJECTID, $1);
-                                                   o->setType($3->getType());
+//                                                   o->setType($3->getType());
                                                    f->setPosition(@1.first_line, @1.first_column);
                                                    o->setPosition(@1.first_line, @1.first_column);
                                                    f->addChild(o);
@@ -173,7 +178,7 @@ field:
                                                    astResult = f; }
   | OBJECTID COLON type ASSIGN expr SEMICOLON    { ASTNode * f = new ASTNode("field");
                                                    ASTNode * o = new ASTNode(OBJECTID, $1);
-                                                   o->setType($3->getType());
+//                                                   o->setType($3->getType());
                                                    ASTNode * a = new ASTNode("assign");
                                                    f->setPosition(@1.first_line, @1.first_column);
                                                    o->setPosition(@1.first_line, @1.first_column);
@@ -189,9 +194,9 @@ field:
 
 method:
     OBJECTID LPAR formals RPAR COLON type LBRACE block RBRACE    { ASTNode * m = new ASTNode("method");
-                                                                   m->setType($6->getType());
+//                                                                   m->setType($6->getType());
                                                                    ASTNode * o = new ASTNode(OBJECTID, $1);
-                                                                   o->setType($6->getType());
+//                                                                   o->setType($6->getType());
                                                                    m->setPosition(@1.first_line, @1.first_column);
                                                                    o->setPosition(@1.first_line, @1.first_column);
                                                                    @$ = @1; @$.last_line = @9.last_line; @$.last_column = @9.last_column;
@@ -220,7 +225,7 @@ formals:
 formal:
     OBJECTID COLON type    { ASTNode * f = new ASTNode("formal");
                              ASTNode * o = new ASTNode(OBJECTID, $1);
-                             f->setType($3->getType());
+//                             f->setType($3->getType());
                              f->setPosition(@1.first_line, @1.first_column);
                              o->setPosition(@1.first_line, @1.first_column);
                              @$ = @1; @$.last_line = @3.last_line; @$.last_column = @3.last_column;
@@ -269,7 +274,7 @@ expr:
                                                      astResult = e; }
   | LET OBJECTID COLON type IN expr                { ASTNode * e = new ASTNode("let");
                                                      ASTNode * o = new ASTNode(OBJECTID, $2);
-                                                     o->setType($4->getType());
+//                                                     o->setType($4->getType());
                                                      e->setPosition(@1.first_line, @2.first_column);
                                                      o->setPosition(@1.first_line, @2.first_column);
                                                      @$ = @1; @$.last_line = @6.last_line; @$.last_column = @6.last_column;
@@ -281,17 +286,14 @@ expr:
                                                      astResult = e; }
   | LET OBJECTID COLON type ASSIGN expr IN expr    { ASTNode * e = new ASTNode("let");
                                                      ASTNode * o = new ASTNode(OBJECTID, $2);
-                                                     o->setType($4->getType());
-                                                     ASTNode * a = new ASTNode("assign");
+//                                                     o->setType($4->getType());
                                                      e->setPosition(@1.first_line, @1.first_column);
                                                      o->setPosition(@2.first_line, @2.first_column);
-                                                     a->setPosition(@5.first_line, @5.first_column);
                                                      @$ = @1; @$.last_line = @8.last_line; @$.last_column = @8.last_column;
-                                                     a->addChild($6);
                                                      //Child's Order : Obj - Type - Assign - Expr
                                                      e->addChild(o);
                                                      e->addChild($4);
-                                                     e->addChild(a);
+                                                     e->addChild($6);
                                                      e->addChild($8);
                                                      $$ = e;
                                                      astResult = e; }
@@ -439,6 +441,7 @@ expr:
 
 args:
     /*empty*/          { $$ = NULL; }
+
   | expr               { ASTNode * a = new ASTNode("args");
                          a->setPosition(@1.first_line, @1.first_column);
                          @$ = @1;

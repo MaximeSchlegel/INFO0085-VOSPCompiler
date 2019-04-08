@@ -20,14 +20,15 @@ private:
     int iType;
     std::string sType;
     int iValue;
-    std::string * sValue;
+    std::string *sValue;
     std::map<std::string, prop> properties;
     std::vector<ASTNode *> children;
 
 public:
     ASTNode(int type);
     ASTNode(int type, int iValue);
-    ASTNode(int type, std::string * sValue);
+    ASTNode(int type, std::string sType);
+    ASTNode(int type, std::string *sValue);
     ASTNode(std::string type);
     void setPosition(int line, int column);
     void setType(std::string type);
