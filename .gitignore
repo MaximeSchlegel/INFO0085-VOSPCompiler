@@ -1,3 +1,5 @@
-.vscode/settings.json
-.vscode/c_cpp_properties.json
+.vscode/*
 vsopcompiler/vsopc.exe
+vsopcompiler/lex.yy.c
+vsopcompiler/vsopc.tab.h
+vsopcompiler/vsopc.tab.c
