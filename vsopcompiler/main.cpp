@@ -77,14 +77,16 @@ int main(int argc, char *argv[]) {
         DISPLAY = false;
         yyin = fopen(argv[2], "r");
         filename = argv[2];
-        int token;
-        do {
-            token = yyparse();
-        } while (token != 1 and token != 2);
 
-        fclose(yyin);
-        std::cout << *astResult;
-        return 0;
+        if (yyparse() == 1) {
+            std::cerr << filename << ":" << yylloc.first_line << ":" << yylloc.first_column << ": syntax error";
+            fclose(yyin);
+            return -1;
+        } else {
+            std::cout << *astResult;
+            fclose(yyin);
+            return 0;
+        }
     }
     return -1;
 }

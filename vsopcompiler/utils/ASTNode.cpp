@@ -34,6 +34,14 @@ void ASTNode::setPosition(int line, int column) {
     this->properties.emplace("column", c);
 }
 
+int ASTNode::getLine() {
+    return this->properties.find("line")->second.iProp;
+}
+
+int ASTNode::getColumn() {
+    return this->properties.find("column")->second.iProp;
+}
+
 void ASTNode::setType(std::string type) {
     prop t; t.sProp = type;
     this->properties.emplace("type", t);

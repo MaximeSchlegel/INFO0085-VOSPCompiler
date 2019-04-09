@@ -31,6 +31,8 @@ public:
     ASTNode(int type, std::string *sValue);
     ASTNode(std::string type);
     void setPosition(int line, int column);
+    int getLine();
+    int getColumn();
     void setType(std::string type);
     std::string getType()const ;
     void addChild (ASTNode * child);
