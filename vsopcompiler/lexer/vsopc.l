@@ -247,7 +247,7 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
 {ignored-char}+    { yycharnoRefresh(); }
 {lf}+              { yycharnoNewline(); }
 <<EOF>>            { yycharnoRefresh();
-                     return returnAndDisplayToken(END, yylineno, yycharno);
+                     return END;
                    }
 .                  { yycharnoRefresh();
                      return returnAndDisplayError(110, yylineno, yycharno);

@@ -45,6 +45,9 @@
 %type <astNode> expr args
 
 //Precedence
+%nonassoc THEN
+%nonassoc ELSE
+%nonassoc DO IN
 %right ASSIGN
 %left AND
 %right NOT
@@ -54,9 +57,6 @@
 %left ISNULL NEG
 %right POW
 %left DOT
-%nonassoc THEN
-%nonassoc ELSE
-%nonassoc DO IN
 %nonassoc LPAR RPAR
 %nonassoc LBRACE RBRACE
 
@@ -179,15 +179,12 @@ field:
   | OBJECTID COLON type ASSIGN expr SEMICOLON    { ASTNode * f = new ASTNode("field");
                                                    ASTNode * o = new ASTNode(OBJECTID, $1);
 //                                                   o->setType($3->getType());
-                                                   ASTNode * a = new ASTNode("assign");
                                                    f->setPosition(@1.first_line, @1.first_column);
                                                    o->setPosition(@1.first_line, @1.first_column);
-                                                   a->setPosition(@4.first_line, @4.first_column);
                                                    @$ = @1; @$.last_line = @6.last_line; @$.last_column = @6.last_column;
-                                                   a->addChild($5);
                                                    f->addChild(o);
                                                    f->addChild($3);
-                                                   f->addChild(a);
+                                                   f->addChild($5);
                                                    $$ = f;
                                                    astResult = f; }
   ;
@@ -239,7 +236,9 @@ block:		//put the L/RBARCE in the parent rule
     expr                    { ASTNode * b = new ASTNode("block");
                               b->setPosition(@1.first_line, @1.first_column);
                               @$ = @1;
-                              b->addChild($1); }
+                              b->addChild($1);
+                              $$ = b;
+                              astResult = b; }
   | block SEMICOLON expr    { @$ = @1; @$.last_line = @3.last_line; @$.last_column = @1.last_column;
                               $1->addChild($3);
                               $$ = $1;

@@ -38,13 +38,13 @@ int main(int argc, char *argv[]) {
     yylloc.last_column = 1;
     yylloc.last_line = 1;
 
-    yydebug = 1;
+//    yydebug = 1;
 
     if(argc == 2 and std::string(argv[1]).compare("-lex") == 0)
     {
         DISPLAY = true;
         int token = yylex();
-        while (token != END and token != -1) {
+        while (token != END and token != ERROR) {
             token = yylex();
         }
         return 0;
@@ -60,13 +60,14 @@ int main(int argc, char *argv[]) {
     if(argc == 3 && std::string(argv[1]).compare("-lex") == 0) {
         DISPLAY = true;
         yyin = fopen(argv[2], "r");
-        int token = yylex();
-        while (token != END and token != -1) {
+        filename = argv[2];
+
+        int token;
+        do {
             token = yylex();
-//            std::cout << "Hello";
-        }
+        } while (token != END and token != ERROR);
         fclose(yyin);
-        if (token ==-1) {
+        if (token == ERROR) {
             return -1;
         }
         return 0;
@@ -75,23 +76,15 @@ int main(int argc, char *argv[]) {
     if(argc == 3 && std::string(argv[1]).compare("-parse") == 0) {
         DISPLAY = false;
         yyin = fopen(argv[2], "r");
-        int token = yyparse();
-        while (token != 1 and token != 2) {
+        filename = argv[2];
+        int token;
+        do {
             token = yyparse();
-        }
+        } while (token != 1 and token != 2);
+
         fclose(yyin);
-        // if (token == 1) {
-        //     std::cout << "here" << std::endl;
-        //     return -1;
-        // }
-        std::cout << "here" << std::endl;
         std::cout << *astResult;
         return 0;
     }
-
-    ASTNode * node = new ASTNode("class");
-    std::cout << * node << std::endl;
-    std::cout << "Hello";
-
     return -1;
 }

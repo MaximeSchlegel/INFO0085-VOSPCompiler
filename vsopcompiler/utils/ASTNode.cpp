@@ -2,21 +2,29 @@
 
 ASTNode::ASTNode(int type) {
     this->iType = type;
+    this->children = std::vector<ASTNode *>();
+    this->properties = std::map<std::string, prop>();
 }
 
 ASTNode::ASTNode(int type, int iValue) {
     this->iType = type;
     this->iValue = iValue;
+    this->children = std::vector<ASTNode *>();
+    this->properties = std::map<std::string, prop>();
 }
 
 ASTNode::ASTNode(int type, std::string *sValue) {
     this->iType = type;
     this->sValue = sValue;
+    this->children = std::vector<ASTNode *>();
+    this->properties = std::map<std::string, prop>();
 }
 
 ASTNode::ASTNode(std::string type) {
     this->iType = -1;
     this->sType = type;
+    this->children = std::vector<ASTNode *>();
+    this->properties = std::map<std::string, prop>();
 }
 
 void ASTNode::setPosition(int line, int column) {
@@ -66,15 +74,18 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
         }
 
     } else if (node.sType.compare("program") == 0) {
-        os << "[ " << std::endl;
-        for (auto const& child: node.children) {
-            os << *child;
+        os << "[" << std::endl;
+        for (int i = 0; i < node.children.size(); i++) {
+            os << *node.children[i];
+            if (i != node.children.size() - 1) {
+                os << "," << std::endl;
+            }
         }
-        os << " ]" << std::endl;
+        os << std::endl << " ]" << std::endl;
 
     } else if (node.sType.compare("class") == 0) {
         os << "Class(" << *(node.children[node.children.size() - 1]) << ", " << *node.children[node.children.size() - 2] << "," << std::endl;
-        os << "      [ ";
+        os << "      [";
         bool first = true;
         for (auto const& child: node.children) {
             if (child->sType == "field") {
@@ -86,12 +97,12 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
                 }
             }
         }
-        os << " ]," << std::endl << "      [ ";
+        os << "]," << std::endl << "      [";
         first = true;
         for (auto const& child: node.children) {
             if (child->sType == "method") {
                 if(!first) {
-                    os << "\n        " << *child;
+                    os << ",\n        " << *child;
 
                 } else {
                     first = false;
@@ -99,11 +110,11 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
                 }
             }
         }
-        os << " ])" << std::endl;
+        os << "])";
 
     } else if (node.sType.compare("field") == 0) {
         if (node.children.size() == 3) {
-            os << "Field(" << *node.children[1] << ", " << *node.children[2] << ", " << node.children[3] << ")";
+            os << "Field(" << *node.children[0] << ", " << *node.children[1] << ", " << *node.children[2] << ")";
         } else {
             os << "Field(" << *node.children[0] << ", " << *node.children[1] << ")";
         }
@@ -128,11 +139,17 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
         os << *node.children[0] << " : " << *node.children[1];
 
     } else if (node.sType.compare("block") == 0) {
-        for (int i = 0; i < node.children.size(); i++) {
-            os << *node.children[i];
-            if (i != node.children.size() - 1){
-                os << ",  ";
+        if (node.children.size() == 1) {
+            os << *node.children[0];
+        } else {
+            os << "[";
+            for (int i = 0; i < node.children.size(); i++) {
+                os << *node.children[i];
+                if (i != node.children.size() - 1){
+                    os << ", ";
+                }
             }
+            os << "]";
         }
 
     } else if (node.sType.compare("if") == 0) {
@@ -146,8 +163,8 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
         os << "While(" << *node.children[0] << ", " << *node.children[1] << ")";
 
     } else if (node.sType.compare("let") == 0) {
-        if (node.children.size() == 3) {
-            os << "Let(" << *node.children[0] << ", " << *node.children[1] << ", " << *node.children[2] << ", " << *node.children[3] <<")";
+        if (node.children.size() == 4) {
+            os << "Let(" << *node.children[0] << ", " << *node.children[1] << ", " << *node.children[2] << ", " << *node.children[3] << ")";
         } else {
             os << "Let(" << *node.children[0] << ", " << *node.children[1] << ", " << *node.children[2] << ")";
         }
@@ -191,11 +208,11 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
         os << "UnOp(isnull, " << *node.children[0] << ")";
 
     } else if (node.sType.compare("call") == 0) {
-        os << "Call(" << *node.children[0] << ", " << *node.children[1] << ", [ ";
+        os << "Call(" << *node.children[0] << ", " << *node.children[1] << ", [";
         if (node.children.size() == 3) {
             os << *node.children[2];
         }
-        os << " ])";
+        os << "])";
 
     } else if (node.sType.compare("new") == 0) {
         os << "New(" << *node.children[0] << ")";
