@@ -2,12 +2,14 @@
 
 ASTNode::ASTNode(int type) {
     this->iType = type;
+    this->sType = "";
     this->children = std::vector<ASTNode *>();
     this->properties = std::map<std::string, prop>();
 }
 
 ASTNode::ASTNode(int type, int iValue) {
     this->iType = type;
+    this->sType = "";
     this->iValue = iValue;
     this->children = std::vector<ASTNode *>();
     this->properties = std::map<std::string, prop>();
@@ -48,20 +50,30 @@ void ASTNode::setType(std::string type) {
 }
 
 std::string ASTNode::getType() const {
-    if (this->iType) {
+    if (this->iType != -1) {
         switch (this->iType) {
             case 260: return "bool";
             case 261: return "int32";
             case 262: return "string";
             case 263: return "unit";
             case 264: return *this->sValue;
+            case 265: return "bool";
+            case 266: return "bool";
+            case 267: return "int";
+            case 268: return "string";
         }
+    } else  if (this->sType != "") {
+        return this->sType;
     }
     return "error";
 }
 
 void ASTNode::addChild(ASTNode * child) {
     this->children.push_back(child);
+}
+
+std::vector<ASTNode *> ASTNode::getChildren() {
+    return this->children;
 }
 
 std::ostream & operator<<(std::ostream & os, const ASTNode & node) {

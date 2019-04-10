@@ -5,18 +5,21 @@
 #include <vector>
 #include <string>
 
+#include "../utils/ASTNode.h"
+
 
 class Checker {
 private:
-    std::Map<std::string, std::vector<string>> declared_class;
+    std::map<std::string, std::vector<std::string> *> *primary;
+//    std::map<std::string, std::vector<string>> declared_variable;
     // declared_type
     // declared class.method
     // declared object with scope
 
 public:
     Checker();
-    int check(ASTNode root);
-
+    int check(ASTNode *root);
+    void registerClasses(ASTNode *root);
     //TODO: definition des class
     //          - redifinition des class
     //          - une class est nmmée Object

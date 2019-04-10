@@ -2,6 +2,8 @@
 #include "lex.yy.c"
 
 #include "utils/ASTNode.h"
+#include "checker/checker.h"
+
 
 //extern "C" int yyparse();
 //extern "C" int yyerror();
@@ -91,8 +93,26 @@ int main(int argc, char *argv[]) {
     }
 
     if(argc == 3 && std::string(argv[1]).compare("-check") == 0) {
-        std::cout << "Done" << std::endl;
-        return 0;
+        DISPLAY = false;
+        yyin = fopen(argv[2], "r");
+        filename = argv[2];
+
+        if (yyparse() == 1) {
+            std::cerr << filename << ":" << yylloc.first_line << ":" << yylloc.first_column << ": syntax error";
+            fclose(yyin);
+            return -1;
+        } else {
+            Checker *sc = new Checker();
+            if (sc->check(astResult) == 0) {
+                std::cout << *astResult << std::endl;
+                fclose(yyin);
+                return 0;
+            } else {
+                std::cout << "Nope" << std::endl;
+                fclose(yyin);
+                return -1;
+            }
+        }
     }
     return -1;
 }

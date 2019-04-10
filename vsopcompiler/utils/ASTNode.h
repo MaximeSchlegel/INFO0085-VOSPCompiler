@@ -36,6 +36,7 @@ public:
     void setType(std::string type);
     std::string getType()const ;
     void addChild (ASTNode * child);
+    std::vector<ASTNode *> getChildren();
     friend std::ostream & operator<<(std::ostream & os, const ASTNode & node);
     ~ASTNode();
 };
