@@ -69,8 +69,9 @@ int main(int argc, char *argv[]) {
         fclose(yyin);
         if (token == ERROR) {
             return -1;
+        } else {
+            return 0;
         }
-        return 0;
     }
 
     if(argc == 3 && std::string(argv[1]).compare("-parse") == 0) {
@@ -87,6 +88,11 @@ int main(int argc, char *argv[]) {
             fclose(yyin);
             return 0;
         }
+    }
+
+    if(argc == 3 && std::string(argv[1]).compare("-check") == 0) {
+        std::cout << "Done" << std::endl;
+        return 0;
     }
     return -1;
 }
