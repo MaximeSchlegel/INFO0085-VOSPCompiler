@@ -1,93 +1,71 @@
 #include "symbolTable.h"
 
-SymbolTableEntry::SymbolTableEntry() {
-    this->next = NULL;
-}
-
-SymbolTableEntry::SymbolTableEntry(std::string key, std::string value, std::string type, int lineNo) {
-    this->id = key;
-    this->scope = value;
+SymbolTableEntry::SymbolTableEntry(std::string id, std::string scope, std::string type, int lineNo) {
+    this->id = id;
+    this->scope = scope;
     this->type = type;
     this->lineNo = lineNo;
-    this->next = NULL;
 }
 
-SymbolTable::SymbolTable() {
-    for(int i = 0; i < MAXSIZE; i++) {
-        this->table[i] == NULL;
-    }
+SymbolTableScope::SymbolTableScope(SymbolTableScope* parent) {
+    this->parent = parent;
+    this->scope = new std::unordered_map<std::string, SymbolTableEntry*>();
 }
 
-// Hash function
-// Somme des charactères modulo la taille de la table
-int SymbolTable::hash(std::string id) {
-    int sum = 0;
-
-    for(int i = 0; i < id.length(); i++) {
-        sum += id[i];
-    }
-
-    return sum%MAXSIZE;
-}
-
-bool SymbolTable::add(std::string id, std::string scope, std::string type, int lineNo) {
-    int index = this->hash(id);
+void SymbolTableScope::add(std::string id, std::string scope, std::string type, int lineNo) {
     SymbolTableEntry* newEntry = new SymbolTableEntry(id, scope, type, lineNo);
-
-    if(this->table[index] == NULL) {
-        this->table[index] = newEntry;
-        
-        return true;
-    } else {
-        SymbolTableEntry* entry = this->table[index];
-        while(entry->next != NULL) {
-            entry = entry->next;
-        }
-        entry->next = newEntry;
-
-        return true;
-    }
-
-    return false;
+    this->scope->emplace(id, newEntry);
 }
 
-SymbolTableEntry* SymbolTable::lookup(std::string id) {
-    int index = this->hash(id);
-    SymbolTableEntry* entry = this->table[index];
-
-    if(entry == NULL) {
+SymbolTableEntry* SymbolTableScope::lookup(std::string id) {
+    SymbolTableEntry* entry = NULL;
+    try {
+         entry = this->scope->at(id);
+    } catch(std::out_of_range oor) {
         return NULL;
     }
 
-    while(entry != NULL) {
-        if(entry->id == id) {
+    return entry;
+}
+
+SymbolTable::SymbolTable() {
+    this->root = new SymbolTableScope(NULL);
+    this->head = this->root;
+}
+
+bool SymbolTable::add(std::string id, std::string scope, std::string type, int lineNo) {
+    SymbolTableScope* currentScope = this->head;
+    currentScope->add(id, scope, type, lineNo);
+}
+
+SymbolTableEntry* SymbolTable::lookup(std::string id) {
+    SymbolTableScope* currentScope = this->head;
+
+    while(currentScope != NULL) {
+        SymbolTableEntry* entry = currentScope->lookup(id);
+
+        if(entry != NULL) {
             return entry;
         }
 
-        entry = entry->next;
+        currentScope = currentScope->parent;
     }
 
     return NULL;
 }
 
-bool SymbolTable::modify(std::string id, std::string scope, std::string type, int lineNo) {
-    int index = this->hash(id);
-    SymbolTableEntry* entry = this->table[index];
+void SymbolTable::pushScope() {
+    SymbolTableScope* currentScope = this->head;
 
-    if(entry == NULL) {
-        return false;
-    }
+    SymbolTableScope* newScope = new SymbolTableScope(currentScope);
 
-    while(entry != NULL) {
-        if(entry->id == id) {
-            entry->scope = scope;
-            entry->type = type;
-            entry->lineNo = lineNo;
-            return true;
-        }
+    this->head = newScope;
+}
 
-        entry = entry->next;
-    }
+void SymbolTable::popScope() {
+    SymbolTableScope* currentScope = this->head;
 
-    return false;
+    SymbolTableScope* parent = currentScope->parent;
+
+    this->head = parent;
 }

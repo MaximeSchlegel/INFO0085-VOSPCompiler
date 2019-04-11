@@ -3,6 +3,7 @@
 #define VSOPCOMPILER_SYMBOLTABLE_H
 
 #include <string>
+#include <unordered_map>
 
 const int MAXSIZE = 100;
 
@@ -12,25 +13,37 @@ private:
     std::string scope;
     std::string type;
     int lineNo;
-    SymbolTableEntry* next;
 
 public:
-    SymbolTableEntry();
-    SymbolTableEntry(std::string key, std::string value, std::string type, int lineNo);
+    SymbolTableEntry(std::string id, std::string scope, std::string type, int lineNo);
+
+    friend class SymbolTableScope;
+};
+
+class SymbolTableScope {
+private:
+    std::unordered_map<std::string, SymbolTableEntry*>* scope;
+    SymbolTableScope* parent;
+
+public:
+    SymbolTableScope(SymbolTableScope* parent);
+    void add(std::string id, std::string scope, std::string type, int lineNo);
+    SymbolTableEntry* lookup(std::string id);
 
     friend class SymbolTable;
 };
 
 class SymbolTable {
 private:
-    SymbolTableEntry* table[MAXSIZE];
+    SymbolTableScope* root;
+    SymbolTableScope* head;
 
 public:
     SymbolTable();
-    int hash(std::string id);
     bool add(std::string id, std::string scope, std::string type, int lineNo);
     SymbolTableEntry* lookup(std::string id);
-    bool modify(std::string id, std::string scope, std::string type, int lineNo);
+    void pushScope();
+    void popScope();
 };
 
 #endif // VSOPCOMPILER_SYMBOLTABLE_H
