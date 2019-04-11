@@ -37,17 +37,15 @@ public:
 
 class SymbolTable {
 private:
-    SymbolTableScope* root;
-    SymbolTableScope* head;
+    std::unordered_map<std::string, SymbolTableScope*> scopes;
+    SymbolTableScope* currentScope;
 
 public:
     SymbolTable();
     void add(std::string id, std::string scope, std::string type, int lineNo);
     SymbolTableEntry* lookup(std::string id);
-    void pushScope();
-    void popScope();
-    SymbolTableScope* getCurrentScope();
-    void setCurrentScope();
+    void enterNewScope(std::string scopeId, std::string parent = "");
+    void exitScope();
 };
 
 #endif // VSOPCOMPILER_SYMBOLTABLE_H
