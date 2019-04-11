@@ -29,47 +29,48 @@ SymbolTableEntry* SymbolTableScope::lookup(std::string id) {
 }
 
 SymbolTable::SymbolTable() {
-    this->root = new SymbolTableScope(NULL);
-    this->head = this->root;
+    this->scopes = new std::unordered_map<std::string, SymbolTableScope*>();
+
+    SymbolTableScope* rootScope = new SymbolTableScope(NULL);
+    this->scopes->emplace("root", rootScope);
+
+    this->currentScope = rootScope;
 }
 
 void SymbolTable::add(std::string id, std::string scope, std::string type, int lineNo) {
-    SymbolTableScope* currentScope = this->head;
-    currentScope->add(id, scope, type, lineNo);
+    this->currentScope->add(id, scope, type, lineNo);
 }
 
 SymbolTableEntry* SymbolTable::lookup(std::string id) {
-    SymbolTableScope* currentScope = this->head;
+    SymbolTableScope* tmpScope = this->currentScope;
 
-    while(currentScope != NULL) {
-        SymbolTableEntry* entry = currentScope->lookup(id);
+    while(tmpScope != NULL) {
+        SymbolTableEntry* entry = tmpScope->lookup(id);
 
         if(entry != NULL) {
             return entry;
         }
 
-        currentScope = currentScope->parent;
+        tmpScope = tmpScope->parent;
     }
 
     return NULL;
 }
 
-void SymbolTable::pushScope() {
-    SymbolTableScope* currentScope = this->head;
-
-    SymbolTableScope* newScope = new SymbolTableScope(currentScope);
-
-    this->head = newScope;
+void SymbolTable::enterNewScope(std::string scopeId, std::string parent = "") {
+    if(parent != "") {
+        SymbolTableScope* parentScope = this->scopes->at(parent);
+        SymbolTableScope* newScope = new SymbolTableScope(parentScope);
+        this->scopes->emplace(scopeId, newScope);
+        this->currentScope = newScope;
+    } else {
+        SymbolTableScope* newScope = new SymbolTableScope(this->currentScope);
+        this->scopes->emplace(scopeId, newScope);
+        this->currentScope = newScope;
+    }
 }
 
-void SymbolTable::popScope() {
-    SymbolTableScope* currentScope = this->head;
-
-    SymbolTableScope* parent = currentScope->parent;
-
-    this->head = parent;
-}
-
-SymbolTableScope* SymbolTable::getCurrentScope() {
-    return this->head;
+void SymbolTable::exitScope() {
+    SymbolTableScope* parentScope = this->currentScope->parent;
+    this->currentScope = parentScope;
 }

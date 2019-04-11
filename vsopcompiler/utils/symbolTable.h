@@ -37,7 +37,7 @@ public:
 
 class SymbolTable {
 private:
-    std::unordered_map<std::string, SymbolTableScope*> scopes;
+    std::unordered_map<std::string, SymbolTableScope*>* scopes;
     SymbolTableScope* currentScope;
 
 public:
