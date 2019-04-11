@@ -57,9 +57,14 @@ SymbolTableEntry* SymbolTable::lookup(std::string id) {
     return NULL;
 }
 
-void SymbolTable::enterNewScope(std::string scopeId, std::string parent = "") {
+bool SymbolTable::enterNewScope(std::string scopeId, std::string parent = "") {
     if(parent != "") {
-        SymbolTableScope* parentScope = this->scopes->at(parent);
+        SymbolTableScope* parentScope;
+        try {
+          parentScope = this->scopes->at(parent);
+        } catch(std::out_of_range oor) {
+            return false;
+        }
         SymbolTableScope* newScope = new SymbolTableScope(parentScope);
         this->scopes->emplace(scopeId, newScope);
         this->currentScope = newScope;
@@ -68,9 +73,17 @@ void SymbolTable::enterNewScope(std::string scopeId, std::string parent = "") {
         this->scopes->emplace(scopeId, newScope);
         this->currentScope = newScope;
     }
+
+    return true;
 }
 
 void SymbolTable::exitScope() {
     SymbolTableScope* parentScope = this->currentScope->parent;
     this->currentScope = parentScope;
 }
+
+bool SymbolTable::hasScope(std::string name) {
+    std::size_t n = this->scopes->count(name);
+
+    return n == 1 ? true : false;
+} 

@@ -44,8 +44,9 @@ public:
     SymbolTable();
     void add(std::string id, std::string scope, std::string type, int lineNo);
     SymbolTableEntry* lookup(std::string id);
-    void enterNewScope(std::string scopeId, std::string parent = "");
+    bool enterNewScope(std::string scopeId, std::string parent = "");
     void exitScope();
+    bool hasScope(std::string name);
 };
 
 #endif // VSOPCOMPILER_SYMBOLTABLE_H
