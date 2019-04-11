@@ -44,6 +44,10 @@ int ASTNode::getColumn() {
     return this->properties.find("column")->second.iProp;
 }
 
+std::string ASTNode::getSValue() {
+    return *this->sValue;
+}
+
 void ASTNode::setType(std::string type) {
     prop t; t.sProp = type;
     this->properties.emplace("type", t);
@@ -56,11 +60,11 @@ std::string ASTNode::getType() const {
             case 261: return "int32";
             case 262: return "string";
             case 263: return "unit";
-            case 264: return *this->sValue;
-            case 265: return "bool";
-            case 266: return "bool";
-            case 267: return "int";
-            case 268: return "string";
+            case 264: return "typeid";
+            case 265: return "true";
+            case 266: return "false";
+            case 267: return "intliteral";
+            case 268: return "stringliteral";
         }
     } else  if (this->sType != "") {
         return this->sType;
@@ -68,8 +72,13 @@ std::string ASTNode::getType() const {
     return "error";
 }
 
-void ASTNode::addChild(ASTNode * child) {
-    this->children.push_back(child);
+void ASTNode::addChild(ASTNode * child, bool front) {
+    if (front){
+        std::vector<ASTNode *>::iterator it = this->children.begin();
+        this->children.insert(it, child);
+    } else {
+        this->children.push_back(child);
+    }
 }
 
 std::vector<ASTNode *> ASTNode::getChildren() {
@@ -104,7 +113,7 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
         os << std::endl << " ]" << std::endl;
 
     } else if (node.sType.compare("class") == 0) {
-        os << "Class(" << *(node.children[node.children.size() - 1]) << ", " << *node.children[node.children.size() - 2] << "," << std::endl;
+        os << "Class(" << *(node.children[0]) << ", " << *node.children[1] << "," << std::endl;
         os << "      [";
         bool first = true;
         for (auto const& child: node.children) {

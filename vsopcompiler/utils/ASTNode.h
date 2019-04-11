@@ -30,12 +30,13 @@ public:
     ASTNode(int type, std::string sType);
     ASTNode(int type, std::string *sValue);
     ASTNode(std::string type);
+    std::string getSValue();
     void setPosition(int line, int column);
     int getLine();
     int getColumn();
     void setType(std::string type);
     std::string getType()const ;
-    void addChild (ASTNode * child);
+    void addChild (ASTNode * child, bool front = false);
     std::vector<ASTNode *> getChildren();
     friend std::ostream & operator<<(std::ostream & os, const ASTNode & node);
     ~ASTNode();

@@ -102,8 +102,9 @@ int main(int argc, char *argv[]) {
             fclose(yyin);
             return -1;
         } else {
-            Checker *sc = new Checker();
-            if (sc->check(astResult) == 0) {
+            Checker *sc = new Checker(astResult);
+            if (sc->check()) {
+                std::cout << "Yes" << std::endl;
                 std::cout << *astResult << std::endl;
                 fclose(yyin);
                 return 0;

@@ -1,7 +1,0 @@
-class Main (
-    main() : int32 {
-        while (true) do (1+1)
-        print("hello");
-        0
-    }
-}

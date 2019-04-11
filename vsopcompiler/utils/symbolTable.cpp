@@ -33,7 +33,7 @@ SymbolTable::SymbolTable() {
     this->head = this->root;
 }
 
-bool SymbolTable::add(std::string id, std::string scope, std::string type, int lineNo) {
+void SymbolTable::add(std::string id, std::string scope, std::string type, int lineNo) {
     SymbolTableScope* currentScope = this->head;
     currentScope->add(id, scope, type, lineNo);
 }
@@ -68,4 +68,8 @@ void SymbolTable::popScope() {
     SymbolTableScope* parent = currentScope->parent;
 
     this->head = parent;
+}
+
+SymbolTableScope* SymbolTable::getCurrentScope() {
+    return this->head;
 }

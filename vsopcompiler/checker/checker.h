@@ -6,20 +6,21 @@
 #include <string>
 
 #include "../utils/ASTNode.h"
+#include "../utils/symbolTable.h"
 
 
 class Checker {
 private:
-    std::map<std::string, std::vector<std::string> *> *primary;
-//    std::map<std::string, std::vector<string>> declared_variable;
-    // declared_type
-    // declared class.method
-    // declared object with scope
+    ASTNode *root;
+    SymbolTable *symbolTable;
+    std::map<std::string, SymbolTableScope*> *classScope;
 
 public:
-    Checker();
-    int check(ASTNode *root);
-    void registerClasses(ASTNode *root);
+    Checker(ASTNode *root);
+    bool check();
+    bool scopeCheck(ASTNode *node);
+    bool checkClass(ASTNode *node);
+    void registerClasses(ASTNode *node);
     //TODO: definition des class
     //          - redifinition des class
     //          - une class est nmmée Object

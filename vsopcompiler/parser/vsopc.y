@@ -134,19 +134,19 @@ program:
   ;
 
 class:
-    CLASS TYPEID LBRACE class_body RBRACE                   { ASTNode * p = new ASTNode("Object");
+  CLASS TYPEID LBRACE class_body RBRACE                   { ASTNode * p = new ASTNode(TYPEID, new std::string("Object"));
                                                               ASTNode * t = new ASTNode(TYPEID, $2);
     		                                              p->setPosition(@1.first_line, @1.first_column);
     		                                              t->setPosition(@2.first_line, @2.first_column);
-                                                              $4->addChild(p); $4->addChild(t);
+                                                              $4->addChild(p, true); $4->addChild(t, true);
                                                               @$ = @1; @$.last_line = @5.last_line; @$.last_column = @5.last_column;
                                                               $$ = $4;
                                                               astResult = $4; }
   | CLASS TYPEID EXTENDS TYPEID LBRACE class_body RBRACE    { ASTNode * p = new ASTNode(TYPEID, $4);
                                                               ASTNode * t = new ASTNode(TYPEID, $2);
-    		                                              p->setPosition(@1.first_line, @1.first_column);
+	                                                      p->setPosition(@1.first_line, @1.first_column);
     		                                              t->setPosition(@2.first_line, @2.first_column);
-                                                              $6->addChild(p); $6->addChild(t);
+                                                              $6->addChild(p, true); $6->addChild(t, true);
                                                               @$ = @1; @$.last_line = @7.last_line; @$.last_column = @7.last_column;
                                                               $$ = $6;
                                                               astResult = $6; }
