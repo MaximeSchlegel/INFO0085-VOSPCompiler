@@ -1,10 +1,26 @@
 #include "symbolTable.h"
 
-SymbolTableEntry::SymbolTableEntry(std::string id, std::string scope, std::string type, int lineNo) {
+SymbolTableEntry::SymbolTableEntry(std::string id, std::string type, bool isMethod = false, SymbolTableEntry** formals = NULL) {
     this->id = id;
-    this->scope = scope;
     this->type = type;
-    this->lineNo = lineNo;
+    this->method = isMethod;
+    this->formals = formals;
+}
+
+std::string SymbolTableEntry::getName() {
+    return this->id;
+}
+
+std::string SymbolTableEntry::getType() {
+    return this->type;
+}
+
+bool SymbolTableEntry::isMethod() {
+    return this->method;
+}
+
+SymbolTableEntry** SymbolTableEntry::getFormals() {
+    return this->formals;
 }
 
 SymbolTableScope::SymbolTableScope(SymbolTableScope* parent) {
@@ -12,8 +28,8 @@ SymbolTableScope::SymbolTableScope(SymbolTableScope* parent) {
     this->scope = new std::unordered_map<std::string, SymbolTableEntry*>();
 }
 
-void SymbolTableScope::add(std::string id, std::string scope, std::string type, int lineNo) {
-    SymbolTableEntry* newEntry = new SymbolTableEntry(id, scope, type, lineNo);
+void SymbolTableScope::add(std::string id, std::string type, bool isMethod = false, SymbolTableEntry** formals = NULL) {
+    SymbolTableEntry* newEntry = new SymbolTableEntry(id, type, isMethod, formals);
     this->scope->emplace(id, newEntry);
 }
 
@@ -29,16 +45,15 @@ SymbolTableEntry* SymbolTableScope::lookup(std::string id) {
 }
 
 SymbolTable::SymbolTable() {
-    this->scopes = new std::unordered_map<std::string, SymbolTableScope*>();
+    this->classes = new std::unordered_map<std::string, SymbolTableScope*>();
 
     SymbolTableScope* rootScope = new SymbolTableScope(NULL);
-    this->scopes->emplace("root", rootScope);
 
     this->currentScope = rootScope;
 }
 
-void SymbolTable::add(std::string id, std::string scope, std::string type, int lineNo) {
-    this->currentScope->add(id, scope, type, lineNo);
+void SymbolTable::add(std::string id, std::string type, bool isMethod = false, SymbolTableEntry** formals = NULL) {
+    this->currentScope->add(id, type, isMethod, formals);
 }
 
 SymbolTableEntry* SymbolTable::lookup(std::string id) {
@@ -57,20 +72,26 @@ SymbolTableEntry* SymbolTable::lookup(std::string id) {
     return NULL;
 }
 
-bool SymbolTable::enterNewScope(std::string scopeId, std::string parent = "") {
+bool SymbolTable::enterNewScope(std::string className, std::string parent = "") {
+    SymbolTableScope* newScope = new SymbolTableScope(this->currentScope);
+
+    this->currentScope = newScope;
+}
+
+bool SymbolTable::enterNewScope(std::string className, std::string parent = "") {
     if(parent != "") {
         SymbolTableScope* parentScope;
         try {
-          parentScope = this->scopes->at(parent);
+          parentScope = this->classes->at(parent);
         } catch(std::out_of_range oor) {
             return false;
         }
         SymbolTableScope* newScope = new SymbolTableScope(parentScope);
-        this->scopes->emplace(scopeId, newScope);
+        this->classes->emplace(className, newScope);
         this->currentScope = newScope;
     } else {
         SymbolTableScope* newScope = new SymbolTableScope(this->currentScope);
-        this->scopes->emplace(scopeId, newScope);
+        this->classes->emplace(className, newScope);
         this->currentScope = newScope;
     }
 
@@ -82,8 +103,15 @@ void SymbolTable::exitScope() {
     this->currentScope = parentScope;
 }
 
-bool SymbolTable::hasScope(std::string name) {
-    std::size_t n = this->scopes->count(name);
+bool SymbolTable::hasClass(std::string name) {
+    std::size_t n = this->classes->count(name);
 
     return n == 1 ? true : false;
-} 
+}
+
+SymbolTableScope* SymbolTable::getScope(std::string name) {
+    if(this->hasClass(name)) {
+        return this->classes->at(name);
+    }
+    return NULL;
+}

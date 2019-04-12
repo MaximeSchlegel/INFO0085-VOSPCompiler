@@ -11,13 +11,17 @@ class SymbolTableEntry {
 private:
     std::string id;
     std::string type;
-    std::string scope;
-    int lineNo;
+    bool method;
+    SymbolTableEntry** formals;
 
 public:
     //TODO: il faut un moyen d'acceder au args
     //TODO: il faut revoir les arguments qu'il stocke
-    SymbolTableEntry(std::string id, std::string scope, std::string type, int lineNo);
+    SymbolTableEntry(std::string id, std::string type, bool isMethod = false, SymbolTableEntry** formals = NULL);
+    std::string getName();
+    std::string getType();
+    bool isMethod();
+    SymbolTableEntry** getFormals();
 
     friend class SymbolTableScope;
 };
@@ -30,7 +34,7 @@ private:
 
 public:
     SymbolTableScope(SymbolTableScope* parent);
-    void add(std::string id, std::string scope, std::string type, int lineNo);
+    void add(std::string id, std::string type, bool isMethod = false, SymbolTableEntry** formals = NULL);
     SymbolTableEntry* lookup(std::string id);
 
     friend class SymbolTable;
@@ -39,16 +43,39 @@ public:
 
 class SymbolTable {
 private:
-    std::unordered_map<std::string, SymbolTableScope*>* scopes;
+    std::unordered_map<std::string, SymbolTableScope*>* classes;
     SymbolTableScope* currentScope;
 
 public:
     SymbolTable();
-    void add(std::string id, std::string scope, std::string type, int lineNo);
+    /**
+     * Add entry to current scope
+     */
+    void add(std::string id, std::string type, bool isMethod = false, SymbolTableEntry** formals = NULL);
+    /**
+     * Look up for a given entry
+     */
     SymbolTableEntry* lookup(std::string id);
-    bool enterNewScope(std::string scopeId, std::string parent = "");
+    /**
+     * Enter a new scope
+     */
+    bool enterNewScope();
+    /**
+     * Enter a new scope for a class
+     */
+    bool enterNewScope(std::string className, std::string parent = "");
+    /**
+     * Exit scope
+     */
     void exitScope();
-    bool hasScope(std::string name);
+    /**
+     * Check if there exists a scope associated with the given class name
+     */
+    bool hasClass(std::string name);
+    /**
+     * Return the scope associated with the given class name
+     */
+    SymbolTableScope* getScope(std::string name);
 };
 
 #endif // VSOPCOMPILER_SYMBOLTABLE_H
