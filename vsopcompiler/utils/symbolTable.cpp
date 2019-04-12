@@ -30,7 +30,7 @@ SymbolTableScope::SymbolTableScope(SymbolTableScope* parent) {
 
 void SymbolTableScope::add(std::string id, std::string type, bool isMethod = false, SymbolTableEntry** formals = NULL) {
     SymbolTableEntry* newEntry = new SymbolTableEntry(id, type, isMethod, formals);
-    this->scope->emplace(id, newEntry);
+    (*this->scope)[id] = newEntry;
 }
 
 SymbolTableEntry* SymbolTableScope::lookup(std::string id) {
@@ -67,6 +67,16 @@ SymbolTableEntry* SymbolTable::lookup(std::string id) {
         }
 
         tmpScope = tmpScope->parent;
+    }
+
+    return NULL;
+}
+
+SymbolTableEntry* SymbolTable::lookupInCurrentScope(std::string id) {
+    SymbolTableEntry* entry = this->currentScope->lookup(id);
+
+    if(entry != NULL) {
+        return entry;
     }
 
     return NULL;

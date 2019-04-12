@@ -57,6 +57,10 @@ public:
      */
     SymbolTableEntry* lookup(std::string id);
     /**
+     * Look up for a given entry in the current scope
+     */
+    SymbolTableEntry* lookupInCurrentScope(std::string id);
+    /**
      * Enter a new scope
      */
     bool enterNewScope();

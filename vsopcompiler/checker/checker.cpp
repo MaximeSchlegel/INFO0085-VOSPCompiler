@@ -206,22 +206,52 @@ bool checkNode(ASTNode *node) {
     if (node->getType() == "program") {
         std::vector < ASTNode * > children = node->getChildren();
         for (int i = 0; i < children.size(); i++) {
-            if (!this->typeCheck(children[i])) {
+            if (!this->checkNode(children[i])) {
                 return false;
             }
+        }
+
+        // Check if program contains a class Main
+        if(!this->symbolTable->hasClass("Main")) {
+            return false;
+        }
+
+        // Check if Main contains main()
+        SymbolTableScope* mainScope = this->sumbolTable->getScope("Main");
+        if(mainScope->lookup("main") == NULL) {
+            return false;
         }
         return true;
 
     } else if (node->getType() == "class") {
         std::vector < ASTNode * > children = node->getChildren();
         std::string name = children[0]->getSValue();
-        //ENTER THE SCOPE
+
+        // Check if class already defined
+        if(this->symbolTable->hasClass(name)) {
+            return false;
+        }
+
+        // Check if parent is definde
+        // TODO: not sure if I can do that even if there is no extends
+        std::string parentName = children[1]->getSValue();
+        if(!this->symbolTable->hasClass(parentName)) {
+            return false;
+        }
+        
+        //ENTER A NEW SCOPE
+        // TODO: Scope differs depending on the parent
+        this->symbolTable->enterNewScope(name);
+
         for (int i = 2; i < children.size(); i++) {
             if (!this->checkNode(children[i])) {
                 return false;
             }
         }
+
         //EXIT THE SCOPE
+        this->symbolTable->exitScope();
+
         return true;
 
     } else if (node->getType() == "field") {
@@ -233,6 +263,7 @@ bool checkNode(ASTNode *node) {
             if (!this->checkNode(children[2])) {
                 return false;
             }
+
             //check that the return type match the expected one
             std::string rType = children->getReturnType();
             if (rType == "" || rType != this->symbolTable->lookup(name)->type) {
@@ -245,17 +276,77 @@ bool checkNode(ASTNode *node) {
     } else if (node->getType() == "method") {
         std::vector < ASTNode * > children = node->getChildren();
         std::string name = children[0]->getSValue();
+
+        // Check if the name is already used
+        if(this->symbolTable->lookupInCurrentScope(name) != NULL) {
+            // check if same prototype
+            // TODO
+        }
+        // Check if declared in parent scope
+        //if(this->symbolTable->)
+        
         //ENTER A NEW SCOPE
+        this->symbolTable->enterNewScope();
+
         if (children.size() == 3) {
 
         }
 
+        //EXIT THE SCOPE
+        this->symbolTable->exitScope();
+
+        return true;
 
     } else if (node->getType() == "formals") {
     } else if (node->getType() == "formal") {
     } else if (node->getType() == "block") {
+        //ENTER A NEW SCOPE
+        this->symbolTable->enterNewScope();
+
+        // Continue checking
+        for (int i = 2; i < children.size(); i++) {
+            if (!this->checkNode(children[i])) {
+                return false;
+            }
+        }
+
+        //EXIT THE SCOPE
+        this->symbolTable->exitScope();
+
+        return true;
+
     } else if (node->getType() == "if") {
+        //ENTER A NEW SCOPE
+        this->symbolTable->enterNewScope();
+
+        // Continue checking
+        for (int i = 2; i < children.size(); i++) {
+            if (!this->checkNode(children[i])) {
+                return false;
+            }
+        }
+
+        //EXIT THE SCOPE
+        this->symbolTable->exitScope();
+
+        return true;
+
     } else if (node->getType() == "while") {
+        //ENTER A NEW SCOPE
+        this->symbolTable->enterNewScope();
+
+        // Continue checking
+        for (int i = 2; i < children.size(); i++) {
+            if (!this->checkNode(children[i])) {
+                return false;
+            }
+        }
+
+        //EXIT THE SCOPE
+        this->symbolTable->exitScope();
+
+        return true;
+
     } else if (node->getType() == "let") {
     } else if (node->getType() == "assign") {
         std::vector < ASTNode * > children = node->getChildren();
