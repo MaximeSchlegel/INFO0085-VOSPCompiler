@@ -19,7 +19,13 @@ Checker::Checker(ASTNode *root) {
 
 
 bool Checker::check() {
-    return this->scopeCheck(this->root);
+    if(!this->scopeCheck(this->root)){
+        return false;
+    }
+    if(!this->typeCheck(this->root)){
+        return false;
+    }
+    return true;
 }
 
 
@@ -80,8 +86,10 @@ bool Checker::scopeCheck(ASTNode *node) {
         return true;
 
     } else if (node->getType() == "field") {
+        true;
 
     } else if (node->getType() == "method") {
+
 
     } else if (node->getType() == "block") {
 
@@ -185,4 +193,9 @@ bool Checker::registerMethodAndField(ASTNode *node) {
     }
 
     return true;
+}
+
+
+bool Checker::typeCheck(ASTNode *node) {
+
 }

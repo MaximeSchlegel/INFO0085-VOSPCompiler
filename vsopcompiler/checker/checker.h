@@ -16,9 +16,9 @@ private:
     std::map<std::string, std::string> *extend;
 
     bool scopeCheck(ASTNode *node);
-    bool checkClass(ASTNode *node);
     bool registerClass(std::string className, std::vector<std::string> *waiting);
     bool registerMethodAndField(ASTNode *node);
+    bool typeCheck(ASTNode *node);
 
 public:
     bool check();
