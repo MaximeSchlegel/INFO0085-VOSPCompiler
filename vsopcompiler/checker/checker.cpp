@@ -564,6 +564,8 @@ bool checkNode(ASTNode *node) {
         //lockup to get the type of the symbol
         //if not define return flase
         //set the type to the returned type
+    }else {
+        std::cout << node->getType();
     }
     return true;
 }
