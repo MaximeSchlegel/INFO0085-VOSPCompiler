@@ -226,22 +226,9 @@ bool checkNode(ASTNode *node) {
     } else if (node->getType() == "class") {
         std::vector < ASTNode * > children = node->getChildren();
         std::string name = children[0]->getSValue();
-
-        // Check if class already defined
-        if(this->symbolTable->hasClass(name)) {
-            return false;
-        }
-
-        // Check if parent is definde
-        // TODO: not sure if I can do that even if there is no extends
-        std::string parentName = children[1]->getSValue();
-        if(!this->symbolTable->hasClass(parentName)) {
-            return false;
-        }
         
         //ENTER A NEW SCOPE
-        // TODO: Scope differs depending on the parent
-        this->symbolTable->enterNewScope(name);
+        this->symbolTable->getScope(name);
 
         for (int i = 2; i < children.size(); i++) {
             if (!this->checkNode(children[i])) {
@@ -278,18 +265,31 @@ bool checkNode(ASTNode *node) {
         std::string name = children[0]->getSValue();
 
         // Check if the name is already used
-        if(this->symbolTable->lookupInCurrentScope(name) != NULL) {
-            // check if same prototype
-            // TODO
+        SymbolTableEntry* previous = this->symbolTable->lookupInCurrentScope(name);
+        if(previous != NULL) {
+            return false; // Same name used inside the current scope
         }
         // Check if declared in parent scope
-        //if(this->symbolTable->)
+        SymbolTableEntry* superMethod = this->symbolTable->lookup(name);
+        if(superMethod != NULL) {
+            //Check prototype
+            // TODO compare formals
+            if(superMethod->type == children[1]->getSValue()) {
+                return false;
+            }
+        }
         
         //ENTER A NEW SCOPE
         this->symbolTable->enterNewScope();
 
-        if (children.size() == 3) {
+        // add formals
+        if(children.size() == 4) {
+            this->checkNode(children[3]);
+        }
 
+        // check block
+        if (!this->checkNode(children[2])) {
+            return false;
         }
 
         //EXIT THE SCOPE
@@ -298,7 +298,30 @@ bool checkNode(ASTNode *node) {
         return true;
 
     } else if (node->getType() == "formals") {
+        std::vector < ASTNode * > children = node->getChildren();
+        for (int i = 0; i < children.size(); i++) {
+            if (!this->checkNode(children[i])) {
+                return false;
+            }
+        }
+
+        return true;
+
     } else if (node->getType() == "formal") {
+        std::vector < ASTNode * > children = node->getChildren();
+        std::string name = children[0]->getSValue();
+
+        // Check if already defined as formal name must be distinct
+        SymbolTableEntry* formal = this->symbolTable->lookup(name);
+        if(formal != NULL) {
+            return false;
+        }
+
+        // Add formal to current scope (new scope create in method)
+        this->symbolTable->add(name, children[1]->getSValue());
+
+        return true;
+
     } else if (node->getType() == "block") {
         //ENTER A NEW SCOPE
         this->symbolTable->enterNewScope();
