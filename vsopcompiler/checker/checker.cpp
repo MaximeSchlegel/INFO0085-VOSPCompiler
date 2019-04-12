@@ -213,12 +213,14 @@ bool checkNode(ASTNode *node) {
 
         // Check if program contains a class Main
         if(!this->symbolTable->hasClass("Main")) {
+            std::cerr << "A program must contain a Main class" << std::endl;
             return false;
         }
 
         // Check if Main contains main()
         SymbolTableScope* mainScope = this->sumbolTable->getScope("Main");
         if(mainScope->lookup("main") == NULL) {
+            std::cerr << "The Main class must have a method called main" << std::endl;
             return false;
         }
         return true;
@@ -267,6 +269,7 @@ bool checkNode(ASTNode *node) {
         // Check if the name is already used
         SymbolTableEntry* previous = this->symbolTable->lookupInCurrentScope(name);
         if(previous != NULL) {
+            std::cerr << "Method already defined" << std::endl;
             return false; // Same name used inside the current scope
         }
         // Check if declared in parent scope
@@ -314,6 +317,7 @@ bool checkNode(ASTNode *node) {
         // Check if already defined as formal name must be distinct
         SymbolTableEntry* formal = this->symbolTable->lookup(name);
         if(formal != NULL) {
+            std::cerr << "Formals must have distinct names" << std::endl;
             return false;
         }
 
