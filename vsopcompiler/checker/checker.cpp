@@ -202,7 +202,7 @@ bool Checker::registerMethodAndField(ASTNode *node) {
 }
 
 
-bool Checker::typeCheck(ASTNode *node) {
+bool checkNode(ASTNode *node) {
     if (node->getType() == "program") {
         std::vector < ASTNode * > children = node->getChildren();
         for (int i = 0; i < children.size(); i++) {
@@ -215,25 +215,24 @@ bool Checker::typeCheck(ASTNode *node) {
     } else if (node->getType() == "class") {
         std::vector < ASTNode * > children = node->getChildren();
         std::string name = children[0]->getSValue();
-        this->symbolTable->enterNewScope(name);
+        //ENTER THE SCOPE
         for (int i = 2; i < children.size(); i++) {
-            if (!this->typeCheck(children[i])) {
+            if (!this->checkNode(children[i])) {
                 return false;
             }
         }
-        this->symbolTable->exitScope();
+        //EXIT THE SCOPE
         return true;
 
     } else if (node->getType() == "field") {
         std::vector < ASTNode * > children = node->getChildren();
         std::string name = children[0]->getSValue();
+
         if (children.size() == 3) {
             // check the expression type
-            //ENTER THE SCOPE
-            if (!this->typeCheck(children[2])) {
+            if (!this->checkNode(children[2])) {
                 return false;
             }
-            //EXIT THE SCOPE
             //check that the return type match the expected one
             std::string rType = children->getReturnType();
             if (rType == "" || rType != this->symbolTable->lookup(name)->type) {
@@ -242,51 +241,238 @@ bool Checker::typeCheck(ASTNode *node) {
             }
         }
         return true;
-    } else if (node->getType() == "class") {
+
+    } else if (node->getType() == "method") {
         std::vector < ASTNode * > children = node->getChildren();
         std::string name = children[0]->getSValue();
+        //ENTER A NEW SCOPE
+        if (children.size() == 3) {
+
+        }
 
 
+    } else if (node->getType() == "formals") {
+    } else if (node->getType() == "formal") {
+    } else if (node->getType() == "block") {
+    } else if (node->getType() == "if") {
+    } else if (node->getType() == "while") {
+    } else if (node->getType() == "let") {
+    } else if (node->getType() == "assign") {
+        std::vector < ASTNode * > children = node->getChildren();
+        if (!this->checkNode(children[0])) {
+            return false;
+        }
+        if (!this->checkNode(children[1])) {
+            return false;
+        }
+        if (children[0]->getReturnType() != children[0]->getReturnType()) {
+            std::cerr << "Same type expected" << std::endl;
+            return false;
+        }
+        node->setReturnType("bool");
+    } else if (node->getType() == "not") {
+        std::vector < ASTNode * > children = node->getChildren();
+        if (!this->checkNode(children[0])) {
+            return false;
+        }
+        if (children[0]->getReturnType() != "bool") {
+            std::cerr << "Type bool expected" << std::endl;
+            return false;
+        }
+        node->setReturnType("bool");
+
+    } else if (node->getType() == "and") {
+        std::vector < ASTNode * > children = node->getChildren();
+        if (!this->checkNode(children[0])) {
+            return false;
+        }
+        if (!this->checkNode(children[1])) {
+            return false;
+        }
+        if (children[0]->getReturnType() != "bool") {
+            std::cerr << "Type bool expected" << std::endl;
+        }
+        if (children[1]->getReturnType() != "bool") {
+            std::cerr << "Type bool expected" << std::endl;
+        }
+        node->setReturnType("bool");
+
+    } else if (node->getType() == "equal") {
+        std::vector < ASTNode * > children = node->getChildren();
+        if (!this->checkNode(children[0])) {
+            return false;
+        }
+        if (!this->checkNode(children[1])) {
+            return false;
+        }
+        if (children[0]->getReturnType() != children[1]->getReturnType()) {
+            std::cerr << "Same type expected" << std::endl;
+        }
+        node->setReturnType(children[0]->getReturnType());
+
+    } else if (node->getType() == "lower") {
+        std::vector < ASTNode * > children = node->getChildren();
+        if (!this->checkNode(children[0])) {
+            return false;
+        }
+        if (!this->checkNode(children[1])) {
+            return false;
+        }
+        if (children[0]->getReturnType() != "int32") {
+            std::cerr << "Type int32 expected" << std::endl;
+        }
+        if (children[1]->getReturnType() != "int32") {
+            std::cerr << "Type int32 expected" << std::endl;
+        }
+        node->setReturnType("int32");
+
+    } else if (node->getType() == "lowerequal") {
+        std::vector < ASTNode * > children = node->getChildren();
+        if (!this->checkNode(children[0])) {
+            return false;
+        }
+        if (!this->checkNode(children[1])) {
+            return false;
+        }
+        if (children[0]->getReturnType() != "int32") {
+            std::cerr << "Type int32 expected" << std::endl;
+        }
+        if (children[1]->getReturnType() != "int32") {
+            std::cerr << "Type int32 expected" << std::endl;
+        }
+        node->setReturnType("int32");
+
+    } else if (node->getType() == "plus") {
+        std::vector < ASTNode * > children = node->getChildren();
+        if (!this->checkNode(children[0])) {
+            return false;
+        }
+        if (!this->checkNode(children[1])) {
+            return false;
+        }
+        if (children[0]->getReturnType() != "int32") {
+            std::cerr << "Type int32 expected" << std::endl;
+        }
+        if (children[1]->getReturnType() != "int32") {
+            std::cerr << "Type int32 expected" << std::endl;
+        }
+        node->setReturnType("int32");
+
+    } else if (node->getType() == "minus") {
+        std::vector < ASTNode * > children = node->getChildren();
+        if (!this->checkNode(children[0])) {
+            return false;
+        }
+        if (!this->checkNode(children[1])) {
+            return false;
+        }
+        if (children[0]->getReturnType() != "int32") {
+            std::cerr << "Type int32 expected" << std::endl;
+        }
+        if (children[1]->getReturnType() != "int32") {
+            std::cerr << "Type int32 expected" << std::endl;
+        }
+        node->setReturnType("int32");
+
+    } else if (node->getType() == "times") {
+        std::vector < ASTNode * > children = node->getChildren();
+        if (!this->checkNode(children[0])) {
+            return false;
+        }
+        if (!this->checkNode(children[1])) {
+            return false;
+        }
+        if (children[0]->getReturnType() != "int32") {
+            std::cerr << "Type int32 expected" << std::endl;
+        }
+        if (children[1]->getReturnType() != "int32") {
+            std::cerr << "Type int32 expected" << std::endl;
+        }
+        node->setReturnType("int32");
+
+    } else if (node->getType() == "div") {
+        std::vector < ASTNode * > children = node->getChildren();
+        if (!this->checkNode(children[0])) {
+            return false;
+        }
+        if (!this->checkNode(children[1])) {
+            return false;
+        }
+        if (children[0]->getReturnType() != "int32") {
+            std::cerr << "Type int32 expected" << std::endl;
+        }
+        if (children[1]->getReturnType() != "int32") {
+            std::cerr << "Type int32 expected" << std::endl;
+        }
+        node->setReturnType("int32");
+
+    } else if (node->getType() == "pow") {
+        std::vector < ASTNode * > children = node->getChildren();
+        if (!this->checkNode(children[0])) {
+            return false;
+        }
+        if (!this->checkNode(children[1])) {
+            return false;
+        }
+        if (children[0]->getReturnType() != "int32") {
+            std::cerr << "Type int32 expected" << std::endl;
+        }
+        if (children[1]->getReturnType() != "int32") {
+            std::cerr << "Type int32 expected" << std::endl;
+        }
+        node->setReturnType("int32");
+
+    } else if (node->getType() == "neg") {
+        std::vector < ASTNode * > children = node->getChildren();
+        if (!this->checkNode(children[0])) {
+            return false;
+        }
+        if (children[0]->getReturnType() != "int32") {
+            std::cerr << "Type int32 expected" << std::endl;
+        }
+        node->setReturnType("int32");
+
+    } else if (node->getType() == "isnull") {
+        std::vector < ASTNode * > children = node->getChildren();
+        if (!this->checkNode(children[0])) {
+            return false;
+        }
+        node->setReturnType("bool");
+
+    } else if (node->getType() == "call") {
+    } else if (node->getType() == "new") {
+    } else if (node->getType() == "args") {
+        std:cout << "args" << std::endl;
+
+    } else if (node->getType() == "bool") {
+        node->setReturnType("bool");
+
+    } else if (node->getType() == "int32") {
+        node->setReturnType("int32");
+
+    } else if (node->getType() == "unit") {
+        node->setReturnType("unit");
+
+    } else if (node->getType() == "typeid") {
+        node->setReturnType(node->getSValue());
+
+    } else if (node->getType() == "true") {
+        node->setReturnType("bool");
+
+    } else if (node->getType() == "false") {
+        node->setReturnType("bool");
+
+    } else if (node->getType() == "intliteral") {
+        node->setReturnType("int32");
+
+    } else if (node->getType() == "stringliteral") {
+        node->setReturnType("string");
+
+    } else if (node->getType() == "objectid") {
+        std::string objectId = node->getSValue();
+        //lockup to get the type of the symbol
+        //if not define return flase
+        //set the type to the returned type
     }
+    return true;
 }
-
-/*
- *
- * if (node->getType() == "program") {
- * } else if (node->getType() == "class") {
- * } else if (node->getType() == "field") {
- * } else if (node->getType() == "method") {
- * } else if (node->getType() == "formal") {
- * } else if (node->getType() == "block") {
- * } else if (node->getType() == "if") {
- * } else if (node->getType() == "while") {
- * } else if (node->getType() == "let") {
- * } else if (node->getType() == "assign") {
- * } else if (node->getType() == "not") {
- * } else if (node->getType() == "and") {
- * } else if (node->getType() == "equal") {
- * } else if (node->getType() == "lower") {
- * } else if (node->getType() == "lowerequal") {
- * } else if (node->getType() == "plus") {
- * } else if (node->getType() == "minus") {
- * } else if (node->getType() == "times") {
- * } else if (node->getType() == "div") {
- * } else if (node->getType() == "pow") {
- * } else if (node->getType() == "equal") {
- * } else if (node->getType() == "neg") {
- * } else if (node->getType() == "isnull") {
- * } else if (node->getType() == "call") {
- * } else if (node->getType() == "new") {
- * } else if (node->getType() == "div") {
- * } else if (node->getType() == "args") {
- * } else if (node->getType() == "bool") {
- * } else if (node->getType() == "int32") {
- * } else if (node->getType() == "unit") {
- * } else if (node->getType() == "typeid") {
- * } else if (node->getType() == "true") {
- * } else if (node->getType() == "false") {
- * } else if (node->getType() == "intliteral") {
- * } else if (node->getType() == "stringliteral") {
- * } else if (node->getType() == "objectid") {
- * }
- */
