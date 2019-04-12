@@ -146,7 +146,8 @@ class:
                                                               ASTNode * t = new ASTNode(TYPEID, $2);
 	                                                      p->setPosition(@1.first_line, @1.first_column);
     		                                              t->setPosition(@2.first_line, @2.first_column);
-                                                              $6->addChild(p, true); $6->addChild(t, true);
+                                                              $6->addChild(p, true);
+                                                              $6->addChild(t, true);
                                                               @$ = @1; @$.last_line = @7.last_line; @$.last_column = @7.last_column;
                                                               $$ = $6;
                                                               astResult = $6; }

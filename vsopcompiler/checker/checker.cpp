@@ -8,11 +8,17 @@ Checker::Checker(ASTNode *root) {
     this->root = root;
     this->symbolTable = new SymbolTable();
     this->symbolTable->enterNewScope("int32");
+    this->symbolTable->exitScope();
     this->symbolTable->enterNewScope("bool");
+    this->symbolTable->exitScope();
     this->symbolTable->enterNewScope("string");
+    this->symbolTable->exitScope();
     this->symbolTable->enterNewScope("unit");
+    this->symbolTable->exitScope();
     this->symbolTable->enterNewScope("Object");
+    this->symbolTable->exitScope();
     this->symbolTable->enterNewScope("IO");
+    this->symbolTable->exitScope();
 
     this->extend = new std::map<std::string, std::string>();
 }
@@ -197,5 +203,90 @@ bool Checker::registerMethodAndField(ASTNode *node) {
 
 
 bool Checker::typeCheck(ASTNode *node) {
+    if (node->getType() == "program") {
+        std::vector < ASTNode * > children = node->getChildren();
+        for (int i = 0; i < children.size(); i++) {
+            if (!this->typeCheck(children[i])) {
+                return false;
+            }
+        }
+        return true;
 
+    } else if (node->getType() == "class") {
+        std::vector < ASTNode * > children = node->getChildren();
+        std::string name = children[0]->getSValue();
+        this->symbolTable->enterNewScope(name);
+        for (int i = 2; i < children.size(); i++) {
+            if (!this->typeCheck(children[i])) {
+                return false;
+            }
+        }
+        this->symbolTable->exitScope();
+        return true;
+
+    } else if (node->getType() == "field") {
+        std::vector < ASTNode * > children = node->getChildren();
+        std::string name = children[0]->getSValue();
+        if (children.size() == 3) {
+            // check the expression type
+            //ENTER THE SCOPE
+            if (!this->typeCheck(children[2])) {
+                return false;
+            }
+            //EXIT THE SCOPE
+            //check that the return type match the expected one
+            std::string rType = children->getReturnType();
+            if (rType == "" || rType != this->symbolTable->lookup(name)->type) {
+                std::cerr << "Type do not match" << std::endl;
+                return false;
+            }
+        }
+        return true;
+    } else if (node->getType() == "class") {
+        std::vector < ASTNode * > children = node->getChildren();
+        std::string name = children[0]->getSValue();
+
+
+    }
 }
+
+/*
+ *
+ * if (node->getType() == "program") {
+ * } else if (node->getType() == "class") {
+ * } else if (node->getType() == "field") {
+ * } else if (node->getType() == "method") {
+ * } else if (node->getType() == "formal") {
+ * } else if (node->getType() == "block") {
+ * } else if (node->getType() == "if") {
+ * } else if (node->getType() == "while") {
+ * } else if (node->getType() == "let") {
+ * } else if (node->getType() == "assign") {
+ * } else if (node->getType() == "not") {
+ * } else if (node->getType() == "and") {
+ * } else if (node->getType() == "equal") {
+ * } else if (node->getType() == "lower") {
+ * } else if (node->getType() == "lowerequal") {
+ * } else if (node->getType() == "plus") {
+ * } else if (node->getType() == "minus") {
+ * } else if (node->getType() == "times") {
+ * } else if (node->getType() == "div") {
+ * } else if (node->getType() == "pow") {
+ * } else if (node->getType() == "equal") {
+ * } else if (node->getType() == "neg") {
+ * } else if (node->getType() == "isnull") {
+ * } else if (node->getType() == "call") {
+ * } else if (node->getType() == "new") {
+ * } else if (node->getType() == "div") {
+ * } else if (node->getType() == "args") {
+ * } else if (node->getType() == "bool") {
+ * } else if (node->getType() == "int32") {
+ * } else if (node->getType() == "unit") {
+ * } else if (node->getType() == "typeid") {
+ * } else if (node->getType() == "true") {
+ * } else if (node->getType() == "false") {
+ * } else if (node->getType() == "intliteral") {
+ * } else if (node->getType() == "stringliteral") {
+ * } else if (node->getType() == "objectid") {
+ * }
+ */
