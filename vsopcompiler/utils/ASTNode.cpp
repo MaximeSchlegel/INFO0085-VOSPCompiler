@@ -74,6 +74,7 @@ std::string ASTNode::getType() const {
             case 266: return "false";
             case 267: return "intliteral";
             case 268: return "stringliteral";
+            case 282: return "objectid"
         }
     } else  if (this->sType != "") {
         return this->sType;

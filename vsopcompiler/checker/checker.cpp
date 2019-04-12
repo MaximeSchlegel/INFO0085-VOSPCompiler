@@ -63,45 +63,40 @@ bool Checker::scopeCheck(ASTNode *node) {
         std::vector < ASTNode * > children = node->getChildren();
         std::string name = children[0]->getSValue();
         // check if the class is already define
-        if (this->symbolTable->hasScope(name)) {
-            //register its methods and fields
-            if (!this->registerMethodAndField(node)) {
-                return false;
-            }
-        } else {
-            //register the class then its methods and field
-            if ( !this->registerClass(name, new std::vector<std::string>()) || !this->registerMethodAndField(node)) {
+        if (!this->symbolTable->hasScope(name)) {
+            //check if the class is register
+            if ( !this->registerClass(name, new std::vector<std::string>())) {
                 return false;
             }
         }
         //continue the checking on the methods and fields
+        this->symbolTable->enterNewScope(name);
         for(int i = 0; i < children.size() ; i++) {
             if (!this->scopeCheck(children[i])) {
                 return false;
             }
         }
+        this->symbolTable->exitScope();
         return true;
 
     } else if (node->getType() == "field") {
-        std::vector < ASTNode * > children = node->getChildren();
-        std::string name = children[0]->getSValue();
-        //test if the field is assign;
-        if (children.size() == 3) {
-            //check the expr and set it's return type
-            if (!this->scopeCheck(children[3])) {
-                return false;
-            }
-            //check that the return type is conform to the one declare
-            if (this->symbolTable->lookup(name)->type != children[3]->getType()) {
-                std::cerr << "Type doesn't match" << std::endl;
-                return false;
-            }
 
-        }
-        return true;
-    }else {
-        std::cout << node->getType() << std::endl;
-        return false;
+    } else if (node->getType() == "method") {
+
+    } else if (node->getType() == "block") {
+
+    } else if (node->getType() == "let") {
+
+    } else if (node->getType() == "assign") {
+
+    } else if (node->getType() == "call") {
+
+    } else if (node->getType() == "new") {
+
+    } else if (node->getType() == "objectid") {
+
+    } else {
+        //we just continue the scope checking on all the child (case of if while etc)
     }
     return true;
 }
@@ -149,30 +144,43 @@ bool Checker::registerMethodAndField(ASTNode *node) {
         std::string name = children[0]->getSValue();
 
         if (classChildren[i]->getType() == "field") {
+            //test if the field is assign;
             if (this->symbolTable->lookup(name)) {
                 std::cerr << "The field is already define" << std::endl;
                 return false;
             }
-
+            //test if the type is valid
             if (this->extend->find(children[1]->getSValue()) == this->extend->end()) {
                 std::cerr << "Type is not define" << std::endl;
                 return false;
             }
-
+            //create the symbol in the table
             this->symbolTable->add(name, className, children[1]->getSValue(), 0);
 
         } else if (classChildren[i]->getType() == "method") {
+            //check if the method is already define
             if (this->symbolTable->lookup(name)) {
+                //TODO: check if the formals are the same
                 std::cerr << "The method is already define" << std::endl;
                 return false;
             }
+            //check if the formals are define carrectly
+            if (children.size() == 3){
+                std::vector<std::string>usedName = std::vector<std::string>();
+                std::vector<ASTNode>
+                for (int )
+            }
 
+            //check if the return type is valid
             if (this->extend->find(children[1]->getSValue()) == this->extend->end()) {
                 std::cerr << "Type is not define" << std::endl;
                 return false;
             }
 
+            //create the method in scope
             this->symbolTable->add(name, className, children[1]->getSValue(), 0); //TODO: need to be adapt for method
+
+
         }
     }
 
