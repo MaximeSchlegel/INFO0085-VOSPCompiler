@@ -15,6 +15,8 @@ private:
     int lineNo;
 
 public:
+    //TODO: il faut un moyen d'acceder au args
+    //TODO: il faut revoir les arguments qu'il stocke
     SymbolTableEntry(std::string id, std::string scope, std::string type, int lineNo);
 
     friend class SymbolTableScope;

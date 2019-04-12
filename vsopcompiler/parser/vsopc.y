@@ -168,7 +168,6 @@ class_body:
 field:
     OBJECTID COLON type SEMICOLON                { ASTNode * f = new ASTNode("field");
                                                    ASTNode * o = new ASTNode(OBJECTID, $1);
-//                                                   o->setType($3->getType());
                                                    f->setPosition(@1.first_line, @1.first_column);
                                                    o->setPosition(@1.first_line, @1.first_column);
                                                    f->addChild(o);
@@ -178,7 +177,6 @@ field:
                                                    astResult = f; }
   | OBJECTID COLON type ASSIGN expr SEMICOLON    { ASTNode * f = new ASTNode("field");
                                                    ASTNode * o = new ASTNode(OBJECTID, $1);
-//                                                   o->setType($3->getType());
                                                    f->setPosition(@1.first_line, @1.first_column);
                                                    o->setPosition(@1.first_line, @1.first_column);
                                                    @$ = @1; @$.last_line = @6.last_line; @$.last_column = @6.last_column;
@@ -191,9 +189,7 @@ field:
 
 method:
     OBJECTID LPAR formals RPAR COLON type LBRACE block RBRACE    { ASTNode * m = new ASTNode("method");
-//                                                                   m->setType($6->getType());
                                                                    ASTNode * o = new ASTNode(OBJECTID, $1);
-//                                                                   o->setType($6->getType());
                                                                    m->setPosition(@1.first_line, @1.first_column);
                                                                    o->setPosition(@1.first_line, @1.first_column);
                                                                    @$ = @1; @$.last_line = @9.last_line; @$.last_column = @9.last_column;
@@ -222,7 +218,6 @@ formals:
 formal:
     OBJECTID COLON type    { ASTNode * f = new ASTNode("formal");
                              ASTNode * o = new ASTNode(OBJECTID, $1);
-//                             f->setType($3->getType());
                              f->setPosition(@1.first_line, @1.first_column);
                              o->setPosition(@1.first_line, @1.first_column);
                              @$ = @1; @$.last_line = @3.last_line; @$.last_column = @3.last_column;
@@ -273,7 +268,6 @@ expr:
                                                      astResult = e; }
   | LET OBJECTID COLON type IN expr                { ASTNode * e = new ASTNode("let");
                                                      ASTNode * o = new ASTNode(OBJECTID, $2);
-//                                                     o->setType($4->getType());
                                                      e->setPosition(@1.first_line, @2.first_column);
                                                      o->setPosition(@1.first_line, @2.first_column);
                                                      @$ = @1; @$.last_line = @6.last_line; @$.last_column = @6.last_column;
@@ -285,7 +279,6 @@ expr:
                                                      astResult = e; }
   | LET OBJECTID COLON type ASSIGN expr IN expr    { ASTNode * e = new ASTNode("let");
                                                      ASTNode * o = new ASTNode(OBJECTID, $2);
-//                                                     o->setType($4->getType());
                                                      e->setPosition(@1.first_line, @1.first_column);
                                                      o->setPosition(@2.first_line, @2.first_column);
                                                      @$ = @1; @$.last_line = @8.last_line; @$.last_column = @8.last_column;

@@ -48,9 +48,18 @@ std::string ASTNode::getSValue() {
     return *this->sValue;
 }
 
-void ASTNode::setType(std::string type) {
+void ASTNode::setReturnType(std::string type) {
     prop t; t.sProp = type;
     this->properties.emplace("type", t);
+}
+
+std::string ASTNode::getReturnType() {
+    std::map<std::string, prop>::iterator it = this->properties.find("type");
+    if (it == this->properties.end()){
+        return "";
+    } else {
+        return it->second.sProp;
+    }
 }
 
 std::string ASTNode::getType() const {

@@ -13,17 +13,20 @@ class Checker {
 private:
     ASTNode *root;
     SymbolTable *symbolTable;
-    std::map<std::string, SymbolTableScope*> *classScope;
+    std::map<std::string, std::string> *extend;
 
-public:
-    Checker(ASTNode *root);
-    bool check();
     bool scopeCheck(ASTNode *node);
     bool checkClass(ASTNode *node);
-    void registerClasses(ASTNode *node);
+    bool registerClass(std::string className, std::vector<std::string> *waiting);
+    bool registerMethodAndField(ASTNode *node);
+
+public:
+    bool check();
+    Checker(ASTNode *root);
+
     //TODO: definition des class
-    //          - redifinition des class
     //          - une class est nmmée Object
+    //          - redifinition des class
     //          - cycle dans les héritages
 
     //TODO: methodes
