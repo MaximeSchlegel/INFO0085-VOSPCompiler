@@ -283,7 +283,7 @@ expr:
                                                      e->setPosition(@1.first_line, @1.first_column);
                                                      o->setPosition(@2.first_line, @2.first_column);
                                                      @$ = @1; @$.last_line = @8.last_line; @$.last_column = @8.last_column;
-                                                     //Child's Order : Obj - Type - Assign - Expr
+                                                     //Child's Order : Obj - Type - Assign - In
                                                      e->addChild(o);
                                                      e->addChild($4);
                                                      e->addChild($6);

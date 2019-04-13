@@ -18,11 +18,11 @@ private:
     bool scopeCheck(ASTNode *node);
     bool registerClass(std::string className, std::vector<std::string> *waiting);
     bool registerMethodAndField(ASTNode *node);
-    bool typeCheck(ASTNode *node);
+    bool checkNode(ASTNode *root);
 
 public:
-    bool check();
     Checker(ASTNode *root);
+    bool check();
 
     //TODO: definition des class
     //          - une class est nmmée Object
