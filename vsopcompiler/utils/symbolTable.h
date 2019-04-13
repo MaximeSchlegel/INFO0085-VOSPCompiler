@@ -3,6 +3,7 @@
 #define VSOPCOMPILER_SYMBOLTABLE_H
 
 #include <string>
+#include <vector>
 #include <unordered_map>
 
 const int MAXSIZE = 100;
@@ -12,16 +13,16 @@ private:
     std::string id;
     std::string type;
     bool method;
-    SymbolTableEntry** formals;
+    std::vector<SymbolTableEntry>* formals;
 
 public:
     //TODO: il faut un moyen d'acceder au args
     //TODO: il faut revoir les arguments qu'il stocke
-    SymbolTableEntry(std::string id, std::string type, bool isMethod = false, SymbolTableEntry** formals = NULL);
+    SymbolTableEntry(std::string id, std::string type, bool isMethod = false, std::vector<SymbolTableEntry>* formals = new std::vector<SymbolTableEntry>());
     std::string getName();
     std::string getType();
     bool isMethod();
-    SymbolTableEntry** getFormals();
+    std::vector<SymbolTableEntry>* getFormals();
 
     friend class SymbolTableScope;
 };
@@ -34,7 +35,7 @@ private:
 
 public:
     SymbolTableScope(SymbolTableScope* parent);
-    void add(std::string id, std::string type, bool isMethod = false, SymbolTableEntry** formals = NULL);
+    void add(std::string id, std::string type, bool isMethod = false, std::vector<SymbolTableEntry>* formals = new std::vector<SymbolTableEntry>());
     SymbolTableEntry* lookup(std::string id);
 
     friend class SymbolTable;
@@ -51,7 +52,7 @@ public:
     /**
      * Add entry to current scope
      */
-    void add(std::string id, std::string type, bool isMethod = false, SymbolTableEntry** formals = NULL);
+    void add(std::string id, std::string type, bool isMethod = false, std::vector<SymbolTableEntry>* formals = new std::vector<SymbolTableEntry>());
     /**
      * Look up for a given entry
      */

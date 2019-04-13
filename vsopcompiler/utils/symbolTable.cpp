@@ -1,6 +1,6 @@
 #include "symbolTable.h"
 
-SymbolTableEntry::SymbolTableEntry(std::string id, std::string type, bool isMethod = false, SymbolTableEntry** formals = NULL) {
+SymbolTableEntry::SymbolTableEntry(std::string id, std::string type, bool isMethod = false, std::vector<SymbolTableEntry>* formals = new std::vector<SymbolTableEntry>()) {
     this->id = id;
     this->type = type;
     this->method = isMethod;
@@ -19,7 +19,7 @@ bool SymbolTableEntry::isMethod() {
     return this->method;
 }
 
-SymbolTableEntry** SymbolTableEntry::getFormals() {
+std::vector<SymbolTableEntry>* SymbolTableEntry::getFormals() {
     return this->formals;
 }
 
@@ -28,7 +28,7 @@ SymbolTableScope::SymbolTableScope(SymbolTableScope* parent) {
     this->scope = new std::unordered_map<std::string, SymbolTableEntry*>();
 }
 
-void SymbolTableScope::add(std::string id, std::string type, bool isMethod = false, SymbolTableEntry** formals = NULL) {
+void SymbolTableScope::add(std::string id, std::string type, bool isMethod = false, std::vector<SymbolTableEntry>* formals = new std::vector<SymbolTableEntry>()) {
     SymbolTableEntry* newEntry = new SymbolTableEntry(id, type, isMethod, formals);
     (*this->scope)[id] = newEntry;
 }
@@ -52,7 +52,7 @@ SymbolTable::SymbolTable() {
     this->currentScope = rootScope;
 }
 
-void SymbolTable::add(std::string id, std::string type, bool isMethod = false, SymbolTableEntry** formals = NULL) {
+void SymbolTable::add(std::string id, std::string type, bool isMethod = false, std::vector<SymbolTableEntry>* formals = new std::vector<SymbolTableEntry>()) {
     this->currentScope->add(id, type, isMethod, formals);
 }
 
