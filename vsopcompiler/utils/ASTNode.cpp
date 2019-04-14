@@ -120,7 +120,7 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
         for (int i = 0; i < node.children.size(); i++) {
             os << *node.children[i];
             if (i != node.children.size() - 1) {
-                os << ",";
+                os << ", ";
             }
         }
         os << "]";

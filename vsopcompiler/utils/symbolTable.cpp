@@ -51,6 +51,7 @@ SymbolTable::SymbolTable() {
     SymbolTableScope* rootScope = new SymbolTableScope(NULL);
 
     this->currentScope = rootScope;
+    this->previousScope = rootScope;
 }
 
 void SymbolTable::add(std::string id, std::string type, bool isMethod, std::vector<SymbolTableEntry*>* formals) {
@@ -126,4 +127,17 @@ SymbolTableScope* SymbolTable::getScope(std::string name) {
         return this->classes->at(name);
     }
     return NULL;
+}
+
+void SymbolTable::enterScope(std::string name) {
+    if(this->hasClass(name)) {
+        this->previousScope = this->currentScope;
+        this->currentScope = this->classes->at(name);
+    }
+}
+
+void SymbolTable::exitScope(std::string name) {
+    if(this->hasClass(name)) {
+        this->currentScope = this->previousScope;
+    }
 }

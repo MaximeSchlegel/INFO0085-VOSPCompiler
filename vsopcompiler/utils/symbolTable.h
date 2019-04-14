@@ -46,6 +46,7 @@ class SymbolTable {
 private:
     std::unordered_map<std::string, SymbolTableScope*>* classes;
     SymbolTableScope* currentScope;
+    SymbolTableScope* previousScope;
 
 public:
     SymbolTable();
@@ -81,6 +82,14 @@ public:
      * Return the scope associated with the given class name
      */
     SymbolTableScope* getScope(std::string name);
+    /**
+     * Enter the scope associated with the given class name
+     */
+    void enterScope(std::string name);
+    /**
+     * Exit the scope associated with the given class name
+     */
+    void exitScope(std::string name);
 };
 
 #endif // VSOPCOMPILER_SYMBOLTABLE_H

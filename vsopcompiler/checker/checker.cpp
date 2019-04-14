@@ -71,7 +71,7 @@ bool Checker::scopeCheck(ASTNode *node) {
         std::string name = children[0]->getSValue();
 
         // check if the class is already define
-        if (!this->symbolTable->getScope(name)) {
+        if (!this->symbolTable->hasClass(name)) {
             //check if the class is register
             if (!this->registerClass(name, new std::vector<std::string>())) {
                 return false;
@@ -109,7 +109,7 @@ bool Checker::registerClass(std::string className, std::vector<std::string> *wai
     }
 
     waiting->push_back(className);
-    if (!this->symbolTable->getScope(parentIt->second)) {
+    if (!this->symbolTable->hasClass(parentIt->second)) {
         //if the parent has already been define
         for (int i = 0; i < waiting->size(); i++) {
             //check for cyclic definition
@@ -142,17 +142,18 @@ bool Checker::registerMethodAndField(ASTNode *node) {
 
         if (classChildren[i]->getType() == "field") {
             //test if the field is assign;
-            if (this->symbolTable->lookup(name)) {
+            if (this->symbolTable->lookup("field"+name)) {
                 std::cerr << "Error line " << node->getLine() << ": The field is already define" << std::endl;
                 return false;
             }
+
             //test if the type is valid
             if (this->extend->find(children[1]->getSValue()) == this->extend->end()) {
                 std::cerr << "Error line " << node->getLine() << ": Type is not define" << std::endl;
                 return false;
             }
             //create the symbol in the table
-            this->symbolTable->add("variable"+name, children[1]->getSValue());
+            this->symbolTable->add("field"+name, children[1]->getSValue());
 
         } else if (classChildren[i]->getType() == "method") {
             
@@ -177,7 +178,7 @@ bool Checker::registerMethodAndField(ASTNode *node) {
             //TODO: check if it is a valid averwrite
 
             //create the method in scope
-            this->symbolTable->add("methode"+name, children[1]->getSValue()); //TODO: need to be adapt for method
+            this->symbolTable->add("method"+name, children[1]->getSValue()); //TODO: need to be adapt for method
         }
     }
 
@@ -188,6 +189,7 @@ bool Checker::registerMethodAndField(ASTNode *node) {
 bool Checker::checkNode(ASTNode *node) {
     if (node->getType() == "program") {
         std::vector < ASTNode * > children = node->getChildren();
+        
         for (int i = 0; i < children.size(); i++) {
             if (!this->checkNode(children[i])) {
                 return false;
@@ -199,22 +201,25 @@ bool Checker::checkNode(ASTNode *node) {
             return false;
         }
         // Check if Main contains main()
-        SymbolTableScope* mainScope = this->symbolTable->getScope("Main");
-        if(mainScope->lookup("methodemain") == NULL) {
+        this->symbolTable->enterScope("Main");
+        if( this->symbolTable->lookup("methodmain") == NULL) {
             std::cerr << "Error line " << node->getLine() << ": The Main class must have a method called main" << std::endl;
             return false;
         }
+        this->symbolTable->exitScope("Main");
 
     } else if (node->getType() == "class") {
         std::vector < ASTNode * > children = node->getChildren();
         std::string name = children[0]->getSValue();
-        this->symbolTable->getScope(name);
+
+        this->symbolTable->enterScope(name);
+
         for (int i = 2; i < children.size(); i++) {
             if (!this->checkNode(children[i])) {
                 return false;
             }
         }
-        this->symbolTable->exitScope();
+        this->symbolTable->exitScope(name);
 
     } else if (node->getType() == "field") {
         std::vector < ASTNode * > children = node->getChildren();
@@ -225,9 +230,12 @@ bool Checker::checkNode(ASTNode *node) {
             if (!this->checkNode(children[2])) {
                 return false;
             }
+            
             //check that the return type match the expected one
             std::string rType = children[1]->getSValue();
-            if (rType != this->symbolTable->lookup(name)->getType()) {
+            std::string eType = this->symbolTable->lookup("field"+name)->getType();
+            
+            if (rType != eType) {
                 std::cerr << "Error line " << node->getLine() << ": Type do not match" << std::endl;
                 return false;
             }
