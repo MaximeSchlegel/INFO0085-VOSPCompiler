@@ -45,6 +45,9 @@ int ASTNode::getColumn() {
 }
 
 std::string ASTNode::getSValue() {
+    if(this->sValue == NULL) {
+        return this->getType();
+    }
     return *this->sValue;
 }
 

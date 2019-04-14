@@ -1,6 +1,7 @@
 #include "symbolTable.h"
+#include <iostream>
 
-SymbolTableEntry::SymbolTableEntry(std::string id, std::string type, bool isMethod = false, std::vector<SymbolTableEntry>* formals = new std::vector<SymbolTableEntry>()) {
+SymbolTableEntry::SymbolTableEntry(std::string id, std::string type, std::vector<SymbolTableEntry*>* formals, bool isMethod) {
     this->id = id;
     this->type = type;
     this->method = isMethod;
@@ -19,7 +20,7 @@ bool SymbolTableEntry::isMethod() {
     return this->method;
 }
 
-std::vector<SymbolTableEntry>* SymbolTableEntry::getFormals() {
+std::vector<SymbolTableEntry*>* SymbolTableEntry::getFormals() {
     return this->formals;
 }
 
@@ -28,8 +29,8 @@ SymbolTableScope::SymbolTableScope(SymbolTableScope* parent) {
     this->scope = new std::unordered_map<std::string, SymbolTableEntry*>();
 }
 
-void SymbolTableScope::add(std::string id, std::string type, bool isMethod = false, std::vector<SymbolTableEntry>* formals = new std::vector<SymbolTableEntry>()) {
-    SymbolTableEntry* newEntry = new SymbolTableEntry(id, type, isMethod, formals);
+void SymbolTableScope::add(std::string id, std::string type, std::vector<SymbolTableEntry*>* formals, bool isMethod) {
+    SymbolTableEntry* newEntry = new SymbolTableEntry(id, type, formals, isMethod);
     (*this->scope)[id] = newEntry;
 }
 
@@ -52,12 +53,13 @@ SymbolTable::SymbolTable() {
     this->currentScope = rootScope;
 }
 
-void SymbolTable::add(std::string id, std::string type, bool isMethod = false, std::vector<SymbolTableEntry>* formals = new std::vector<SymbolTableEntry>()) {
-    this->currentScope->add(id, type, isMethod, formals);
+void SymbolTable::add(std::string id, std::string type, bool isMethod, std::vector<SymbolTableEntry*>* formals) {
+    this->currentScope->add(id, type, formals, isMethod);
 }
 
 SymbolTableEntry* SymbolTable::lookup(std::string id) {
     SymbolTableScope* tmpScope = this->currentScope;
+    // std::cout << this->currentScope->scope->size() << std::endl;
 
     while(tmpScope != NULL) {
         SymbolTableEntry* entry = tmpScope->lookup(id);
@@ -82,13 +84,13 @@ SymbolTableEntry* SymbolTable::lookupInCurrentScope(std::string id) {
     return NULL;
 }
 
-bool SymbolTable::enterNewScope(std::string className, std::string parent = "") {
+bool SymbolTable::enterNewScope() {
     SymbolTableScope* newScope = new SymbolTableScope(this->currentScope);
 
     this->currentScope = newScope;
 }
 
-bool SymbolTable::enterNewScope(std::string className, std::string parent = "") {
+bool SymbolTable::enterNewScope(std::string className, std::string parent) {
     if(parent != "") {
         SymbolTableScope* parentScope;
         try {

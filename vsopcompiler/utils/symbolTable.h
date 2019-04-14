@@ -13,16 +13,16 @@ private:
     std::string id;
     std::string type;
     bool method;
-    std::vector<SymbolTableEntry>* formals;
+    std::vector<SymbolTableEntry*>* formals;
 
 public:
     //TODO: il faut un moyen d'acceder au args
     //TODO: il faut revoir les arguments qu'il stocke
-    SymbolTableEntry(std::string id, std::string type, bool isMethod = false, std::vector<SymbolTableEntry>* formals = new std::vector<SymbolTableEntry>());
+    SymbolTableEntry(std::string id, std::string type, std::vector<SymbolTableEntry*>* formals, bool isMethod = false);
     std::string getName();
     std::string getType();
     bool isMethod();
-    std::vector<SymbolTableEntry>* getFormals();
+    std::vector<SymbolTableEntry*>* getFormals();
 
     friend class SymbolTableScope;
 };
@@ -35,7 +35,7 @@ private:
 
 public:
     SymbolTableScope(SymbolTableScope* parent);
-    void add(std::string id, std::string type, bool isMethod = false, std::vector<SymbolTableEntry>* formals = new std::vector<SymbolTableEntry>());
+    void add(std::string id, std::string type, std::vector<SymbolTableEntry*>* formals, bool isMethod = false);
     SymbolTableEntry* lookup(std::string id);
 
     friend class SymbolTable;
@@ -52,7 +52,7 @@ public:
     /**
      * Add entry to current scope
      */
-    void add(std::string id, std::string type, bool isMethod = false, std::vector<SymbolTableEntry>* formals = new std::vector<SymbolTableEntry>());
+    void add(std::string id, std::string type, bool isMethod = false, std::vector<SymbolTableEntry*>* formals = NULL);
     /**
      * Look up for a given entry
      */

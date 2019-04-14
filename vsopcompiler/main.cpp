@@ -104,12 +104,12 @@ int main(int argc, char *argv[]) {
         } else {
             Checker *sc = new Checker(astResult);
             if (sc->check()) {
-                std::cout << "Yes" << std::endl;
+                // std::cout << "Yes" << std::endl;
                 std::cout << *astResult << std::endl;
                 fclose(yyin);
                 return 0;
             } else {
-                std::cout << "Nope" << std::endl;
+                // std::cout << "Nope" << std::endl;
                 fclose(yyin);
                 return -1;
             }
