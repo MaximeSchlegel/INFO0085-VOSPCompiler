@@ -114,7 +114,7 @@ bool Checker::registerClass(std::string className, std::vector<std::string> *wai
         for (int i = 0; i < waiting->size(); i++) {
             //check for cyclic definition
             if ((*waiting)[i] == parentIt->second) {
-                std::cerr << "Error line " << node->getLine() << ": Definition cyclique" << std::endl;
+                std::cerr << "Definition cyclique" << std::endl;
                 return false;
             }
         }
@@ -632,7 +632,7 @@ bool Checker::checkNode(ASTNode *node) {
         std::string objectId = node->getSValue();
         SymbolTableEntry* entry = this->symbolTable->lookup("variable"+objectId);
         if (entry == NULL) {
-            std::cerr << "Error line " << node->getLine() << ": Object Id does not exist" << std::endl;
+            std::cerr << "Error line " << node->getLine() << ": Object Id \""<< objectId <<"\" does not exist" << std::endl;
             return false;
         }
         node->setReturnType(entry->getType());
