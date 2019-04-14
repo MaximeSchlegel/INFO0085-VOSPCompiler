@@ -200,8 +200,12 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
             os << "If(" << *node.children[0] << ", " << *node.children[1] << ")";
         }
 
+        os << node.getReturnType();
+
     } else if (node.sType.compare("while") == 0) {
         os << "While(" << *node.children[0] << ", " << *node.children[1] << ")";
+        
+        os << node.getReturnType();
 
     } else if (node.sType.compare("let") == 0) {
         if (node.children.size() == 4) {
@@ -209,44 +213,72 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
         } else {
             os << "Let(" << *node.children[0] << ", " << *node.children[1] << ", " << *node.children[2] << ")";
         }
+        
+        os << node.getReturnType();
     } else if (node.sType.compare("assign") == 0) {
         os << "Assign(" << *node.children[0] << ", " << *node.children[1] << ")";
+        
+        os << node.getReturnType();
 
     } else if (node.sType.compare("not") == 0) {
         os << "UnOp(not, " << *node.children[0] << ")";
+        
+        os << node.getReturnType();
 
     } else if (node.sType.compare("and") == 0) {
         os << "BinOp(and, " << *node.children[0] << ", " << *node.children[1] << ")";
+        
+        os << node.getReturnType();
 
     } else if (node.sType.compare("equal") == 0) {
         os << "BinOp(=, " << *node.children[0] << ", " << *node.children[1] << ")";
+        
+        os << node.getReturnType();
 
     } else if (node.sType.compare("lower") == 0) {
         os << "BinOp(<, " << *node.children[0] << ", " << *node.children[1] << ")";
+        
+        os << node.getReturnType();
 
     } else if (node.sType.compare("lowerequal") == 0) {
         os << "BinOp(<=, " << *node.children[0] << ", " << *node.children[1] << ")";
+        
+        os << node.getReturnType();
 
     } else if (node.sType.compare("plus") == 0) {
         os << "BinOp(+, " << *node.children[0] << ", " << *node.children[1] << ")";
+        
+        os << node.getReturnType();
 
     } else if (node.sType.compare("minus") == 0) {
         os << "BinOp(-, " << *node.children[0] << ", " << *node.children[1] << ")";
+        
+        os << node.getReturnType();
 
     } else if (node.sType.compare("times") == 0) {
         os << "BinOp(*, " << *node.children[0] << ", " << *node.children[1] << ")";
+        
+        os << node.getReturnType();
 
     } else if (node.sType.compare("div") == 0) {
         os << "BinOp(/, " << *node.children[0] << ", " << *node.children[1] << ")";
+        
+        os << node.getReturnType();
 
     } else if (node.sType.compare("pow") == 0) {
         os << "BinOp(^, " << *node.children[0] << ", " << *node.children[1] << ")";
+        
+        os << node.getReturnType();
 
     } else if (node.sType.compare("neg") == 0) {
         os << "UnOp(-, " << *node.children[0] << ")";
+        
+        os << node.getReturnType();
 
     } else if (node.sType.compare("isnull") == 0) {
         os << "UnOp(isnull, " << *node.children[0] << ")";
+        
+        os << node.getReturnType();
 
     } else if (node.sType.compare("call") == 0) {
         os << "Call(" << *node.children[0] << ", " << *node.children[1] << ", [";
@@ -254,9 +286,13 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
             os << *node.children[2];
         }
         os << "])";
+        
+        os << node.getReturnType();
 
     } else if (node.sType.compare("new") == 0) {
         os << "New(" << *node.children[0] << ")";
+        
+        os << node.getReturnType();
 
     } else if (node.sType.compare("args") == 0) {
         for (int i = 0; i < node.children.size(); i++) {
