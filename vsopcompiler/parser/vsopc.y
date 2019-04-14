@@ -422,7 +422,7 @@ expr:
   | LPAR expr RPAR                                 { @$ = @1; @$.last_line = @3.last_line; @$.last_column = @3.last_column;
                                                      $$ = $2;
                                                       astResult = $2; }
-  | LPAR RPAR                                      { ASTNode * e = new ASTNode(UNIT);
+  | LPAR RPAR                                      { ASTNode * e = new ASTNode(UNIT, new std::string("()"));
                                                      e->setPosition(@1.first_line, @1.first_column);
                                                      @$ = @1; @$.last_line = @2.last_line; @$.last_column = @2.last_column;
                                                      $$ = e;

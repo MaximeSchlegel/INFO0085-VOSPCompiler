@@ -115,7 +115,7 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
             case 260: os << "bool" << node.printReturnType(); break;
             case 261: os << "int32" << node.printReturnType(); break;
             case 262: os << "string" << node.printReturnType(); break;
-            case 263: os << "unit" << node.printReturnType(); break;
+            case 263: os << (node.sValue != NULL ? *node.sValue : "unit") << node.printReturnType(); break;
             case 264: os << *node.sValue << node.printReturnType(); break;
             case 265: os << "true" << node.printReturnType(); break;
             case 266: os << "false" << node.printReturnType(); break;
