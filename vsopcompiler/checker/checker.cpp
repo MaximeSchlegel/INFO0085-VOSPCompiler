@@ -354,25 +354,52 @@ bool Checker::checkNode(ASTNode *node) {
 
     } else if (node->getType() == "let") {
         std::vector<ASTNode *> children = node->getChildren();
-        //check the expressions
+        
         if (children.size() == 4){
+            // Evaluate assign
+            if (!this->checkNode(children[2])) {
+                return false;
+            }
+
+            // Evaluate expr after IN
             this->symbolTable->enterNewScope();
+
+            this->symbolTable->add(children[0]->getSValue(), children[2]->getReturnType());
+
             if (!this->checkNode(children[3])) {
                 return false;
             }
             this->symbolTable->exitScope();
-            if (children[1]->getSValue() != children[3]->getReturnType()){
+
+            // Check matching types
+            std::string rType = children[1]->getSValue();
+            std::string eType = children[3]->getReturnType();
+
+            if (rType != eType){
+                std::cerr << "Error line " << node->getLine() << ": Type does not match" << std::endl;
+                return false;
+            }
+        } else {
+            // Evaluate expr after IN
+            if (!this->checkNode(children[2])) {
+                return false;
+            }
+
+            // Check matching types
+            std::string rType = children[1]->getSValue();
+            std::string eType = children[2]->getReturnType();
+
+            if (rType != eType){
                 std::cerr << "Error line " << node->getLine() << ": Type does not match" << std::endl;
                 return false;
             }
         }
-        this->symbolTable->enterNewScope();
-        //TODO: add variable to the second scope
-        if (!this->checkNode(children[2])) {
-            return false;
+        
+        if(children.size() == 4) {
+            node->setReturnType(children[3]->getReturnType());
+        } else {
+            node->setReturnType(children[2]->getReturnType());
         }
-        this->symbolTable->exitScope();
-        node->setReturnType(children[2]->getReturnType());
 
     } else if (node->getType() == "assign") {
         std::vector < ASTNode * > children = node->getChildren();
