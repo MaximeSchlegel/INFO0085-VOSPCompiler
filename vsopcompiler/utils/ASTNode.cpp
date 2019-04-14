@@ -56,12 +56,12 @@ void ASTNode::setReturnType(std::string type) {
     this->properties.emplace("type", t);
 }
 
-std::string ASTNode::getReturnType() {
-    std::map<std::string, prop>::iterator it = this->properties.find("type");
+std::string ASTNode::getReturnType() const {
+    std::map<std::string, prop>::const_iterator it = this->properties.find("type");
     if (it == this->properties.end()){
         return "";
     } else {
-        return it->second.sProp;
+        return " : "+it->second.sProp;
     }
 }
 
@@ -103,31 +103,31 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
 
     if (node.iType != -1) {
         switch (node.iType) {
-            case 260: os << "bool"; break;
-            case 261: os << "int32"; break;
-            case 262: os << "string"; break;
-            case 263: os << "unit"; break;
-            case 264: os << *node.sValue; break;
-            case 265: os << "true"; break;
-            case 266: os << "false"; break;
-            case 267: os << node.iValue; break;
-            case 268: os << *node.sValue; break;
-            case 282: os << *node.sValue; break;
+            case 260: os << "bool" << node.getReturnType(); break;
+            case 261: os << "int32" << node.getReturnType(); break;
+            case 262: os << "string" << node.getReturnType(); break;
+            case 263: os << "unit" << node.getReturnType(); break;
+            case 264: os << *node.sValue << node.getReturnType(); break;
+            case 265: os << "true" << node.getReturnType(); break;
+            case 266: os << "false" << node.getReturnType(); break;
+            case 267: os << node.iValue << node.getReturnType(); break;
+            case 268: os << *node.sValue << node.getReturnType(); break;
+            case 282: os << *node.sValue << node.getReturnType(); break;
         }
 
     } else if (node.sType.compare("program") == 0) {
-        os << "[" << std::endl;
+        os << "[";
         for (int i = 0; i < node.children.size(); i++) {
             os << *node.children[i];
             if (i != node.children.size() - 1) {
-                os << "," << std::endl;
+                os << ",";
             }
         }
-        os << std::endl << " ]" << std::endl;
+        os << "]";
 
     } else if (node.sType.compare("class") == 0) {
-        os << "Class(" << *(node.children[0]) << ", " << *node.children[1] << "," << std::endl;
-        os << "      [";
+        os << "Class(" << *(node.children[0]) << ", " << *node.children[1] << ", ";
+        os << "[";
         bool first = true;
         for (auto const& child: node.children) {
             if (child->sType == "field") {
@@ -139,12 +139,12 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
                 }
             }
         }
-        os << "]," << std::endl << "      [";
+        os << "], " << "[";
         first = true;
         for (auto const& child: node.children) {
             if (child->sType == "method") {
                 if(!first) {
-                    os << ",\n        " << *child;
+                    os << ", " << *child;
 
                 } else {
                     first = false;
@@ -166,8 +166,7 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
         if (node.children.size() == 4) {
             os << *node.children[3];
         }
-        os << "], " << *node.children[1] << "," << std::endl;
-        os << "               " << *node.children[2] <<")";
+        os << "], " << *node.children[1] << ", " << *node.children[2] <<")";
 
     } else if (node.sType.compare("formals") == 0) {
         for (int i = 0 ; i < node.children.size() ; i++) {

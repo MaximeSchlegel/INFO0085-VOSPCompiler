@@ -293,8 +293,9 @@ bool Checker::checkNode(ASTNode *node) {
     } else if (node->getType() == "block") {
         std::vector < ASTNode * > children = node->getChildren();
         this->symbolTable->enterNewScope();
+
         // Continue checking
-        for (int i = 2; i < children.size(); i++) {
+        for (int i = 0; i < children.size(); i++) {
             if (!this->checkNode(children[i])) {
                 return false;
             }

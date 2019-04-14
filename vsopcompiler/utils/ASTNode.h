@@ -35,7 +35,7 @@ public:
     int getLine();
     int getColumn();
     void setReturnType(std::string type);
-    std::string getReturnType();
+    std::string getReturnType()const;
     std::string getType()const ;
     void addChild (ASTNode * child, bool front = false);
     std::vector<ASTNode *> getChildren();
