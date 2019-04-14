@@ -322,7 +322,7 @@ bool Checker::checkNode(ASTNode *node) {
             this->symbolTable->exitScope();
         }
         //check that the first exp is of type bool
-        if (children[0]->getReturnType() != " : bool") {
+        if (children[0]->getReturnType() != "bool") {
             std::cerr << "Error line " << node->getLine() << ": Type bool expected" << std::endl;
             return false;
         }
@@ -346,7 +346,7 @@ bool Checker::checkNode(ASTNode *node) {
             this->symbolTable->exitScope();
         }
         //check that the first exp is of type bool
-        if (children[0]->getReturnType() != " : bool") {
+        if (children[0]->getReturnType() != "bool") {
             std::cerr << "Error line " << node->getLine() << ": Type bool expected" << std::endl;
             return false;
         }
@@ -395,7 +395,7 @@ bool Checker::checkNode(ASTNode *node) {
         if (!this->checkNode(children[0])) {
             return false;
         }
-        if (children[0]->getReturnType() != " : bool") {
+        if (children[0]->getReturnType() != "bool") {
             std::cerr << "Error line " << node->getLine() << ": Type bool expected" << std::endl;
             return false;
         }
@@ -409,10 +409,10 @@ bool Checker::checkNode(ASTNode *node) {
         if (!this->checkNode(children[1])) {
             return false;
         }
-        if (children[0]->getReturnType() != " : bool") {
+        if (children[0]->getReturnType() != "bool") {
             std::cerr << "Error line " << node->getLine() << ": Type bool expected" << std::endl;
         }
-        if (children[1]->getReturnType() != " : bool") {
+        if (children[1]->getReturnType() != "bool") {
             std::cerr << "Error line " << node->getLine() << ": Type bool expected" << std::endl;
         }
         node->setReturnType("bool");
@@ -438,10 +438,10 @@ bool Checker::checkNode(ASTNode *node) {
         if (!this->checkNode(children[1])) {
             return false;
         }
-        if (children[0]->getReturnType() != " : int32") {
+        if (children[0]->getReturnType() != "int32") {
             std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
         }
-        if (children[1]->getReturnType() != " : int32") {
+        if (children[1]->getReturnType() != "int32") {
             std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
         }
         node->setReturnType("int32");
@@ -454,10 +454,10 @@ bool Checker::checkNode(ASTNode *node) {
         if (!this->checkNode(children[1])) {
             return false;
         }
-        if (children[0]->getReturnType() != " : int32") {
+        if (children[0]->getReturnType() != "int32") {
             std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
         }
-        if (children[1]->getReturnType() != " : int32") {
+        if (children[1]->getReturnType() != "int32") {
             std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
         }
         node->setReturnType("int32");
@@ -470,11 +470,11 @@ bool Checker::checkNode(ASTNode *node) {
         if (!this->checkNode(children[1])) {
             return false;
         }
-        
-        if (children[0]->getReturnType() != " : int32") {
+
+        if (children[0]->getReturnType() != "int32") {
             std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
         }
-        if (children[1]->getReturnType() != " : int32") {
+        if (children[1]->getReturnType() != "int32") {
             std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
         }
         node->setReturnType("int32");
@@ -487,10 +487,10 @@ bool Checker::checkNode(ASTNode *node) {
         if (!this->checkNode(children[1])) {
             return false;
         }
-        if (children[0]->getReturnType() != " : int32") {
+        if (children[0]->getReturnType() != "int32") {
             std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
         }
-        if (children[1]->getReturnType() != " : int32") {
+        if (children[1]->getReturnType() != "int32") {
             std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
         }
         node->setReturnType("int32");
@@ -503,10 +503,10 @@ bool Checker::checkNode(ASTNode *node) {
         if (!this->checkNode(children[1])) {
             return false;
         }
-        if (children[0]->getReturnType() != " : int32") {
+        if (children[0]->getReturnType() != "int32") {
             std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
         }
-        if (children[1]->getReturnType() != " : int32") {
+        if (children[1]->getReturnType() != "int32") {
             std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
         }
         node->setReturnType("int32");
@@ -519,10 +519,10 @@ bool Checker::checkNode(ASTNode *node) {
         if (!this->checkNode(children[1])) {
             return false;
         }
-        if (children[0]->getReturnType() != " : int32") {
+        if (children[0]->getReturnType() != "int32") {
             std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
         }
-        if (children[1]->getReturnType() != " : int32") {
+        if (children[1]->getReturnType() != "int32") {
             std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
         }
         node->setReturnType("int32");
@@ -535,10 +535,10 @@ bool Checker::checkNode(ASTNode *node) {
         if (!this->checkNode(children[1])) {
             return false;
         }
-        if (children[0]->getReturnType() != " : int32") {
+        if (children[0]->getReturnType() != "int32") {
             std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
         }
-        if (children[1]->getReturnType() != " : int32") {
+        if (children[1]->getReturnType() != "int32") {
             std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
         }
         node->setReturnType("int32");
@@ -548,7 +548,7 @@ bool Checker::checkNode(ASTNode *node) {
         if (!this->checkNode(children[0])) {
             return false;
         }
-        if (children[0]->getReturnType() != " : int32") {
+        if (children[0]->getReturnType() != "int32") {
             std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
         }
         node->setReturnType("int32");

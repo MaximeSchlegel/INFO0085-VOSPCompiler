@@ -36,6 +36,7 @@ public:
     int getColumn();
     void setReturnType(std::string type);
     std::string getReturnType()const;
+    std::string printReturnType()const;
     std::string getType()const ;
     void addChild (ASTNode * child, bool front = false);
     std::vector<ASTNode *> getChildren();

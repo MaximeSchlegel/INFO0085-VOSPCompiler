@@ -61,6 +61,15 @@ std::string ASTNode::getReturnType() const {
     if (it == this->properties.end()){
         return "";
     } else {
+        return it->second.sProp;
+    }
+}
+
+std::string ASTNode::printReturnType() const {
+    std::map<std::string, prop>::const_iterator it = this->properties.find("type");
+    if (it == this->properties.end()){
+        return "";
+    } else {
         return " : "+it->second.sProp;
     }
 }
@@ -103,16 +112,16 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
 
     if (node.iType != -1) {
         switch (node.iType) {
-            case 260: os << "bool" << node.getReturnType(); break;
-            case 261: os << "int32" << node.getReturnType(); break;
-            case 262: os << "string" << node.getReturnType(); break;
-            case 263: os << "unit" << node.getReturnType(); break;
-            case 264: os << *node.sValue << node.getReturnType(); break;
-            case 265: os << "true" << node.getReturnType(); break;
-            case 266: os << "false" << node.getReturnType(); break;
-            case 267: os << node.iValue << node.getReturnType(); break;
-            case 268: os << *node.sValue << node.getReturnType(); break;
-            case 282: os << *node.sValue << node.getReturnType(); break;
+            case 260: os << "bool" << node.printReturnType(); break;
+            case 261: os << "int32" << node.printReturnType(); break;
+            case 262: os << "string" << node.printReturnType(); break;
+            case 263: os << "unit" << node.printReturnType(); break;
+            case 264: os << *node.sValue << node.printReturnType(); break;
+            case 265: os << "true" << node.printReturnType(); break;
+            case 266: os << "false" << node.printReturnType(); break;
+            case 267: os << node.iValue << node.printReturnType(); break;
+            case 268: os << *node.sValue << node.printReturnType(); break;
+            case 282: os << *node.sValue << node.printReturnType(); break;
         }
 
     } else if (node.sType.compare("program") == 0) {
@@ -200,12 +209,12 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
             os << "If(" << *node.children[0] << ", " << *node.children[1] << ")";
         }
 
-        os << node.getReturnType();
+        os << node.printReturnType();
 
     } else if (node.sType.compare("while") == 0) {
         os << "While(" << *node.children[0] << ", " << *node.children[1] << ")";
         
-        os << node.getReturnType();
+        os << node.printReturnType();
 
     } else if (node.sType.compare("let") == 0) {
         if (node.children.size() == 4) {
@@ -214,71 +223,71 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
             os << "Let(" << *node.children[0] << ", " << *node.children[1] << ", " << *node.children[2] << ")";
         }
         
-        os << node.getReturnType();
+        os << node.printReturnType();
     } else if (node.sType.compare("assign") == 0) {
         os << "Assign(" << *node.children[0] << ", " << *node.children[1] << ")";
         
-        os << node.getReturnType();
+        os << node.printReturnType();
 
     } else if (node.sType.compare("not") == 0) {
         os << "UnOp(not, " << *node.children[0] << ")";
         
-        os << node.getReturnType();
+        os << node.printReturnType();
 
     } else if (node.sType.compare("and") == 0) {
         os << "BinOp(and, " << *node.children[0] << ", " << *node.children[1] << ")";
         
-        os << node.getReturnType();
+        os << node.printReturnType();
 
     } else if (node.sType.compare("equal") == 0) {
         os << "BinOp(=, " << *node.children[0] << ", " << *node.children[1] << ")";
         
-        os << node.getReturnType();
+        os << node.printReturnType();
 
     } else if (node.sType.compare("lower") == 0) {
         os << "BinOp(<, " << *node.children[0] << ", " << *node.children[1] << ")";
         
-        os << node.getReturnType();
+        os << node.printReturnType();
 
     } else if (node.sType.compare("lowerequal") == 0) {
         os << "BinOp(<=, " << *node.children[0] << ", " << *node.children[1] << ")";
         
-        os << node.getReturnType();
+        os << node.printReturnType();
 
     } else if (node.sType.compare("plus") == 0) {
         os << "BinOp(+, " << *node.children[0] << ", " << *node.children[1] << ")";
         
-        os << node.getReturnType();
+        os << node.printReturnType();
 
     } else if (node.sType.compare("minus") == 0) {
         os << "BinOp(-, " << *node.children[0] << ", " << *node.children[1] << ")";
         
-        os << node.getReturnType();
+        os << node.printReturnType();
 
     } else if (node.sType.compare("times") == 0) {
         os << "BinOp(*, " << *node.children[0] << ", " << *node.children[1] << ")";
         
-        os << node.getReturnType();
+        os << node.printReturnType();
 
     } else if (node.sType.compare("div") == 0) {
         os << "BinOp(/, " << *node.children[0] << ", " << *node.children[1] << ")";
         
-        os << node.getReturnType();
+        os << node.printReturnType();
 
     } else if (node.sType.compare("pow") == 0) {
         os << "BinOp(^, " << *node.children[0] << ", " << *node.children[1] << ")";
         
-        os << node.getReturnType();
+        os << node.printReturnType();
 
     } else if (node.sType.compare("neg") == 0) {
         os << "UnOp(-, " << *node.children[0] << ")";
         
-        os << node.getReturnType();
+        os << node.printReturnType();
 
     } else if (node.sType.compare("isnull") == 0) {
         os << "UnOp(isnull, " << *node.children[0] << ")";
         
-        os << node.getReturnType();
+        os << node.printReturnType();
 
     } else if (node.sType.compare("call") == 0) {
         os << "Call(" << *node.children[0] << ", " << *node.children[1] << ", [";
@@ -287,12 +296,12 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
         }
         os << "])";
         
-        os << node.getReturnType();
+        os << node.printReturnType();
 
     } else if (node.sType.compare("new") == 0) {
         os << "New(" << *node.children[0] << ")";
         
-        os << node.getReturnType();
+        os << node.printReturnType();
 
     } else if (node.sType.compare("args") == 0) {
         for (int i = 0; i < node.children.size(); i++) {
