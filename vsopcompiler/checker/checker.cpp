@@ -194,7 +194,7 @@ bool Checker::registerMethodAndField(ASTNode *node) {
                 std::vector<std::string> *usedName = new std::vector<std::string>();
                 std::vector<ASTNode *> methodFormals = children[3]->getChildren();
 
-                for (int j = 1; j < methodFormals.size(); j++) {
+                for (int j = 0; j < methodFormals.size(); j++) {
                     std::vector<ASTNode *> formalNode = methodFormals[j]->getChildren();
                     std::string formalName = formalNode[0]->getSValue();
                     std::string formalType = formalNode[1]->getSValue();
@@ -653,11 +653,6 @@ bool Checker::checkNode(ASTNode *node) {
         std::cout << "IN CALL" << std::endl;
         std::vector < ASTNode * > children = node->getChildren();
 
-        std::cout << "Children" << std::endl;
-        std::cout << *children[0] << std::endl;
-        std::cout << *children[1] << std::endl;
-        std::cout << "End children" << std::endl;
-
         if (!this->checkNode(children[0])) {
             return false;
         }
@@ -668,7 +663,6 @@ bool Checker::checkNode(ASTNode *node) {
         SymbolTableScope *classScope = this->symbolTable->getScope(objectName);
 
         std::cout << "  4" << std::endl;
-        std::cout << classScope << std::endl;
 
         std::string methodName = children[1]->getSValue();
 
@@ -693,7 +687,6 @@ bool Checker::checkNode(ASTNode *node) {
             std::vector<std::string> usedName = std::vector<std::string>();
 
             std::cout << "  6" << std::endl;
-            std::cout << method->getFormals() << std::endl;
 
             if (formals->size() == 0) {
                 std::cerr << "Error line " << node->getLine() << ": Invalid number of args" << std::endl;
@@ -701,6 +694,8 @@ bool Checker::checkNode(ASTNode *node) {
             }
 
             std::cout << "  7" << std::endl;
+
+            std::cout << ">>>>>>>>>>>" << args.size() << " VS " << formals->size() << std::endl;
             //check the number of args
             if (args.size() != formals->size()) {
                 std::cerr << "Error line " << node->getLine() << ": Invalid number of args" << std::endl;
