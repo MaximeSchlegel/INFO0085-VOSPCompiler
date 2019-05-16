@@ -387,24 +387,20 @@ bool Checker::checkNode(ASTNode *node) {
             return false;
         }
         // Add formal to current scope (new scope create in method)
-        this->symbolTable->add(name, children[1]->getSValue());
+        this->symbolTable->add("variable"+name, children[1]->getSValue());
 
     } else if (node->getType() == "block") {
-        std::cout << "IN BLOCK" << std::endl;
         std::vector < ASTNode * > children = node->getChildren();
         this->symbolTable->enterNewScope();
 
         // Continue checking
         for (int i = 0; i < children.size(); i++) {
-            std::cout << *children[i] << std::endl;
-            std::cout << "________________________" << std::endl;
             if (!this->checkNode(children[i])) {
                 return false;
             }
         }
         this->symbolTable->exitScope();
         node->setReturnType(children[children.size() - 1]->getReturnType());
-        std::cout << "OUT BLOCK" << std::endl;
 
     } else if (node->getType() == "if") {
         std::vector < ASTNode * > children = node->getChildren();
@@ -448,7 +444,6 @@ bool Checker::checkNode(ASTNode *node) {
         node->setReturnType("unit");
 
     } else if (node->getType() == "let") {
-        std::cout << "IN LET" << std::endl;
         std::vector<ASTNode *> children = node->getChildren();
 
         if (children.size() == 4){
@@ -460,7 +455,7 @@ bool Checker::checkNode(ASTNode *node) {
             // Evaluate expr after IN
             this->symbolTable->enterNewScope();
 
-            this->symbolTable->add(children[0]->getSValue(), children[2]->getReturnType());
+            this->symbolTable->add("variable"+children[0]->getSValue(), children[2]->getReturnType());
 
             if (!this->checkNode(children[3])) {
                 return false;
@@ -479,12 +474,7 @@ bool Checker::checkNode(ASTNode *node) {
             // Evaluate expr after IN
             this->symbolTable->enterNewScope();
 
-            std::cout << "ADD" << children[0]->getSValue() << ", " << children[1]->getSValue() << std::endl;
-
             this->symbolTable->add("variable"+children[0]->getSValue(), children[1]->getSValue());
-
-            std::cout << "here0" << std::endl;
-            std::cout << *children[2] << std::endl;
 
             if (!this->checkNode(children[2])) {
                 return false;
@@ -492,13 +482,9 @@ bool Checker::checkNode(ASTNode *node) {
 
             this->symbolTable->exitScope();
 
-            std::cout << "here1" << std::endl;
-
             // Check matching types
             std::string rType = children[1]->getSValue();
             std::string eType = children[2]->getReturnType();
-
-            std::cout << "here2" << std::endl;
 
             if (rType != eType){
                 std::cerr << "Error line " << node->getLine() << ": Type does not match" << std::endl;
@@ -511,12 +497,9 @@ bool Checker::checkNode(ASTNode *node) {
         } else {
             node->setReturnType(children[2]->getReturnType());
         }
-        std::cout << "OUT LET" << std::endl;
 
     } else if (node->getType() == "assign") {
         std::vector < ASTNode * > children = node->getChildren();
-
-        std::cout << "IN ASSIGN" << std::endl << children[0]->getType() << std::endl;
 
         if (!this->checkNode(children[0])) {
             return false;
@@ -524,19 +507,13 @@ bool Checker::checkNode(ASTNode *node) {
 
         this->symbolTable->enterNewScope();
 
-        std::cout << "NEW SCOPE" << std::endl << children[1]->getType() << std::endl;
-
         if (!this->checkNode(children[1])) {
             return false;
         }
 
-        std::cout << "EXIT SCOPE" << std::endl;
-
         this->symbolTable->exitScope();
 
         SymbolTableEntry* identifier = this->symbolTable->lookup("variable"+(children[0]->getSValue()));
-
-        std::cout << identifier << std::endl;
 
         if (identifier->getType() != children[1]->getReturnType()) {
             std::cerr << "Error line " << node->getLine() << ": Same type expected" << std::endl;
