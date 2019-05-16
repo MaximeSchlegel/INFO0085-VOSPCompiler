@@ -69,7 +69,7 @@ SymbolTableEntry* SymbolTable::lookup(std::string id) {
         }
 
         tmpScope = tmpScope->parent;
-        std::cout << '  try parent' << std::endl;
+        std::cout << "  try parent" << std::endl;
     }
 
     return NULL;
@@ -133,6 +133,8 @@ void SymbolTable::enterScope(std::string name) {
     if(this->hasClass(name)) {
         this->previousScope = this->currentScope;
         this->currentScope = this->classes->at(name);
+    } else {
+        std::cout << "reckt" << std::endl;
     }
 }
 

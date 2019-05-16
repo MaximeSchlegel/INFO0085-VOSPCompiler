@@ -42,12 +42,12 @@ bool Checker::check() {
     if(!this->preprocess(this->root)){
         return false;
     }
-//    std::cout << "Preprocess sucessful" << std::endl;
+    std::cout << "Preprocess sucessful" << std::endl;
 
     if(!this->checkNode(this->root)){
         return false;
     }
-//    std::cout << "scopeCheck sucessful" << std::endl;
+    std::cout << "scopeCheck sucessful" << std::endl;
 
     return true;
 }
@@ -699,7 +699,11 @@ bool Checker::checkNode(ASTNode *node) {
         SymbolTableScope *classScope = this->symbolTable->getScope(objectType);
         std::string methodName = children[1]->getSValue();
 
+
+        std::cout << std::endl << std::endl;
+
         //check if the method if declared
+        this->symbolTable->enterScope(objectType);
         SymbolTableEntry* method = classScope->lookup("method"+methodName);
 
         std::cout << methodName << std::endl;
@@ -793,8 +797,7 @@ bool Checker::checkNode(ASTNode *node) {
         node->setReturnType(entry->getType());
 
     }else {
-        std::cout << "Hello  ";
-        std::cout << node->getType();
+        std::cout << "  Hello " << node->getType() << std::endl;
     }
     return true;
 }
