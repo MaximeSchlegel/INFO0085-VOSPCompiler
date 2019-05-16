@@ -18,7 +18,7 @@ private:
 public:
     //TODO: il faut un moyen d'acceder au args
     //TODO: il faut revoir les arguments qu'il stocke
-    SymbolTableEntry(std::string id, std::string type, std::vector<SymbolTableEntry*>* formals, bool isMethod = false);
+    SymbolTableEntry(std::string id, std::string type, std::vector<SymbolTableEntry*>* formals = nullptr, bool isMethod = false);
     std::string getName();
     std::string getType();
     bool isMethod();
