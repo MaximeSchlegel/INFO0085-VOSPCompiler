@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
             fclose(yyin);
             return -1;
         } else {
-            std::cout << *astResult;
+            std::cout << *astResult << std::endl;
             fclose(yyin);
             return 0;
         }

@@ -199,7 +199,7 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
                     os << ", ";
                 }
             }
-            os << "]";
+            os << "]" << node.printReturnType();
         }
 
     } else if (node.sType.compare("if") == 0) {

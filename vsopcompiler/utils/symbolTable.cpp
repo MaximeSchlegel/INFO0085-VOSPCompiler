@@ -69,6 +69,7 @@ SymbolTableEntry* SymbolTable::lookup(std::string id) {
         }
 
         tmpScope = tmpScope->parent;
+        std::cout << '  try parent' << std::endl;
     }
 
     return NULL;
@@ -106,7 +107,7 @@ bool SymbolTable::enterNewScope(std::string className, std::string parent) {
         this->classes->emplace(className, newScope);
         this->currentScope = newScope;
     }
-
+    this->add("self", className);
     return true;
 }
 

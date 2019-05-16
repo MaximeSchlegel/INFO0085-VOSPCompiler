@@ -18,6 +18,23 @@ Checker::Checker(ASTNode *root) {
     this->extend->emplace("IO", "Object");
 
     this->symbolTable->enterNewScope("Object", "");
+    this->symbolTable->enterNewScope("IO", "Object");
+
+    //create IO base functions formals
+    SymbolTableEntry *formal;
+    std::vector<SymbolTableEntry*> *formals;
+
+    formal = new SymbolTableEntry("input", "string");
+    formals = new std::vector<SymbolTableEntry*>();
+    formals->push_back(formal);
+    this->symbolTable->add("methodprint", "IO", true, formals);
+
+    formal = new SymbolTableEntry("input", "int32");
+    formals = new std::vector<SymbolTableEntry*>();
+    formals->push_back(formal);
+    this->symbolTable->add("methodprintInt32", "IO", true, formals);
+
+
 }
 
 
@@ -25,12 +42,12 @@ bool Checker::check() {
     if(!this->preprocess(this->root)){
         return false;
     }
-    std::cout << "Preprocess sucessful" << std::endl;
+//    std::cout << "Preprocess sucessful" << std::endl;
 
     if(!this->checkNode(this->root)){
         return false;
     }
-    std::cout << "scopeCheck sucessful" << std::endl;
+//    std::cout << "scopeCheck sucessful" << std::endl;
 
     return true;
 }
@@ -46,7 +63,7 @@ bool Checker::preprocess(ASTNode *node) {
                 std::string className = (children[i]->getChildren())[0]->getSValue();
                 std::string classParent = (children[i]->getChildren())[1]->getSValue();
 
-                std::cout << className << " ; " << classParent << std::endl;
+//                std::cout << className << " ; " << classParent << std::endl;
 
                 //check if we have already encounter this class
                 if(this->extend->find(className) != this->extend->end()) {
@@ -78,7 +95,7 @@ bool Checker::preprocess(ASTNode *node) {
         }
         SymbolTableScope *main = this->symbolTable->getScope("Main");
 
-        std::cout << main << std::endl;
+//        std::cout << main << std::endl;
 
         if (!main->lookup("methodmain")) {
              std::cerr << "Can't find Main::main method" << std::endl;
@@ -89,7 +106,7 @@ bool Checker::preprocess(ASTNode *node) {
         std::vector < ASTNode * > children = node->getChildren();
         std::string name = children[0]->getSValue();
 
-        std::cout << "New class: " << name << std::endl;
+//        std::cout << "New class: " << name << std::endl;
 
         // check if the class is already define
         if (!this->symbolTable->hasClass(name)) {
@@ -155,7 +172,7 @@ bool Checker::registerMethodAndField(ASTNode *node) {
         std::vector<ASTNode *> children = classChildren[i]->getChildren();
         std::string name = children[0]->getSValue();
 
-        std::cout << "  " << name << std::endl;
+//        std::cout << "  " << name << std::endl;
 
         if (classChildren[i]->getType() == "field") {
             //test if the field is assign;
@@ -175,7 +192,7 @@ bool Checker::registerMethodAndField(ASTNode *node) {
 
         } else if (classChildren[i]->getType() == "method") {
             //check if the method is already define in the class
-            if (this->symbolTable->lookup("method" + name)) {
+            if (this->symbolTable->lookupInCurrentScope("method" + name)) {
                 std::cerr << "Error line " << node->getLine() << ": The method is already define" << std::endl;
                 return false;
             }
@@ -190,7 +207,7 @@ bool Checker::registerMethodAndField(ASTNode *node) {
 
             //check if the formals are define correctly
             if (children.size() == 4){
-                std::cout << "      There is formal to register : " << std::endl;
+//                std::cout << "      There is formal to register : " << std::endl;
                 std::vector<std::string> *usedName = new std::vector<std::string>();
                 std::vector<ASTNode *> methodFormals = children[3]->getChildren();
 
@@ -199,7 +216,7 @@ bool Checker::registerMethodAndField(ASTNode *node) {
                     std::string formalName = formalNode[0]->getSValue();
                     std::string formalType = formalNode[1]->getSValue();
 
-                    std::cout << "          " << formalName << " : " << formalType << std::endl;
+//                    std::cout << "          " << formalName << " : " << formalType << std::endl;
 
                     //check if the formal name is already used
                     for (int k = 0; k < usedName->size(); k++) {
@@ -220,17 +237,38 @@ bool Checker::registerMethodAndField(ASTNode *node) {
                     SymbolTableEntry *formal = new SymbolTableEntry("variable" + formalName, formalType);
                     formals->push_back(formal);
 
-                    std::cout << "          " << "Formal added" << std::endl;
+//                    std::cout << "          " << "Formal added" << std::endl;
                 }
             }
 
-            //TODO: check if it is a valid overwrite
+            //check if the method overwrite correctly
+            SymbolTableEntry* overwrite = this->symbolTable->lookup("method" + name);
+            if(overwrite != NULL) {
+                //check if the return type match
+                if (overwrite->getType() != children[1]->getSValue()) {
+                    std::cerr << "Error line " << node->getLine() << ": Return type does not match the overritten function" << std::endl;
+                    return false;
+                }
+                //check if the formals number match
+                if (overwrite->getFormals()->size() != formals->size()) {
+                    std::cerr << "Error line " << node->getLine() << ": Formals do not match the overritten function" << std::endl;
+                    return false;
+                }
+                //check if the formals match
+                std::vector<SymbolTableEntry*> *testedFormals = overwrite->getFormals();
+                for (int i = 0; i < formals->size(); i++){
+                    if((*testedFormals)[i]->getType() != (*formals)[i]->getType()) {
+                        std::cerr << "Error line " << node->getLine() << ": Formals do not match the overritten function" << std::endl;
+                        return false;
+                    }
+                }
+            }
 
             //create the method in scope
             this->symbolTable->add("method"+name, children[1]->getSValue(), true, formals);//TODO: need to be adapt for method
 
         } else {
-            std::cerr << "Error 1 line " << node->getLine() << ": Unexpetected expr " << node->getSValue() << std::endl;
+            std::cerr << "Error line " << node->getLine() << ": Unexpetected expr " << node->getSValue() << std::endl;
             return false;
         }
     }
@@ -241,7 +279,7 @@ bool Checker::registerMethodAndField(ASTNode *node) {
 
 
 bool Checker::checkNode(ASTNode *node) {
-    std::cout << node->getType() << std::endl;
+//    std::cout << node->getType() << std::endl;
 
     if (node->getType() == "program") {
         std::vector < ASTNode * > children = node->getChildren();
@@ -650,60 +688,53 @@ bool Checker::checkNode(ASTNode *node) {
         }
         node->setReturnType(children[0]->getReturnType());
     } else if (node->getType() == "call") {
-        std::cout << "IN CALL" << std::endl;
         std::vector < ASTNode * > children = node->getChildren();
 
+        //check the caller
         if (!this->checkNode(children[0])) {
             return false;
         }
 
-        std::string objectName = children[0]->getReturnType();
-
-        std::cout << objectName << std::endl;
-        SymbolTableScope *classScope = this->symbolTable->getScope(objectName);
-
-        std::cout << "  4" << std::endl;
-
+        std::string objectType = children[0]->getReturnType();
+        SymbolTableScope *classScope = this->symbolTable->getScope(objectType);
         std::string methodName = children[1]->getSValue();
 
-        SymbolTableEntry* method = classScope->lookup("method"+methodName);
         //check if the method if declared
+        SymbolTableEntry* method = classScope->lookup("method"+methodName);
 
-        std::cout << "  5" << std::endl;
-
-        std::cout << method->getName() << std::endl;
-
-        std::cout << "after get method" << std::endl;
+        std::cout << methodName << std::endl;
+        std::cout << objectType << std::endl;
 
         if (method == nullptr) {
             std::cerr << "Error line " << node->getLine() << ": Method does not exist" << std::endl;
             return false;
         }
-        //if their is args
+
+        //check some args are expected
+        std::vector<SymbolTableEntry*>* formals = method->getFormals();
+        if (formals->size() > 0 && children.size() != 3) {
+            std::cerr << "Error line " << node->getLine() << ": Invalid number of args" << std::endl;
+            return false;
+        }
+
+        //if there is args
         if (children.size() == 3) {
-            std::cout << "has args" << std::endl;
             std::vector<ASTNode *> args = children[2]->getChildren();
-            std::vector<SymbolTableEntry*>* formals = method->getFormals();
-            std::vector<std::string> usedName = std::vector<std::string>();
 
-            std::cout << "  6" << std::endl;
-
+            //check that the formals expected some args
             if (formals->size() == 0) {
                 std::cerr << "Error line " << node->getLine() << ": Invalid number of args" << std::endl;
                 return false;
             }
 
-            std::cout << "  7" << std::endl;
-
-            std::cout << ">>>>>>>>>>>" << args.size() << " VS " << formals->size() << std::endl;
             //check the number of args
             if (args.size() != formals->size()) {
                 std::cerr << "Error line " << node->getLine() << ": Invalid number of args" << std::endl;
                 return false;
             }
 
-            std::cout << "  8" << std::endl;
-            for (int i = 1; i < args.size(); i++) {
+            //check that the args are compatible with the formals
+            for (int i = 0; i < args.size(); i++) {
                 //check the type of the formals
                 this->symbolTable->enterNewScope();
                 if (!this->checkNode(args[i])) {
@@ -716,17 +747,16 @@ bool Checker::checkNode(ASTNode *node) {
                 }
             }
         }
+
         //if the call have n args but the method need them
         if (method->getFormals() == NULL) {
-            std::cout << "no args" << std::endl;
             std::cerr << "Error line " << node->getLine() << ": Invalid number of args" << std::endl;
             return false;
         }
         node->setReturnType(method->getType());
 
     } else if (node->getType() == "args") {
-
-        std::cout << "args" << std::endl;
+        std::cout << "  args " << node->getSValue() << std::endl;
 
     } else if (node->getType() == "bool") {
         node->setReturnType("bool");
@@ -763,7 +793,7 @@ bool Checker::checkNode(ASTNode *node) {
         node->setReturnType(entry->getType());
 
     }else {
-
+        std::cout << "Hello  ";
         std::cout << node->getType();
     }
     return true;
