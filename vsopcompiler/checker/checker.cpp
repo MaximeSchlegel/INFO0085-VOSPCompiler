@@ -180,6 +180,10 @@ bool Checker::registerMethodAndField(ASTNode *node) {
                 return false;
             }
 
+            std::cout << ">>>>>>>>>>>>>>" << std::endl;
+            std::cout << *children[3] << std::endl;
+            std::cout << "<<<<<<<<<<<<<<" << std::endl;
+
             //check if the formals are define correctly
             if (children.size() == 3){
                 std::vector<std::string> *usedName = new std::vector<std::string>();
@@ -213,7 +217,7 @@ bool Checker::checkNode(ASTNode *node) {
 
     if (node->getType() == "program") {
         std::vector < ASTNode * > children = node->getChildren();
-        
+
         for (int i = 0; i < children.size(); i++) {
             if (!this->checkNode(children[i])) {
                 return false;
@@ -254,11 +258,11 @@ bool Checker::checkNode(ASTNode *node) {
             if (!this->checkNode(children[2])) {
                 return false;
             }
-            
+
             //check that the return type match the expected one
             std::string rType = children[1]->getSValue();
             std::string eType = this->symbolTable->lookup("variable"+name)->getType();
-            
+
             if (rType != eType) {
                 std::cerr << "Error line " << node->getLine() << ": Type do not match" << std::endl;
                 return false;
@@ -378,7 +382,7 @@ bool Checker::checkNode(ASTNode *node) {
 
     } else if (node->getType() == "let") {
         std::vector<ASTNode *> children = node->getChildren();
-        
+
         if (children.size() == 4){
             // Evaluate assign
             if (!this->checkNode(children[2])) {
@@ -418,7 +422,7 @@ bool Checker::checkNode(ASTNode *node) {
                 return false;
             }
         }
-        
+
         if(children.size() == 4) {
             node->setReturnType(children[3]->getReturnType());
         } else {
@@ -618,23 +622,36 @@ bool Checker::checkNode(ASTNode *node) {
         }
         node->setReturnType(children[0]->getReturnType());
     } else if (node->getType() == "call") {
+        std::cout << "IN CALL" << std::endl;
         std::vector < ASTNode * > children = node->getChildren();
+
+        std::cout << "Children" << std::endl;
+        std::cout << *children[0] << std::endl;
+        std::cout << *children[1] << std::endl;
+        std::cout << "End children" << std::endl;
 
         if (!this->checkNode(children[0])) {
             return false;
         }
 
-        std::string name = children[0]->getSValue();
+        std::string objectName = children[0]->getReturnType();
 
-        SymbolTableScope *classScope = this->symbolTable->getScope(name);
+        std::cout << objectName << std::endl;
+        SymbolTableScope *classScope = this->symbolTable->getScope(objectName);
 
         std::cout << "  4" << std::endl;
         std::cout << classScope << std::endl;
 
-        SymbolTableEntry* method = classScope->lookup("method"+name);
+        std::string methodName = children[1]->getSValue();
+
+        SymbolTableEntry* method = classScope->lookup("method"+methodName);
         //check if the method if declared
 
         std::cout << "  5" << std::endl;
+
+        std::cout << method->getName() << std::endl;
+
+        std::cout << "after get method" << std::endl;
 
         if (method == nullptr) {
             std::cerr << "Error line " << node->getLine() << ": Method does not exist" << std::endl;
@@ -642,18 +659,27 @@ bool Checker::checkNode(ASTNode *node) {
         }
         //if their is args
         if (children.size() == 3) {
+            std::cout << "has args" << std::endl;
             std::vector<ASTNode *> args = children[2]->getChildren();
             std::vector<SymbolTableEntry*>* formals = method->getFormals();
             std::vector<std::string> usedName = std::vector<std::string>();
+
+            std::cout << "  6" << std::endl;
+            std::cout << method->getFormals() << std::endl;
+
             if (formals->size() == 0) {
                 std::cerr << "Error line " << node->getLine() << ": Invalid number of args" << std::endl;
                 return false;
             }
+
+            std::cout << "  7" << std::endl;
             //check the number of args
             if (args.size() != formals->size()) {
                 std::cerr << "Error line " << node->getLine() << ": Invalid number of args" << std::endl;
                 return false;
             }
+
+            std::cout << "  8" << std::endl;
             for (int i = 1; i < args.size(); i++) {
                 //check the type of the formals
                 this->symbolTable->enterNewScope();
@@ -669,6 +695,7 @@ bool Checker::checkNode(ASTNode *node) {
         }
         //if the call have n args but the method need them
         if (method->getFormals() == NULL) {
+            std::cout << "no args" << std::endl;
             std::cerr << "Error line " << node->getLine() << ": Invalid number of args" << std::endl;
             return false;
         }

@@ -116,7 +116,7 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
             case 261: os << "int32" << node.printReturnType(); break;
             case 262: os << "string" << node.printReturnType(); break;
             case 263: os << (node.sValue != NULL ? *node.sValue : "unit") << node.printReturnType(); break;
-            case 264: os << *node.sValue << node.printReturnType(); break;
+            case 264: os << *node.sValue; break;
             case 265: os << "true" << node.printReturnType(); break;
             case 266: os << "false" << node.printReturnType(); break;
             case 267: os << node.iValue << node.printReturnType(); break;
@@ -213,7 +213,7 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
 
     } else if (node.sType.compare("while") == 0) {
         os << "While(" << *node.children[0] << ", " << *node.children[1] << ")";
-        
+
         os << node.printReturnType();
 
     } else if (node.sType.compare("let") == 0) {
@@ -222,71 +222,71 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
         } else {
             os << "Let(" << *node.children[0] << ", " << *node.children[1] << ", " << *node.children[2] << ")";
         }
-        
+
         os << node.printReturnType();
     } else if (node.sType.compare("assign") == 0) {
         os << "Assign(" << *node.children[0] << ", " << *node.children[1] << ")";
-        
+
         os << node.printReturnType();
 
     } else if (node.sType.compare("not") == 0) {
         os << "UnOp(not, " << *node.children[0] << ")";
-        
+
         os << node.printReturnType();
 
     } else if (node.sType.compare("and") == 0) {
         os << "BinOp(and, " << *node.children[0] << ", " << *node.children[1] << ")";
-        
+
         os << node.printReturnType();
 
     } else if (node.sType.compare("equal") == 0) {
         os << "BinOp(=, " << *node.children[0] << ", " << *node.children[1] << ")";
-        
+
         os << node.printReturnType();
 
     } else if (node.sType.compare("lower") == 0) {
         os << "BinOp(<, " << *node.children[0] << ", " << *node.children[1] << ")";
-        
+
         os << node.printReturnType();
 
     } else if (node.sType.compare("lowerequal") == 0) {
         os << "BinOp(<=, " << *node.children[0] << ", " << *node.children[1] << ")";
-        
+
         os << node.printReturnType();
 
     } else if (node.sType.compare("plus") == 0) {
         os << "BinOp(+, " << *node.children[0] << ", " << *node.children[1] << ")";
-        
+
         os << node.printReturnType();
 
     } else if (node.sType.compare("minus") == 0) {
         os << "BinOp(-, " << *node.children[0] << ", " << *node.children[1] << ")";
-        
+
         os << node.printReturnType();
 
     } else if (node.sType.compare("times") == 0) {
         os << "BinOp(*, " << *node.children[0] << ", " << *node.children[1] << ")";
-        
+
         os << node.printReturnType();
 
     } else if (node.sType.compare("div") == 0) {
         os << "BinOp(/, " << *node.children[0] << ", " << *node.children[1] << ")";
-        
+
         os << node.printReturnType();
 
     } else if (node.sType.compare("pow") == 0) {
         os << "BinOp(^, " << *node.children[0] << ", " << *node.children[1] << ")";
-        
+
         os << node.printReturnType();
 
     } else if (node.sType.compare("neg") == 0) {
         os << "UnOp(-, " << *node.children[0] << ")";
-        
+
         os << node.printReturnType();
 
     } else if (node.sType.compare("isnull") == 0) {
         os << "UnOp(isnull, " << *node.children[0] << ")";
-        
+
         os << node.printReturnType();
 
     } else if (node.sType.compare("call") == 0) {
@@ -295,12 +295,12 @@ std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
             os << *node.children[2];
         }
         os << "])";
-        
+
         os << node.printReturnType();
 
     } else if (node.sType.compare("new") == 0) {
         os << "New(" << *node.children[0] << ")";
-        
+
         os << node.printReturnType();
 
     } else if (node.sType.compare("args") == 0) {
