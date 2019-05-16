@@ -35,12 +35,15 @@ void SymbolTableScope::add(std::string id, std::string type, std::vector<SymbolT
 }
 
 SymbolTableEntry* SymbolTableScope::lookup(std::string id) {
+    // std::cout << "Scope lookup" << std::endl;
     SymbolTableEntry* entry = NULL;
     try {
         entry = this->scope->at(id);
     } catch(std::out_of_range oor) {
+        // std::cout << "Scope lookup nothing" << std::endl;
         return NULL;
     }
+    // std::cout << "Scope lookup something" << std::endl;
     return entry;
 }
 
@@ -54,14 +57,29 @@ SymbolTable::SymbolTable() {
 }
 
 void SymbolTable::add(std::string id, std::string type, bool isMethod, std::vector<SymbolTableEntry*>* formals) {
+    std::cout << "ADD of " << id << "_________________" << std::endl;
+    for (auto it = this->classes->begin(); it != this->classes->end(); it++)
+    {
+        if (it->second == this->currentScope)
+        {
+            std::cout << "ADD in scope " << it->first << std::endl;
+        }
+    }
     this->currentScope->add(id, type, formals, isMethod);
 }
 
 SymbolTableEntry* SymbolTable::lookup(std::string id) {
     SymbolTableScope* tmpScope = this->currentScope;
-    // std::cout << this->currentScope->scope->size() << std::endl;
+    // std::cout << "Lookup for " << id << std::endl;
 
     while(tmpScope != NULL) {
+        for (auto it = this->classes->begin(); it != this->classes->end(); it++)
+        {
+            if (it->second == tmpScope)
+            {
+                // std::cout << "In scope " << it->first << std::endl;
+            }
+        }
         SymbolTableEntry* entry = tmpScope->lookup(id);
 
         if(entry != NULL) {
@@ -69,9 +87,10 @@ SymbolTableEntry* SymbolTable::lookup(std::string id) {
         }
 
         tmpScope = tmpScope->parent;
-        std::cout << '  try parent' << std::endl;
+        // std::cout << "  try parent" << std::endl;
     }
 
+    // std::cout << "End lookup nothing" << std::endl;
     return NULL;
 }
 
@@ -103,7 +122,7 @@ bool SymbolTable::enterNewScope(std::string className, std::string parent) {
         this->classes->emplace(className, newScope);
         this->currentScope = newScope;
     } else {
-        SymbolTableScope* newScope = new SymbolTableScope(this->currentScope);
+        SymbolTableScope* newScope = new SymbolTableScope(NULL);
         this->classes->emplace(className, newScope);
         this->currentScope = newScope;
     }
@@ -118,6 +137,8 @@ void SymbolTable::exitScope() {
 
 bool SymbolTable::hasClass(std::string name) {
     std::size_t n = this->classes->count(name);
+
+    // std::cout << "For name " << name << " " << n << " occurences found" << std::endl;
 
     return n == 1 ? true : false;
 }
