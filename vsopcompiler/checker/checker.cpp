@@ -80,7 +80,7 @@ bool Checker::preprocess(ASTNode *node) {
 
         std::cout << main << std::endl;
 
-        if (!main->lookup("main")) {
+        if (!main->lookup("methodmain")) {
              std::cerr << "Can't find Main::main method" << std::endl;
              return false;
         }
@@ -159,7 +159,7 @@ bool Checker::registerMethodAndField(ASTNode *node) {
 
         if (classChildren[i]->getType() == "field") {
             //test if the field is assign;
-            if (this->symbolTable->lookup("variable"+name)) {
+            if (this->symbolTable->lookupInCurrentScope("variable"+name)) {
                 std::cerr << "Error line " << node->getLine() << ": The field is already define" << std::endl;
                 return false;
             }
@@ -175,15 +175,16 @@ bool Checker::registerMethodAndField(ASTNode *node) {
 
         } else if (classChildren[i]->getType() == "method") {
             //check if the method is already define in the class
-            if (this->symbolTable->lookup(name)) {
+            if (this->symbolTable->lookup("method" + name)) {
                 std::cerr << "Error line " << node->getLine() << ": The method is already define" << std::endl;
                 return false;
             }
 
             //check if the formals are define correctly
             if (children.size() == 3){
-                std::vector<std::string>usedName = std::vector<std::string>();
-                //TODO
+                std::vector<std::string> *usedName = new std::vector<std::string>();
+                std::vector<SymbolTableEntry*> *formals = new std::vector<SymbolTableEntry*>();
+
             }
 
             //check if the return type is valid
@@ -197,7 +198,6 @@ bool Checker::registerMethodAndField(ASTNode *node) {
             //create the method in scope
             this->symbolTable->add("method"+name, children[1]->getSValue()); //TODO: need to be adapt for method
         } else {
-
             std::cerr << "Error 1 line " << node->getLine() << ": Unexpetected expr " << node->getSValue() << std::endl;
         }
     }
