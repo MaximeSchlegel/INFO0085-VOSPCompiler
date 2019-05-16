@@ -57,14 +57,6 @@ SymbolTable::SymbolTable() {
 }
 
 void SymbolTable::add(std::string id, std::string type, bool isMethod, std::vector<SymbolTableEntry*>* formals) {
-    std::cout << "ADD of " << id << "_________________" << std::endl;
-    for (auto it = this->classes->begin(); it != this->classes->end(); it++)
-    {
-        if (it->second == this->currentScope)
-        {
-            std::cout << "ADD in scope " << it->first << std::endl;
-        }
-    }
     this->currentScope->add(id, type, formals, isMethod);
 }
 
@@ -73,13 +65,6 @@ SymbolTableEntry* SymbolTable::lookup(std::string id) {
     // std::cout << "Lookup for " << id << std::endl;
 
     while(tmpScope != NULL) {
-        for (auto it = this->classes->begin(); it != this->classes->end(); it++)
-        {
-            if (it->second == tmpScope)
-            {
-                // std::cout << "In scope " << it->first << std::endl;
-            }
-        }
         SymbolTableEntry* entry = tmpScope->lookup(id);
 
         if(entry != NULL) {
