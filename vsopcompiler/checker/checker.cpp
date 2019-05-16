@@ -180,34 +180,62 @@ bool Checker::registerMethodAndField(ASTNode *node) {
                 return false;
             }
 
-            std::cout << ">>>>>>>>>>>>>>" << std::endl;
-            std::cout << *children[3] << std::endl;
-            std::cout << "<<<<<<<<<<<<<<" << std::endl;
-
-            //check if the formals are define correctly
-            if (children.size() == 3){
-                std::vector<std::string> *usedName = new std::vector<std::string>();
-                std::vector<SymbolTableEntry*> *formals = new std::vector<SymbolTableEntry*>();
-
-            }
-
             //check if the return type is valid
             if (this->extend->find(children[1]->getSValue()) == this->extend->end()) {
                 std::cerr << "Error line " << node->getLine() << ": Type is not define" << std::endl;
                 return false;
             }
 
+            std::vector<SymbolTableEntry*> *formals = new std::vector<SymbolTableEntry*>();
+
+            //check if the formals are define correctly
+            if (children.size() == 4){
+                std::cout << "      There is formal to register : " << std::endl;
+                std::vector<std::string> *usedName = new std::vector<std::string>();
+                std::vector<ASTNode *> methodFormals = children[3]->getChildren();
+
+                for (int j = 1; j < methodFormals.size(); j++) {
+                    std::vector<ASTNode *> formalNode = methodFormals[j]->getChildren();
+                    std::string formalName = formalNode[0]->getSValue();
+                    std::string formalType = formalNode[1]->getSValue();
+
+                    std::cout << "          " << formalName << " : " << formalType << std::endl;
+
+                    //check if the formal name is already used
+                    for (int k = 0; k < usedName->size(); k++) {
+                        if ((*usedName)[k] == formalName) {
+                            std::cerr << "Error line " << node->getLine() << " : Formal's name already used" << std::endl;
+                            return false;
+                        }
+                    }
+
+                    //check if the type is valid
+                    if (this->extend->find(formalType) == this->extend->end()) {
+                        std::cerr << "Error line " << node->getLine() << ": Type is not define" << std::endl;
+                        return false;
+                    }
+
+                    //create the formal and add it to the current formals
+                    usedName->push_back(formalName);
+                    SymbolTableEntry *formal = new SymbolTableEntry("variable" + formalName, formalType);
+                    formals->push_back(formal);
+
+                    std::cout << "          " << "Formal added" << std::endl;
+                }
+            }
+
             //TODO: check if it is a valid overwrite
 
             //create the method in scope
-            this->symbolTable->add("method"+name, children[1]->getSValue()); //TODO: need to be adapt for method
+            this->symbolTable->add("method"+name, children[1]->getSValue(), true, formals);//TODO: need to be adapt for method
+
         } else {
             std::cerr << "Error 1 line " << node->getLine() << ": Unexpetected expr " << node->getSValue() << std::endl;
+            return false;
         }
     }
 
     this->symbolTable->exitScope();
-
     return true;
 }
 
