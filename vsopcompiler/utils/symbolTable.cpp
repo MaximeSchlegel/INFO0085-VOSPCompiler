@@ -37,11 +37,10 @@ void SymbolTableScope::add(std::string id, std::string type, std::vector<SymbolT
 SymbolTableEntry* SymbolTableScope::lookup(std::string id) {
     SymbolTableEntry* entry = NULL;
     try {
-         entry = this->scope->at(id);
+        entry = this->scope->at(id);
     } catch(std::out_of_range oor) {
         return NULL;
     }
-
     return entry;
 }
 

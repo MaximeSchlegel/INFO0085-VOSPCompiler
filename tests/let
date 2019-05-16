@@ -1,21 +1,4 @@
-// Valid comment
-class T {
-    field : int32 <- let x : int32 in x * x; // x uninitialized here!
+class MyClass {
+    myField : bool <- 0 < 42;
 }
-
-class T {
-    f() : int32 {
-        let x : int32 in {
-            x <- 42;
-            x * x
-        }
-    }
-}
-
-    class // Strange indentation is allowed
- T
-        {
-    field : int32 <- let x : int32 <- 42 in x * x;
-
-
-}
+class Main { main() : int32 { 0 } }

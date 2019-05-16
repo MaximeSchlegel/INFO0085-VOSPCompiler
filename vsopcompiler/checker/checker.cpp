@@ -16,21 +16,27 @@ Checker::Checker(ASTNode *root) {
     this->extend->emplace("unit", "");
     this->extend->emplace("Object", "");
     this->extend->emplace("IO", "Object");
+
+    this->symbolTable->enterNewScope("Object", "");
 }
 
 
 bool Checker::check() {
-    if(!this->scopeCheck(this->root)){
+    if(!this->preprocess(this->root)){
         return false;
     }
+    std::cout << "Preprocess sucessful" << std::endl;
+
     if(!this->checkNode(this->root)){
         return false;
     }
+    std::cout << "scopeCheck sucessful" << std::endl;
+
     return true;
 }
 
 
-bool Checker::scopeCheck(ASTNode *node) {
+bool Checker::preprocess(ASTNode *node) {
     if (node->getType() == "program") {
         std::vector<ASTNode *> children = node->getChildren();
 
@@ -39,57 +45,64 @@ bool Checker::scopeCheck(ASTNode *node) {
             if (children[i]->getType() == "class") {
                 std::string className = (children[i]->getChildren())[0]->getSValue();
                 std::string classParent = (children[i]->getChildren())[1]->getSValue();
+
+                std::cout << className << " ; " << classParent << std::endl;
+
+                //check if we have already encounter this class
                 if(this->extend->find(className) != this->extend->end()) {
-                    //we have already encounter it
                     std::cerr << "Error line " << node->getLine() << ": The class" << className << "has been define several times" << std::endl;
                     return false;
                 }
+
+                //add (class, parent to extend
                 this->extend->emplace(className, classParent);
+
+            } else {
+                // only class are expected under program node
+                std::cerr << "Error line " << node->getLine() << ": Unexpected expr" << node->getSValue() << std::endl;
+                return false;
             }
         }
+
         //continue the scope checking in each class
         for(int i = 0; i < children.size() ; i++) {
-            if (!this->scopeCheck(children[i])) {
+            if (!this->preprocess(children[i])) {
                 return false;
-            };
+            }
         }
+
         //check if there is a Main::main
-        // std::map<std::string, std::string>::iterator mainIt = this->extend->find("Main");
-        // if (mainIt == this->extend->end()) {
-        //     std::cerr << "Can't find the Main class" << std::endl;
-        //     return false;
-        // }
-        // this->symbolTable->enterNewScope("Main");
-        // if (!this->symbolTable->lookup("main")) {
-        //     std::cerr << "Can't find Main::main methode" << std::endl;
-        //     return false;
-        // }
-        return true;
+        if (this->extend->find("Main") == this->extend->end()) {
+             std::cerr << "Can't find the Main class" << std::endl;
+             return false;
+        }
+        SymbolTableScope *main = this->symbolTable->getScope("Main");
+
+        std::cout << main << std::endl;
+
+        if (!main->lookup("main")) {
+             std::cerr << "Can't find Main::main method" << std::endl;
+             return false;
+        }
 
     } else if (node->getType() == "class") {
         std::vector < ASTNode * > children = node->getChildren();
         std::string name = children[0]->getSValue();
 
+        std::cout << "New class: " << name << std::endl;
+
         // check if the class is already define
         if (!this->symbolTable->hasClass(name)) {
-            //check if the class is register
+            // check if the class is register
             if (!this->registerClass(name, new std::vector<std::string>())) {
                 return false;
             }
         }
-        //continue the checking on the methods and fields
-        this->symbolTable->enterNewScope(name);
-        // for (int i = 0; i < children.size(); i++) {
-        //     if (!this->scopeCheck(children[i])) {
-        //         return false;
-        //     }
-        // }
-        bool result = this->registerMethodAndField(node);
-        if(!result) {
+
+        //register the methods and fields of the method
+        if(!this->registerMethodAndField(node)) {
             return false;
         }
-        this->symbolTable->exitScope();
-        return true;
     }
     return true;
 }
@@ -97,36 +110,37 @@ bool Checker::scopeCheck(ASTNode *node) {
 
 
 bool Checker::registerClass(std::string className, std::vector<std::string> *waiting) {
-    if(className == "Object") {
-        return true;
-    }
     std::map<std::string, std::string>::iterator parentIt = this->extend->find(className);
-    
+
+    //check if the parent class is define in the program
     if(parentIt == this->extend->end()) {
-        //check if the parent class is define in the program
-        std::cerr << "La class parente n'est pas definie" << std::endl;
+        std::cerr << "La class parente " << parentIt->second << " n'est pas definie" << std::endl;
         return false;
     }
 
     waiting->push_back(className);
+
+    // check if the parent if define in the symbol table
     if (!this->symbolTable->hasClass(parentIt->second)) {
-        //if the parent has already been define
+        // if the parent has not already been define
+        // check for cyclic definition
         for (int i = 0; i < waiting->size(); i++) {
-            //check for cyclic definition
             if ((*waiting)[i] == parentIt->second) {
                 std::cerr << "Definition cyclique" << std::endl;
                 return false;
             }
         }
+
+        // try to create the scope of the parent class
         if (!this->registerClass(parentIt->second, waiting)) {
-            //try to create the scope of the parent class
             return false;
         }
     }
 
-    this->symbolTable->enterNewScope(className, parentIt->second);
-    waiting->pop_back();
     //create the scope for the current class under those of the parent one
+    this->symbolTable->enterNewScope(className, parentIt->second);
+    this->symbolTable->exitScope();
+    waiting->pop_back();
     return true;
 }
 
@@ -134,11 +148,14 @@ bool Checker::registerClass(std::string className, std::vector<std::string> *wai
 bool Checker::registerMethodAndField(ASTNode *node) {
     std::vector<ASTNode *> classChildren = node->getChildren();
     std::string className = classChildren[0]->getSValue();
-    // this->symbolTable->enterNewScope(className);
+
+    this->symbolTable->enterScope(className);
 
     for (int i = 2; i < classChildren.size(); i++) {
         std::vector<ASTNode *> children = classChildren[i]->getChildren();
         std::string name = children[0]->getSValue();
+
+        std::cout << "  " << name << std::endl;
 
         if (classChildren[i]->getType() == "field") {
             //test if the field is assign;
@@ -152,11 +169,11 @@ bool Checker::registerMethodAndField(ASTNode *node) {
                 std::cerr << "Error line " << node->getLine() << ": Type is not define" << std::endl;
                 return false;
             }
+
             //create the symbol in the table
             this->symbolTable->add("variable"+name, children[1]->getSValue());
 
         } else if (classChildren[i]->getType() == "method") {
-            
             //check if the method is already define in the class
             if (this->symbolTable->lookup(name)) {
                 std::cerr << "Error line " << node->getLine() << ": The method is already define" << std::endl;
@@ -179,14 +196,21 @@ bool Checker::registerMethodAndField(ASTNode *node) {
 
             //create the method in scope
             this->symbolTable->add("method"+name, children[1]->getSValue()); //TODO: need to be adapt for method
+        } else {
+
+            std::cerr << "Error 1 line " << node->getLine() << ": Unexpetected expr " << node->getSValue() << std::endl;
         }
     }
+
+    this->symbolTable->exitScope();
 
     return true;
 }
 
 
 bool Checker::checkNode(ASTNode *node) {
+    std::cout << node->getType() << std::endl;
+
     if (node->getType() == "program") {
         std::vector < ASTNode * > children = node->getChildren();
         
@@ -455,7 +479,7 @@ bool Checker::checkNode(ASTNode *node) {
         if (children[0]->getReturnType() != children[1]->getReturnType()) {
             std::cerr << "Error line " << node->getLine() << ": Same type expected" << std::endl;
         }
-        node->setReturnType(children[0]->getReturnType());
+        node->setReturnType("bool");
 
     } else if (node->getType() == "lower") {
         std::vector < ASTNode * > children = node->getChildren();
@@ -471,7 +495,7 @@ bool Checker::checkNode(ASTNode *node) {
         if (children[1]->getReturnType() != "int32") {
             std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
         }
-        node->setReturnType("int32");
+        node->setReturnType("bool");
 
     } else if (node->getType() == "lowerequal") {
         std::vector < ASTNode * > children = node->getChildren();
@@ -487,7 +511,7 @@ bool Checker::checkNode(ASTNode *node) {
         if (children[1]->getReturnType() != "int32") {
             std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
         }
-        node->setReturnType("int32");
+        node->setReturnType("bool");
 
     } else if (node->getType() == "plus") {
         std::vector < ASTNode * > children = node->getChildren();
@@ -595,10 +619,23 @@ bool Checker::checkNode(ASTNode *node) {
         node->setReturnType(children[0]->getReturnType());
     } else if (node->getType() == "call") {
         std::vector < ASTNode * > children = node->getChildren();
+
+        if (!this->checkNode(children[0])) {
+            return false;
+        }
+
         std::string name = children[0]->getSValue();
+
         SymbolTableScope *classScope = this->symbolTable->getScope(name);
+
+        std::cout << "  4" << std::endl;
+        std::cout << classScope << std::endl;
+
         SymbolTableEntry* method = classScope->lookup("method"+name);
         //check if the method if declared
+
+        std::cout << "  5" << std::endl;
+
         if (method == nullptr) {
             std::cerr << "Error line " << node->getLine() << ": Method does not exist" << std::endl;
             return false;
@@ -617,7 +654,7 @@ bool Checker::checkNode(ASTNode *node) {
                 std::cerr << "Error line " << node->getLine() << ": Invalid number of args" << std::endl;
                 return false;
             }
-            for (int i = 0; i < args.size(); i++) {
+            for (int i = 1; i < args.size(); i++) {
                 //check the type of the formals
                 this->symbolTable->enterNewScope();
                 if (!this->checkNode(args[i])) {
@@ -638,6 +675,7 @@ bool Checker::checkNode(ASTNode *node) {
         node->setReturnType(method->getType());
 
     } else if (node->getType() == "args") {
+
         std::cout << "args" << std::endl;
 
     } else if (node->getType() == "bool") {
@@ -675,6 +713,7 @@ bool Checker::checkNode(ASTNode *node) {
         node->setReturnType(entry->getType());
 
     }else {
+
         std::cout << node->getType();
     }
     return true;
