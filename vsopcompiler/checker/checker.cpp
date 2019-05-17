@@ -83,7 +83,8 @@ bool Checker::preprocess(ASTNode *node) {
 
                 //check if we have already encounter this class
                 if(this->extend->find(className) != this->extend->end()) {
-                    std::cerr << "Error line " << node->getLine() << ": The class" << className << "has been define several times" << std::endl;
+                    // std::cerr << "Error line " << node->getLine() << ": The class" << className << "has been define several times" << std::endl;
+                    throw CheckerException(node->getLine(), node->getColumn(), "The class" + className + "has been define several times");
                     return false;
                 }
 
@@ -92,7 +93,8 @@ bool Checker::preprocess(ASTNode *node) {
 
             } else {
                 // only class are expected under program node
-                std::cerr << "Error line " << node->getLine() << ": Unexpected expr" << node->getSValue() << std::endl;
+                // std::cerr << "Error line " << node->getLine() << ": Unexpected expr" << node->getSValue() << std::endl;
+                throw CheckerException(node->getLine(), node->getColumn(), "Unexpected expr" + node->getSValue());
                 return false;
             }
         }
@@ -115,7 +117,8 @@ bool Checker::preprocess(ASTNode *node) {
 //        std::cout << main << std::endl;
 
         if (!main->lookup("methodmain")) {
-             std::cerr << "Can't find Main::main method" << std::endl;
+            //  std::cerr << "Can't find Main::main method" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Can't find Main::main method");
              return false;
         }
 
@@ -126,7 +129,7 @@ bool Checker::preprocess(ASTNode *node) {
         // check if the class is already define
         if (!this->symbolTable->hasClass(name)) {
             // check if the class is register
-            if (!this->registerClass(name, new std::vector<std::string>())) {
+            if (!this->registerClass(name, new std::vector<std::string>(), node->getLine(), node->getColumn())) {
                 return false;
             }
         }
@@ -141,12 +144,13 @@ bool Checker::preprocess(ASTNode *node) {
 
 
 
-bool Checker::registerClass(std::string className, std::vector<std::string> *waiting) {
+bool Checker::registerClass(std::string className, std::vector<std::string> *waiting, int line, int col) {
     std::map<std::string, std::string>::iterator parentIt = this->extend->find(className);
 
     //check if the parent class is define in the program
     if(parentIt == this->extend->end()) {
-        std::cerr << "La class parente " << parentIt->second << " n'est pas definie" << std::endl;
+        // std::cerr << "La class parente " << parentIt->second << " n'est pas definie" << std::endl;
+        throw CheckerException(line, col, "La class parente " + parentIt->second + " n'est pas definie");
         return false;
     }
 
@@ -158,13 +162,14 @@ bool Checker::registerClass(std::string className, std::vector<std::string> *wai
         // check for cyclic definition
         for (int i = 0; i < waiting->size(); i++) {
             if ((*waiting)[i] == parentIt->second) {
-                std::cerr << "Definition cyclique" << std::endl;
+                // std::cerr << "Definition cyclique" << std::endl;
+                throw CheckerException(line, col, "Definition cyclique");
                 return false;
             }
         }
 
         // try to create the scope of the parent class
-        if (!this->registerClass(parentIt->second, waiting)) {
+        if (!this->registerClass(parentIt->second, waiting, line, col)) {
             return false;
         }
     }
@@ -190,13 +195,15 @@ bool Checker::registerMethodAndField(ASTNode *node) {
         if (classChildren[i]->getType() == "field") {
             //test if the field is assign;
             if (this->symbolTable->lookupInCurrentScope("variable"+name)) {
-                std::cerr << "Error line " << node->getLine() << ": The field is already define" << std::endl;
+                // std::cerr << "Error line " << node->getLine() << ": The field is already define" << std::endl;
+                throw CheckerException(node->getLine(), node->getColumn(), "The field is already define");
                 return false;
             }
 
             //test if the type is valid
             if (this->extend->find(children[1]->getSValue()) == this->extend->end()) {
-                std::cerr << "Error line " << node->getLine() << ": Type is not define" << std::endl;
+                // std::cerr << "Error line " << node->getLine() << ": Type is not define" << std::endl;
+                throw CheckerException(node->getLine(), node->getColumn(), "Type is not define");
                 return false;
             }
 
@@ -206,13 +213,15 @@ bool Checker::registerMethodAndField(ASTNode *node) {
         } else if (classChildren[i]->getType() == "method") {
             //check if the method is already define in the class
             if (this->symbolTable->lookupInCurrentScope("method" + name)) {
-                std::cerr << "Error line " << node->getLine() << ": The method is already define" << std::endl;
+                // std::cerr << "Error line " << node->getLine() << ": The method is already define" << std::endl;
+                throw CheckerException(node->getLine(), node->getColumn(), "The method is already define");
                 return false;
             }
 
             //check if the return type is valid
             if (this->extend->find(children[1]->getSValue()) == this->extend->end()) {
-                std::cerr << "Error line " << node->getLine() << ": Type is not define" << std::endl;
+                // std::cerr << "Error line " << node->getLine() << ": Type is not define" << std::endl;
+                throw CheckerException(node->getLine(), node->getColumn(), "Type is not define");
                 return false;
             }
 
@@ -234,14 +243,16 @@ bool Checker::registerMethodAndField(ASTNode *node) {
                     //check if the formal name is already used
                     for (int k = 0; k < usedName->size(); k++) {
                         if ((*usedName)[k] == formalName) {
-                            std::cerr << "Error line " << node->getLine() << " : Formal's name already used" << std::endl;
+                            // std::cerr << "Error line " << node->getLine() << " : Formal's name already used" << std::endl;
+                            throw CheckerException(node->getLine(), node->getColumn(), "Formal's name already used");
                             return false;
                         }
                     }
 
                     //check if the type is valid
                     if (this->extend->find(formalType) == this->extend->end()) {
-                        std::cerr << "Error line " << node->getLine() << ": Type is not define" << std::endl;
+                        // std::cerr << "Error line " << node->getLine() << ": Type is not define" << std::endl;
+                        throw CheckerException(node->getLine(), node->getColumn(), "Type is not define");
                         return false;
                     }
 
@@ -259,19 +270,22 @@ bool Checker::registerMethodAndField(ASTNode *node) {
             if(overwrite != NULL) {
                 //check if the return type match
                 if (overwrite->getType() != children[1]->getSValue()) {
-                    std::cerr << "Error line " << node->getLine() << ": Return type does not match the overritten function" << std::endl;
+                    // std::cerr << "Error line " << node->getLine() << ": Return type does not match the overritten function" << std::endl;
+                    throw CheckerException(node->getLine(), node->getColumn(), "Return type does not match the overritten function");
                     return false;
                 }
                 //check if the formals number match
                 if (overwrite->getFormals()->size() != formals->size()) {
-                    std::cerr << "Error line " << node->getLine() << ": Formals do not match the overritten function" << std::endl;
+                    // std::cerr << "Error line " << node->getLine() << ": Formals do not match the overritten function" << std::endl;
+                    throw CheckerException(node->getLine(), node->getColumn(), "Formals do not match the overritten function");
                     return false;
                 }
                 //check if the formals match
                 std::vector<SymbolTableEntry*> *testedFormals = overwrite->getFormals();
                 for (int i = 0; i < formals->size(); i++){
                     if((*testedFormals)[i]->getType() != (*formals)[i]->getType()) {
-                        std::cerr << "Error line " << node->getLine() << ": Formals do not match the overritten function" << std::endl;
+                        // std::cerr << "Error line " << node->getLine() << ": Formals do not match the overritten function" << std::endl;
+                        throw CheckerException(node->getLine(), node->getColumn(), "Formals do not match the overritten function");
                         return false;
                     }
                 }
@@ -281,7 +295,8 @@ bool Checker::registerMethodAndField(ASTNode *node) {
             this->symbolTable->add("method"+name, children[1]->getSValue(), true, formals);//TODO: need to be adapt for method
 
         } else {
-            std::cerr << "Error line " << node->getLine() << ": Unexpetected expr " << node->getSValue() << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Unexpetected expr " << node->getSValue() << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Unexpetected expr " + node->getSValue());
             return false;
         }
     }
@@ -304,13 +319,15 @@ bool Checker::checkNode(ASTNode *node) {
         }
         // Check if program contains a class Main
         if(!this->symbolTable->hasClass("Main")) {
-            std::cerr << "Error line " << node->getLine() << ": A program must contain a Main class" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": A program must contain a Main class" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "A program must contain a Main class");
             return false;
         }
         // Check if Main contains main()
         this->symbolTable->enterScope("Main");
         if( this->symbolTable->lookup("methodmain") == NULL) {
-            std::cerr << "Error line " << node->getLine() << ": The Main class must have a method called main" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": The Main class must have a method called main" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "The Main class must have a method called main");
             return false;
         }
         this->symbolTable->exitScope("Main");
@@ -345,7 +362,8 @@ bool Checker::checkNode(ASTNode *node) {
             // std::cout << rType << " VS " << eType << std::endl;
 
             if (rType != eType) {
-                std::cerr << "Error line " << node->getLine() << ": Type do not match" << std::endl;
+                // std::cerr << "Error line " << node->getLine() << ": Type do not match" << std::endl;
+                throw CheckerException(node->getLine(), node->getColumn(), "Type do not match");
                 return false;
             }
         }
@@ -357,7 +375,8 @@ bool Checker::checkNode(ASTNode *node) {
         // Check if the name is already used => sera tjs vrai
         SymbolTableEntry* previous = this->symbolTable->lookupInCurrentScope(name);
         if(previous != NULL) {
-            std::cerr << "Error line " << node->getLine() << ": Method already defined" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Method already defined" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Method already defined");
             return false; // Same name used inside the current scope
         }
         // Check if declared in parent scope => sert à rien fait dans le preprocess
@@ -400,7 +419,8 @@ bool Checker::checkNode(ASTNode *node) {
         // Check if already defined as formal name must be distinct
         SymbolTableEntry* formal = this->symbolTable->lookup(name);
         if(formal != NULL) {
-            std::cerr << "Error line " << node->getLine() << ": Formals must have distinct names" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Formals must have distinct names" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Formals must have distinct names");
             return false;
         }
         // Add formal to current scope (new scope create in method)
@@ -431,7 +451,8 @@ bool Checker::checkNode(ASTNode *node) {
         }
         //check that the first exp is of type bool
         if (children[0]->getReturnType() != "bool") {
-            std::cerr << "Error line " << node->getLine() << ": Type bool expected" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Type bool expected" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Type bool expected");
             return false;
         }
         //check that the 2 other expression have the same type
@@ -439,7 +460,8 @@ bool Checker::checkNode(ASTNode *node) {
 
             if (children[1]->getReturnType() != "unit" && children[2]->getReturnType() != "unit") {
                 if (children[1]->getReturnType() != children[2]->getReturnType()) {
-                    std::cerr << "Error line " << node->getLine() << ": Types do not match expected" << std::endl;
+                    // std::cerr << "Error line " << node->getLine() << ": Types do not match expected" << std::endl;
+                    throw CheckerException(node->getLine(), node->getColumn(), "Types do not match expected");
                     return false;
                 }
                 node->setReturnType(children[1]->getReturnType());
@@ -464,7 +486,8 @@ bool Checker::checkNode(ASTNode *node) {
         }
         //check that the first exp is of type bool
         if (children[0]->getReturnType() != "bool") {
-            std::cerr << "Error line " << node->getLine() << ": Type bool expected" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Type bool expected" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Type bool expected");
             return false;
         }
         node->setReturnType("unit");
@@ -517,7 +540,8 @@ bool Checker::checkNode(ASTNode *node) {
             std::string eType = children[2]->getReturnType();
 
             if (rType != eType){
-                std::cerr << "Error line " << node->getLine() << ": Type does not match" << std::endl;
+                // std::cerr << "Error line " << node->getLine() << ": Type does not match" << std::endl;
+                throw CheckerException(node->getLine(), node->getColumn(), "Type does not match");
                 return false;
             }
         }
@@ -546,7 +570,8 @@ bool Checker::checkNode(ASTNode *node) {
         SymbolTableEntry* identifier = this->symbolTable->lookup("variable"+(children[0]->getSValue()));
 
         if (identifier->getType() != children[1]->getReturnType()) {
-            std::cerr << "Error line " << node->getLine() << ": Same type expected" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Same type expected" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Same type expected");
             return false;
         }
 
@@ -558,7 +583,8 @@ bool Checker::checkNode(ASTNode *node) {
             return false;
         }
         if (children[0]->getReturnType() != "bool") {
-            std::cerr << "Error line " << node->getLine() << ": Type bool expected" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Type bool expected" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Type bool expected");
             return false;
         }
         node->setReturnType("bool");
@@ -572,10 +598,12 @@ bool Checker::checkNode(ASTNode *node) {
             return false;
         }
         if (children[0]->getReturnType() != "bool") {
-            std::cerr << "Error line " << node->getLine() << ": Type bool expected" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Type bool expected" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Type bool expected");
         }
         if (children[1]->getReturnType() != "bool") {
-            std::cerr << "Error line " << node->getLine() << ": Type bool expected" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Type bool expected" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Type bool expected");
         }
         node->setReturnType("bool");
 
@@ -588,7 +616,8 @@ bool Checker::checkNode(ASTNode *node) {
             return false;
         }
         if (children[0]->getReturnType() != children[1]->getReturnType()) {
-            std::cerr << "Error line " << node->getLine() << ": Same type expected" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Same type expected" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Same type expected");
         }
         node->setReturnType("bool");
 
@@ -601,10 +630,12 @@ bool Checker::checkNode(ASTNode *node) {
             return false;
         }
         if (children[0]->getReturnType() != "int32") {
-            std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Type int32 expected");
         }
         if (children[1]->getReturnType() != "int32") {
-            std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Type int32 expected");
         }
         node->setReturnType("bool");
 
@@ -617,10 +648,12 @@ bool Checker::checkNode(ASTNode *node) {
             return false;
         }
         if (children[0]->getReturnType() != "int32") {
-            std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Type int32 expected");
         }
         if (children[1]->getReturnType() != "int32") {
-            std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Type int32 expected");
         }
         node->setReturnType("bool");
 
@@ -634,10 +667,12 @@ bool Checker::checkNode(ASTNode *node) {
         }
 
         if (children[0]->getReturnType() != "int32") {
-            std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Type int32 expected");
         }
         if (children[1]->getReturnType() != "int32") {
-            std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Type int32 expected");
         }
         node->setReturnType("int32");
 
@@ -650,10 +685,12 @@ bool Checker::checkNode(ASTNode *node) {
             return false;
         }
         if (children[0]->getReturnType() != "int32") {
-            std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Type int32 expected");
         }
         if (children[1]->getReturnType() != "int32") {
-            std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Type int32 expected");
         }
         node->setReturnType("int32");
 
@@ -666,10 +703,12 @@ bool Checker::checkNode(ASTNode *node) {
             return false;
         }
         if (children[0]->getReturnType() != "int32") {
-            std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Type int32 expected");
         }
         if (children[1]->getReturnType() != "int32") {
-            std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Type int32 expected");
         }
         node->setReturnType("int32");
 
@@ -682,10 +721,12 @@ bool Checker::checkNode(ASTNode *node) {
             return false;
         }
         if (children[0]->getReturnType() != "int32") {
-            std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Type int32 expected");
         }
         if (children[1]->getReturnType() != "int32") {
-            std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Type int32 expected");
         }
         node->setReturnType("int32");
 
@@ -698,10 +739,12 @@ bool Checker::checkNode(ASTNode *node) {
             return false;
         }
         if (children[0]->getReturnType() != "int32") {
-            std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Type int32 expected");
         }
         if (children[1]->getReturnType() != "int32") {
-            std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Type int32 expected");
         }
         node->setReturnType("int32");
 
@@ -711,7 +754,8 @@ bool Checker::checkNode(ASTNode *node) {
             return false;
         }
         if (children[0]->getReturnType() != "int32") {
-            std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Type int32 expected" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Type int32 expected");
         }
         node->setReturnType("int32");
 
@@ -747,14 +791,16 @@ bool Checker::checkNode(ASTNode *node) {
         this->symbolTable->exitScope(objectType);
 
         if (method == nullptr) {
-            std::cerr << "Error line " << node->getLine() << ": Method does not exist" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Method does not exist" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Method does not exist");
             return false;
         }
 
         //check some args are expected
         std::vector<SymbolTableEntry*>* formals = method->getFormals();
         if (formals->size() > 0 && children.size() != 3) {
-            std::cerr << "Error line " << node->getLine() << ": Invalid number of args" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Invalid number of args" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Invalid number of args");
             return false;
         }
 
@@ -764,13 +810,15 @@ bool Checker::checkNode(ASTNode *node) {
 
             //check that the formals expected some args
             if (formals->size() == 0) {
-                std::cerr << "Error line " << node->getLine() << ": Invalid number of args" << std::endl;
+                // std::cerr << "Error line " << node->getLine() << ": Invalid number of args" << std::endl;
+                throw CheckerException(node->getLine(), node->getColumn(), "Invalid number of args");
                 return false;
             }
 
             //check the number of args
             if (args.size() != formals->size()) {
-                std::cerr << "Error line " << node->getLine() << ": Invalid number of args" << std::endl;
+                // std::cerr << "Error line " << node->getLine() << ": Invalid number of args" << std::endl;
+                throw CheckerException(node->getLine(), node->getColumn(), "Invalid number of args");
                 return false;
             }
 
@@ -786,7 +834,8 @@ bool Checker::checkNode(ASTNode *node) {
                 std::cout << (*formals)[i]->getType() << " / " << args[i]->getReturnType() << std::endl;
 
                 if ((*formals)[i]->getType() != args[i]->getReturnType()) {
-                    std::cerr << "Error line " << node->getLine() << ": Type does not match" << std::endl;
+                    // std::cerr << "Error line " << node->getLine() << ": Type does not match" << std::endl;
+                    throw CheckerException(node->getLine(), node->getColumn(), "Type does not match");
                     return false;
                 }
             }
@@ -794,7 +843,8 @@ bool Checker::checkNode(ASTNode *node) {
 
         //if the call have n args but the method need them
         if (method->getFormals() == NULL) {
-            std::cerr << "Error line " << node->getLine() << ": Invalid number of args" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Invalid number of args" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Invalid number of args");
             return false;
         }
         node->setReturnType(method->getType());
@@ -831,7 +881,8 @@ bool Checker::checkNode(ASTNode *node) {
         std::string objectId = node->getSValue();
         SymbolTableEntry* entry = this->symbolTable->lookup("variable"+objectId);
         if (entry == NULL) {
-            std::cerr << "Error line " << node->getLine() << ": Object Id \""<< objectId <<"\" does not exist" << std::endl;
+            // std::cerr << "Error line " << node->getLine() << ": Object Id \""<< objectId <<"\" does not exist" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Object Id \"" + objectId + "\" does not exist");
             return false;
         }
         node->setReturnType(entry->getType());

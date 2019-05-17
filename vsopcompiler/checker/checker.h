@@ -44,7 +44,7 @@ private:
     std::map<std::string, std::string> *extend;
 
     bool preprocess(ASTNode *node);
-    bool registerClass(std::string className, std::vector<std::string> *waiting);
+    bool registerClass(std::string className, std::vector<std::string> *waiting, int line, int col);
     bool registerMethodAndField(ASTNode *node);
     bool checkNode(ASTNode *root);
 
