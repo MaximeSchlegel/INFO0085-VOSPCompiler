@@ -145,23 +145,24 @@ bool Checker::preprocess(ASTNode *node) {
 
 
 bool Checker::registerClass(std::string className, std::vector<std::string> *waiting, int line, int col) {
-    std::map<std::string, std::string>::iterator parentIt = this->extend->find(className);
+    std::map<std::string, std::string>::iterator classIt = this->extend->find(className);
+    std::map<std::string, std::string>::iterator parentIt = this->extend->find(classIt->second);
 
     //check if the parent class is define in the program
     if(parentIt == this->extend->end()) {
         // std::cerr << "La class parente " << parentIt->second << " n'est pas definie" << std::endl;
-        throw CheckerException(line, col, "La class parente " + parentIt->second + " n'est pas definie");
+        throw CheckerException(line, col, "La class parente " + classIt->second + " n'est pas definie");
         return false;
     }
 
     waiting->push_back(className);
 
     // check if the parent if define in the symbol table
-    if (!this->symbolTable->hasClass(parentIt->second)) {
+    if (!this->symbolTable->hasClass(classIt->second)) {
         // if the parent has not already been define
         // check for cyclic definition
         for (int i = 0; i < waiting->size(); i++) {
-            if ((*waiting)[i] == parentIt->second) {
+            if ((*waiting)[i] == classIt->second) {
                 // std::cerr << "Definition cyclique" << std::endl;
                 throw CheckerException(line, col, "Definition cyclique");
                 return false;
@@ -169,13 +170,13 @@ bool Checker::registerClass(std::string className, std::vector<std::string> *wai
         }
 
         // try to create the scope of the parent class
-        if (!this->registerClass(parentIt->second, waiting, line, col)) {
+        if (!this->registerClass(classIt->second, waiting, line, col)) {
             return false;
         }
     }
 
     //create the scope for the current class under those of the parent one
-    this->symbolTable->enterNewScope(className, parentIt->second);
+    this->symbolTable->enterNewScope(className, classIt->second);
     this->symbolTable->exitScope();
     waiting->pop_back();
     return true;
@@ -197,6 +198,12 @@ bool Checker::registerMethodAndField(ASTNode *node) {
             if (this->symbolTable->lookupInCurrentScope("variable"+name)) {
                 // std::cerr << "Error line " << node->getLine() << ": The field is already define" << std::endl;
                 throw CheckerException(node->getLine(), node->getColumn(), "The field is already define");
+                return false;
+            }
+
+            // CHeck if redefinition of inherited field
+            if (this->symbolTable->lookup("variable"+name)) {
+                throw CheckerException(node->getLine(), node->getColumn(), "Redefinition of inherited field " + name);
                 return false;
             }
 
@@ -831,7 +838,7 @@ bool Checker::checkNode(ASTNode *node) {
                 }
                 this->symbolTable->exitScope();
 
-                std::cout << (*formals)[i]->getType() << " / " << args[i]->getReturnType() << std::endl;
+                // std::cout << (*formals)[i]->getType() << " / " << args[i]->getReturnType() << std::endl;
 
                 if ((*formals)[i]->getType() != args[i]->getReturnType()) {
                     // std::cerr << "Error line " << node->getLine() << ": Type does not match" << std::endl;
