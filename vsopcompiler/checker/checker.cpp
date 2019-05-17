@@ -56,6 +56,10 @@ Checker::Checker(ASTNode *root) {
 }
 
 bool Checker::isChildOf(std::string subclass, std::string testClass) {
+    if(subclass == testClass) {
+        return true;
+    }
+
     std::map<std::string, std::string>::iterator entry = this->extend->find(subclass);
     while (entry != this->extend->end()){
         if (entry->second == testClass) {
@@ -742,7 +746,7 @@ bool Checker::checkNode(ASTNode *node) {
             return false;
         }
 
-        if(!this->isChildOf(children[0]->getType(), "Object")) {
+        if(!this->isChildOf(children[0]->getReturnType(), "Object")) {
             throw CheckerException(node->getLine(), node->getColumn(), "Type Object expected");
         }
 
