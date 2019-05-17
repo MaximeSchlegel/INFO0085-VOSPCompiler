@@ -47,6 +47,7 @@ private:
     bool registerClass(std::string className, std::vector<std::string> *waiting, int line, int col);
     bool registerMethodAndField(ASTNode *node);
     bool checkNode(ASTNode *root);
+    bool isChildOf(std::string Subclass, std::string testClass);
 
 public:
     Checker(ASTNode *root);

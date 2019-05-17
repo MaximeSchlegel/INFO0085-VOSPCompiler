@@ -55,6 +55,17 @@ Checker::Checker(ASTNode *root) {
     this->symbolTable->exitScope("IO");
 }
 
+bool Checker::isChildOf(std::string Subclass, std::string testClass) {
+    std::map<std::string, std::string>::iterator entrie = this->extend->find(Subclass);
+    while (entrie != this->extend->end()){
+        if (entrie->second == testClass) {
+            return true;
+        } else {
+            entrie = this->extend->find(entrie->second);
+        }
+    }
+    return false;
+}
 
 bool Checker::check() {
     if(!this->preprocess(this->root)){
@@ -576,10 +587,10 @@ bool Checker::checkNode(ASTNode *node) {
 
         SymbolTableEntry* identifier = this->symbolTable->lookup("variable"+(children[0]->getSValue()));
 
-        if (identifier->getType() != children[1]->getReturnType()) {
+        if (identifier->getType() != children[1]->getReturnType() ||
+            this->isChildOf(children[1]->getReturnType(), identifier->getType())) {
             // std::cerr << "Error line " << node->getLine() << ": Same type expected" << std::endl;
             throw CheckerException(node->getLine(), node->getColumn(), "Same type expected");
-            return false;
         }
 
         node->setReturnType(children[1]->getReturnType());
