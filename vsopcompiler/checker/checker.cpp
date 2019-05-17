@@ -740,7 +740,8 @@ bool Checker::checkNode(ASTNode *node) {
         if (!this->checkNode(children[0])) {
             return false;
         }
-        if(!this->isChildOf(children[0]->getType(), "Object")){
+        if (children[0]->getReturnType() != "Object" &&
+            !this->isChildOf(children[0]->getReturnType(), "Object")){
             throw CheckerException(node->getLine(), node->getColumn(), "Object Type expected");
         }
 
