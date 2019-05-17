@@ -37,6 +37,7 @@ public:
     SymbolTableScope(SymbolTableScope* parent);
     void add(std::string id, std::string type, std::vector<SymbolTableEntry*>* formals, bool isMethod = false);
     SymbolTableEntry* lookup(std::string id);
+    std::vector<std::string> getNames();
 
     friend class SymbolTable;
 };

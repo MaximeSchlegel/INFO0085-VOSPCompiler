@@ -47,6 +47,19 @@ SymbolTableEntry* SymbolTableScope::lookup(std::string id) {
     return entry;
 }
 
+std::vector<std::string> SymbolTableScope::getNames() {
+    std::vector<std::string> names;
+    for(auto it = this->scope->begin(); it != this->scope->end(); it++) {
+        names.push_back(it->first);
+    }
+    if(this->parent != NULL) {
+        std::vector<std::string> parentNames = this->parent->getNames();
+        names.insert(names.end(), parentNames.begin(), parentNames.end());
+    }
+
+    return names;
+}
+
 SymbolTable::SymbolTable() {
     this->classes = new std::unordered_map<std::string, SymbolTableScope*>();
 

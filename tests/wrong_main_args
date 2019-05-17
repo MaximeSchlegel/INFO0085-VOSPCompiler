@@ -1,0 +1,3 @@
+class Main {
+    main() : string { "I should be an int32" }
+}

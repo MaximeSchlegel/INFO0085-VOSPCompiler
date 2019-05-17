@@ -128,9 +128,16 @@ bool Checker::preprocess(ASTNode *node) {
 
 //        std::cout << main << std::endl;
 
-        if (!main->lookup("methodmain")) {
+        SymbolTableEntry* mainMethod = main->lookup("methodmain");
+        if (!mainMethod) {
             //  std::cerr << "Can't find Main::main method" << std::endl;
             throw CheckerException(node->getLine(), node->getColumn(), "Can't find Main::main method");
+        }
+        if (mainMethod->getFormals()->size() != 0) {
+            throw CheckerException(node->getLine(), node->getColumn(), "Main.main() should have no arguments");
+        }
+        if (mainMethod->getType() != "int32") {
+            throw CheckerException(node->getLine(), node->getColumn(), "Main.main() should return int32");
         }
 
     } else if (node->getType() == "class") {
@@ -197,16 +204,18 @@ bool Checker::registerMethodAndField(ASTNode *node) {
     std::string className = classChildren[0]->getSValue();
 
     std::vector<std::string> fieldsAndMethodsName;
-    for(int i = 2; i < classChildren.size(); i++) {
-        ASTNode* name = classChildren[i]->getChildren()[0];
-        fieldsAndMethodsName.push_back(name->getSValue());
-    }
+    // for(int i = 2; i < classChildren.size(); i++) {
+    //     ASTNode* name = classChildren[i]->getChildren()[0];
+    //     fieldsAndMethodsName.push_back(name->getSValue());
+    // }
 
     this->symbolTable->enterScope(className);
 
     for (int i = 2; i < classChildren.size(); i++) {
         std::vector<ASTNode *> children = classChildren[i]->getChildren();
         std::string name = children[0]->getSValue();
+
+        fieldsAndMethodsName = this->symbolTable->getScope(className)->getNames();
 
         if (classChildren[i]->getType() == "field") {
             //test if the field is assign;
@@ -226,18 +235,34 @@ bool Checker::registerMethodAndField(ASTNode *node) {
                 throw CheckerException(node->getLine(), node->getColumn(), "Type is not define");
             }
 
+            //create the symbol in the table
+            this->symbolTable->add("variable"+name, children[1]->getSValue());
+
             if(children.size() == 3) {
                 // Has assign
                 ASTNode* assignExpr = children[2];
                 for(auto p: fieldsAndMethodsName) {
-                    if(assignExpr->doesSubTreeContains(p)) {
+                    std::string checkName = p;
+
+                    // Remove variable if present
+                    size_t pos = checkName.find("variable");
+                    if (pos != std::string::npos)
+                    {
+                        checkName = checkName.substr(8, checkName.size() - 8);
+                    }
+
+                    // Remove method if present
+                    pos = checkName.find("method");
+                    if (pos != std::string::npos)
+                    {
+                        checkName = checkName.substr(6, checkName.size() - 6);
+                    }
+
+                    if(assignExpr->doesSubTreeContains(checkName)) {
                         throw CheckerException(node->getLine(), node->getColumn(), "Cannot use class fields and methods in field initializer");
                     }
                 }
             }
-
-            //create the symbol in the table
-            this->symbolTable->add("variable"+name, children[1]->getSValue());
 
         } else if (classChildren[i]->getType() == "method") {
             //check if the method is already define in the class
@@ -419,7 +444,7 @@ bool Checker::checkNode(ASTNode *node) {
         }
         this->symbolTable->exitScope();
         //check the return type
-        if (children[1]->getSValue() != children[2]->getReturnType()) {
+        if (!this->isChildOf(children[1]->getSValue(), children[2]->getReturnType()) && !this->isChildOf(children[2]->getReturnType(), children[1]->getSValue())) {
             throw CheckerException(node->getLine(), node->getColumn(), "Return type of the block does not match declared type of the method");
         }
         node->setReturnType(children[0]->getSValue());
