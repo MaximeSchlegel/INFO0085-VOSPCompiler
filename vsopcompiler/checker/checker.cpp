@@ -737,13 +737,12 @@ bool Checker::checkNode(ASTNode *node) {
 
     } else if (node->getType() == "isnull") {
         std::vector < ASTNode * > children = node->getChildren();
-        std::string name = children[0]->getSValue();
 
         if (!this->checkNode(children[0])) {
             return false;
         }
 
-        if(!this->isChildOf(name, "Object")) {
+        if(!this->isChildOf(children[0]->getType(), "Object")) {
             throw CheckerException(node->getLine(), node->getColumn(), "Type Object expected");
         }
 
