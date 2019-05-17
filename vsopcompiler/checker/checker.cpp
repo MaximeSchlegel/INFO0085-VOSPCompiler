@@ -505,7 +505,7 @@ bool Checker::checkNode(ASTNode *node) {
             // Evaluate expr after IN
             this->symbolTable->enterNewScope();
 
-            this->symbolTable->add("variable"+children[0]->getSValue(), children[2]->getReturnType());
+            this->symbolTable->add("variable"+children[0]->getSValue(), children[1]->getSValue());
 
             if (!this->checkNode(children[3])) {
                 return false;
