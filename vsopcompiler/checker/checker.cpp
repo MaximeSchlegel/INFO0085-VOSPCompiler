@@ -55,13 +55,13 @@ Checker::Checker(ASTNode *root) {
     this->symbolTable->exitScope("IO");
 }
 
-bool Checker::isChildOf(std::string Subclass, std::string testClass) {
-    std::map<std::string, std::string>::iterator entrie = this->extend->find(Subclass);
-    while (entrie != this->extend->end()){
-        if (entrie->second == testClass) {
+bool Checker::isChildOf(std::string subclass, std::string testClass) {
+    std::map<std::string, std::string>::iterator entry = this->extend->find(subclass);
+    while (entry != this->extend->end()){
+        if (entry->second == testClass) {
             return true;
         } else {
-            entrie = this->extend->find(entrie->second);
+            entry = this->extend->find(entry->second);
         }
     }
     return false;
@@ -758,9 +758,17 @@ bool Checker::checkNode(ASTNode *node) {
 
     } else if (node->getType() == "isnull") {
         std::vector < ASTNode * > children = node->getChildren();
+        std::string name = children[0]->getSValue();
+
         if (!this->checkNode(children[0])) {
             return false;
         }
+
+        if(!this->isChildOf(name, "Object"))
+        {
+            throw CheckerException(node->getLine(), node->getColumn(), "Type Object expected");
+        }
+
         node->setReturnType("bool");
 
     } else if (node->getType() == "new") {
