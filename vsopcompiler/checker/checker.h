@@ -4,10 +4,38 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <exception>
 
 #include "../utils/ASTNode.h"
 #include "../utils/symbolTable.h"
 
+class CheckerException: public std::exception {
+private:
+    int linePos;
+    int colPos;
+    std::string errorText;
+
+public:
+    CheckerException(int linePos, int colPos, std::string errorText) throw()
+        : linePos(linePos), colPos(colPos), errorText(errorText) {}
+
+    virtual const char *what() const throw()
+    {
+        return this->errorText.c_str();
+    }
+
+    int getLineNumber() const throw()
+    {
+        return this->linePos;
+    }
+
+    int getColumnNumber() const throw()
+    {
+        return this->colPos;
+    }
+
+    virtual ~CheckerException() throw() {}
+};
 
 class Checker {
 private:

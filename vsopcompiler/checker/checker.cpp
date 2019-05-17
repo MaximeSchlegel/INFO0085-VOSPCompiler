@@ -106,8 +106,9 @@ bool Checker::preprocess(ASTNode *node) {
 
         //check if there is a Main::main
         if (this->extend->find("Main") == this->extend->end()) {
-             std::cerr << "Can't find the Main class" << std::endl;
-             return false;
+            //  std::cerr << "Can't find the Main class" << std::endl;
+            throw CheckerException(node->getLine(), node->getColumn(), "Can't find the Main class");
+            return false;
         }
         SymbolTableScope *main = this->symbolTable->getScope("Main");
 
