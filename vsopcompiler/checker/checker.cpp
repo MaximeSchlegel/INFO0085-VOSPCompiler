@@ -412,7 +412,7 @@ bool Checker::checkNode(ASTNode *node) {
             eType = children[2]->getReturnType();
         }
 
-        if (rType != eType) {
+        if (!this->isChildOf(rType, eType) && !this->isChildOf(eType, rType)) {
             // std::cerr << "Error line " << node->getLine() << ": Type do not match" << std::endl;
             throw CheckerException(node->getLine(), node->getColumn(), "Type do not match");
         }
@@ -511,7 +511,7 @@ bool Checker::checkNode(ASTNode *node) {
         }
 
         if (exprT != "unit" && exprE != "unit") {
-            if (exprT != exprE) { // Not same type
+            if (!this->isChildOf(exprT, exprE) && !this->isChildOf(exprE, exprT)) { // Not same type
                 throw CheckerException(node->getLine(), node->getColumn(), "Types do not match expected");
             }
             node->setReturnType(exprT); // Same type (exactly) MUST add check of parents...
@@ -594,7 +594,7 @@ bool Checker::checkNode(ASTNode *node) {
             std::string rType = children[1]->getSValue();
             std::string eType = children[2]->getReturnType();
 
-            if (rType != eType && !this->isChildOf(rType, eType)){
+            if (!this->isChildOf(eType, rType) && !this->isChildOf(rType, eType)){
                 throw CheckerException(node->getLine(), node->getColumn(), "Type does not match");
             }
         }
