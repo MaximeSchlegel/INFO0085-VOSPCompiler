@@ -1,0 +1,10 @@
+class GrandParent {
+}
+class Parent extends GrandParent {
+}
+class Child extends Parent {
+}
+class MyClass {
+    myField : Parent <- if true then new Child else new Parent;
+}
+class Main { main() : int32 { 0 } }

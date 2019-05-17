@@ -111,7 +111,7 @@ bool SymbolTable::enterNewScope(std::string className, std::string parent) {
         this->classes->emplace(className, newScope);
         this->currentScope = newScope;
     }
-    this->add("self", className);
+    this->add("variableself", className);
     return true;
 }
 

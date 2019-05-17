@@ -327,6 +327,8 @@ bool Checker::checkNode(ASTNode *node) {
             std::string rType = children[1]->getSValue();
             std::string eType = this->symbolTable->lookup("variable"+name)->getType();
 
+            std::cout << rType << " VS " << eType << std::endl;
+
             if (rType != eType) {
                 std::cerr << "Error line " << node->getLine() << ": Type do not match" << std::endl;
                 return false;
@@ -419,6 +421,9 @@ bool Checker::checkNode(ASTNode *node) {
         }
         //check that the 2 other expression have the same type
         if (children.size() == 3) {
+
+            std::cout << children[1]->getReturnType() << " VS " << children[2]->getReturnType() << std::endl;
+
             if (children[1]->getReturnType() != children[2]->getReturnType()) {
                 std::cerr << "Error line " << node->getLine() << ": Types do not match expected" << std::endl;
                 return false;
