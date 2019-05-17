@@ -33,10 +33,24 @@ Checker::Checker(ASTNode *root) {
     formals->push_back(formal);
     this->symbolTable->add("methodprint", "IO", true, formals);
 
+    formal = new SymbolTableEntry("variableinput", "bool");
+    formals = new std::vector<SymbolTableEntry*>();
+    formals->push_back(formal);
+    this->symbolTable->add("methodprintBool", "IO", true, formals);
+
     formal = new SymbolTableEntry("variableinput", "int32");
     formals = new std::vector<SymbolTableEntry*>();
     formals->push_back(formal);
     this->symbolTable->add("methodprintInt32", "IO", true, formals);
+
+    formals = new std::vector<SymbolTableEntry*>();
+    this->symbolTable->add("methodinputLine", "string", true, formals);
+
+    formals = new std::vector<SymbolTableEntry*>();
+    this->symbolTable->add("methodinputBool", "bool", true, formals);
+
+    formals = new std::vector<SymbolTableEntry*>();
+    this->symbolTable->add("methodinputInt32", "int32", true, formals);
 
     this->symbolTable->exitScope("IO");
 }
@@ -327,7 +341,7 @@ bool Checker::checkNode(ASTNode *node) {
             std::string rType = children[1]->getSValue();
             std::string eType = this->symbolTable->lookup("variable"+name)->getType();
 
-            std::cout << rType << " VS " << eType << std::endl;
+            // std::cout << rType << " VS " << eType << std::endl;
 
             if (rType != eType) {
                 std::cerr << "Error line " << node->getLine() << ": Type do not match" << std::endl;
@@ -422,14 +436,20 @@ bool Checker::checkNode(ASTNode *node) {
         //check that the 2 other expression have the same type
         if (children.size() == 3) {
 
-            std::cout << children[1]->getReturnType() << " VS " << children[2]->getReturnType() << std::endl;
-
-            if (children[1]->getReturnType() != children[2]->getReturnType()) {
-                std::cerr << "Error line " << node->getLine() << ": Types do not match expected" << std::endl;
-                return false;
+            if (children[1]->getReturnType() != "unit" && children[2]->getReturnType() != "unit") {
+                if (children[1]->getReturnType() != children[2]->getReturnType()) {
+                    std::cerr << "Error line " << node->getLine() << ": Types do not match expected" << std::endl;
+                    return false;
+                }
+                node->setReturnType(children[1]->getReturnType());
+            }
+            else {
+                node->setReturnType("unit");
             }
         }
-        node->setReturnType(children[1]->getReturnType());
+        else {
+            node->setReturnType(children[1]->getReturnType());
+        }
 
     } else if (node->getType() == "while") {
         std::vector < ASTNode * > children = node->getChildren();
@@ -468,13 +488,17 @@ bool Checker::checkNode(ASTNode *node) {
             this->symbolTable->exitScope();
 
             // Check matching types
-            std::string rType = children[1]->getSValue();
-            std::string eType = children[3]->getReturnType();
+            // ? Do we need to check ? A let has the value of its body
+            // ? the type is only for the variable used inside this body
+            // std::string rType = children[1]->getSValue();
+            // std::string eType = children[3]->getReturnType();
 
-            if (rType != eType){
-                std::cerr << "Error line " << node->getLine() << ": Type does not match" << std::endl;
-                return false;
-            }
+            // std::cout << rType << " / " << eType << std::endl;
+
+            // if (rType != eType){
+            //     std::cerr << "Error line " << node->getLine() << ": Type does not match" << std::endl;
+            //     return false;
+            // }
         } else {
             // Evaluate expr after IN
             this->symbolTable->enterNewScope();
@@ -506,9 +530,9 @@ bool Checker::checkNode(ASTNode *node) {
     } else if (node->getType() == "assign") {
         std::vector < ASTNode * > children = node->getChildren();
 
-        if (!this->checkNode(children[0])) {
-            return false;
-        }
+        // if (!this->checkNode(children[0])) {
+        //     return false;
+        // }
 
         this->symbolTable->enterNewScope();
 
@@ -757,6 +781,9 @@ bool Checker::checkNode(ASTNode *node) {
                     return false;
                 }
                 this->symbolTable->exitScope();
+
+                std::cout << (*formals)[i]->getType() << " / " << args[i]->getReturnType() << std::endl;
+
                 if ((*formals)[i]->getType() != args[i]->getReturnType()) {
                     std::cerr << "Error line " << node->getLine() << ": Type does not match" << std::endl;
                     return false;
