@@ -290,6 +290,10 @@ bool Checker::registerMethodAndField(ASTNode *node) {
                     std::string formalName = formalNode[0]->getSValue();
                     std::string formalType = formalNode[1]->getSValue();
 
+                    if (formalName == "self") {
+                        throw CheckerException(node->getLine(), node->getColumn(), "cannot use self as an argument name");
+                    }
+
 //                    std::cout << "          " << formalName << " : " << formalType << std::endl;
 
                     //check if the formal name is already used
@@ -544,8 +548,13 @@ bool Checker::checkNode(ASTNode *node) {
 
             // Evaluate expr after IN
             this->symbolTable->enterNewScope();
+            std::string name = children[0]->getSValue();
 
-            this->symbolTable->add("variable"+children[0]->getSValue(), children[1]->getSValue());
+            if(name == "self") {
+                throw CheckerException(node->getLine(), node->getColumn(), "self cannot be shadowed");
+            }
+
+            this->symbolTable->add("variable"+name, children[1]->getSValue());
 
             if (!this->checkNode(children[3])) {
                 return false;
@@ -567,8 +576,13 @@ bool Checker::checkNode(ASTNode *node) {
         } else {
             // Evaluate expr after IN
             this->symbolTable->enterNewScope();
+            std::string name = children[0]->getSValue();
 
-            this->symbolTable->add("variable"+children[0]->getSValue(), children[1]->getSValue());
+            if(name == "self") {
+                throw CheckerException(node->getLine(), node->getColumn(), "self cannot be shadowed");
+            }
+
+            this->symbolTable->add("variable"+name, children[1]->getSValue());
 
             if (!this->checkNode(children[2])) {
                 return false;
@@ -594,6 +608,10 @@ bool Checker::checkNode(ASTNode *node) {
     } else if (node->getType() == "assign") {
         std::vector < ASTNode * > children = node->getChildren();
         std::string name = children[0]->getSValue();
+
+        if(name == "self") {
+            throw CheckerException(node->getLine(), node->getColumn(), "self cannot be shadowed");
+        }
 
         this->symbolTable->enterNewScope();
 

@@ -1,0 +1,5 @@
+class Main {
+    someMethod(i : int32, self : int32) : int32 { i + self }
+
+    main() : int32 { 0 }
+}
