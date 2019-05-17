@@ -35,12 +35,15 @@ void SymbolTableScope::add(std::string id, std::string type, std::vector<SymbolT
 }
 
 SymbolTableEntry* SymbolTableScope::lookup(std::string id) {
+    // std::cout << "Scope lookup" << std::endl;
     SymbolTableEntry* entry = NULL;
     try {
         entry = this->scope->at(id);
     } catch(std::out_of_range oor) {
+        // std::cout << "Scope lookup nothing" << std::endl;
         return NULL;
     }
+    // std::cout << "Scope lookup something" << std::endl;
     return entry;
 }
 
@@ -59,7 +62,7 @@ void SymbolTable::add(std::string id, std::string type, bool isMethod, std::vect
 
 SymbolTableEntry* SymbolTable::lookup(std::string id) {
     SymbolTableScope* tmpScope = this->currentScope;
-    // std::cout << this->currentScope->scope->size() << std::endl;
+    // std::cout << "Lookup for " << id << std::endl;
 
     while(tmpScope != NULL) {
         SymbolTableEntry* entry = tmpScope->lookup(id);
@@ -69,9 +72,10 @@ SymbolTableEntry* SymbolTable::lookup(std::string id) {
         }
 
         tmpScope = tmpScope->parent;
-        std::cout << "  try parent" << std::endl;
+        // std::cout << "  try parent" << std::endl;
     }
 
+    // std::cout << "End lookup nothing" << std::endl;
     return NULL;
 }
 
@@ -103,11 +107,11 @@ bool SymbolTable::enterNewScope(std::string className, std::string parent) {
         this->classes->emplace(className, newScope);
         this->currentScope = newScope;
     } else {
-        SymbolTableScope* newScope = new SymbolTableScope(this->currentScope);
+        SymbolTableScope* newScope = new SymbolTableScope(NULL);
         this->classes->emplace(className, newScope);
         this->currentScope = newScope;
     }
-    this->add("self", className);
+    this->add("variableself", className);
     return true;
 }
 
@@ -118,6 +122,8 @@ void SymbolTable::exitScope() {
 
 bool SymbolTable::hasClass(std::string name) {
     std::size_t n = this->classes->count(name);
+
+    // std::cout << "For name " << name << " " << n << " occurences found" << std::endl;
 
     return n == 1 ? true : false;
 }
@@ -133,8 +139,6 @@ void SymbolTable::enterScope(std::string name) {
     if(this->hasClass(name)) {
         this->previousScope = this->currentScope;
         this->currentScope = this->classes->at(name);
-    } else {
-        std::cout << "reckt" << std::endl;
     }
 }
 

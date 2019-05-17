@@ -1,0 +1,9 @@
+class Main {
+    sharedName : int32 <- 42;
+
+    (* The following function (logical OR) can reuse sharedName, because fields
+     * and methods are in different namespaces *)
+    sharedName(a : bool, b : bool) : bool { not (not a and not b) }
+
+    main() : int32 { 0 }
+}

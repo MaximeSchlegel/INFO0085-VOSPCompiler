@@ -103,13 +103,14 @@ int main(int argc, char *argv[]) {
             return -1;
         } else {
             Checker *sc = new Checker(astResult);
-            if (sc->check()) {
-                // std::cout << "Yes" << std::endl;
+            try {
+                sc->check();
                 std::cout << *astResult << std::endl;
                 fclose(yyin);
                 return 0;
-            } else {
-                // std::cout << "Nope" << std::endl;
+            } catch(const CheckerException& e) {
+                std::cerr << filename << ":" << e.getLineNumber() << ":" << e.getColumnNumber() << ": semantic error: ";
+                std::cerr << e.what() << std::endl;
                 fclose(yyin);
                 return -1;
             }
