@@ -107,6 +107,19 @@ std::vector<ASTNode *> ASTNode::getChildren() {
     return this->children;
 }
 
+bool ASTNode::doesSubTreeContains(std::string name) {
+    std::vector<ASTNode *> children = this->getChildren();
+    for(auto &p: children) {
+        if(p->getSValue() == name) {
+            return true;
+        }
+        if(p->doesSubTreeContains(name)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
     // Same order as in vsopc.y
 

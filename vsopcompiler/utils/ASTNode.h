@@ -40,6 +40,7 @@ public:
     std::string getType()const ;
     void addChild (ASTNode * child, bool front = false);
     std::vector<ASTNode *> getChildren();
+    bool doesSubTreeContains(std::string name);
     friend std::ostream & operator<<(std::ostream & os, const ASTNode & node);
     ~ASTNode();
 };

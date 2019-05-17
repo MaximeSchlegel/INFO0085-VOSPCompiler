@@ -196,6 +196,12 @@ bool Checker::registerMethodAndField(ASTNode *node) {
     std::vector<ASTNode *> classChildren = node->getChildren();
     std::string className = classChildren[0]->getSValue();
 
+    std::vector<std::string> fieldsAndMethodsName;
+    for(int i = 2; i < classChildren.size(); i++) {
+        ASTNode* name = classChildren[i]->getChildren()[0];
+        fieldsAndMethodsName.push_back(name->getSValue());
+    }
+
     this->symbolTable->enterScope(className);
 
     for (int i = 2; i < classChildren.size(); i++) {
@@ -218,6 +224,16 @@ bool Checker::registerMethodAndField(ASTNode *node) {
             if (this->extend->find(children[1]->getSValue()) == this->extend->end()) {
                 // std::cerr << "Error line " << node->getLine() << ": Type is not define" << std::endl;
                 throw CheckerException(node->getLine(), node->getColumn(), "Type is not define");
+            }
+
+            if(children.size() == 3) {
+                // Has assign
+                ASTNode* assignExpr = children[2];
+                for(auto p: fieldsAndMethodsName) {
+                    if(assignExpr->doesSubTreeContains(p)) {
+                        throw CheckerException(node->getLine(), node->getColumn(), "Cannot use class fields and methods in field initializer");
+                    }
+                }
             }
 
             //create the symbol in the table
