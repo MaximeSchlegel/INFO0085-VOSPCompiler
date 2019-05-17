@@ -75,6 +75,7 @@ objectId    {lowercase-letter}({letter}|{digit}|_)*
                                     if (openedCommentsPosition.empty()) { BEGIN(INITIAL); }
                                   }
 <MULTILINECOMMENT>([^*(\n])+      { yycharnoRefresh(); }
+<MULTILINECOMMENT>"("             { yycharnoRefresh(); }
 <MULTILINECOMMENT>\*              { yycharnoRefresh(); }
 <MULTILINECOMMENT>\               { yycharnoRefresh(); }
 <MULTILINECOMMENT>\n              { yycharnoNewline(); }
