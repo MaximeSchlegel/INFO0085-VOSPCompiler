@@ -403,10 +403,9 @@ bool Checker::checkNode(ASTNode *node) {
         }
         this->symbolTable->exitScope();
         //check the return type
-        // if (children[0]->getSValue() != children[2]->getReturnType()) {
-        //     std::cerr << "Types do not match" << std::endl;
-        //     return false;
-        // }
+        if (children[1]->getSValue() != children[2]->getReturnType()) {
+            throw CheckerException(node->getLine(), node->getColumn(), "Return type of the block does not match declared type of the method");
+        }
         node->setReturnType(children[0]->getSValue());
     } else if (node->getType() == "formals") {
         std::vector < ASTNode * > children = node->getChildren();
