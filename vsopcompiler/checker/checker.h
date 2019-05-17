@@ -48,6 +48,7 @@ private:
     bool registerMethodAndField(ASTNode *node);
     bool checkNode(ASTNode *root);
     bool isChildOf(std::string subclass, std::string testClass);
+    std::string getFirstCommonAncestor(std::string c1, std::string c2);
 
 public:
     Checker(ASTNode *root);

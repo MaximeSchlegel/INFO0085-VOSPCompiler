@@ -71,6 +71,14 @@ bool Checker::isChildOf(std::string subclass, std::string testClass) {
     return false;
 }
 
+std::string Checker::getFirstCommonAncestor(std::string c1, std::string c2) {
+    if (this->isChildOf(c1, c2)) {
+        return c2;
+    }
+    std::string parent = this->extend->at(c2);
+    return this->getFirstCommonAncestor(c1, parent);
+}
+
 bool Checker::check() {
     if(!this->preprocess(this->root)){
         return false;
@@ -495,6 +503,7 @@ bool Checker::checkNode(ASTNode *node) {
             }
             this->symbolTable->exitScope();
         }
+
         //check that the first exp is of type bool
         if (children[0]->getReturnType() != "bool") {
             // std::cerr << "Error line " << node->getLine() << ": Type bool expected" << std::endl;
@@ -510,14 +519,21 @@ bool Checker::checkNode(ASTNode *node) {
             exprE = "unit";
         }
 
-        if (exprT != "unit" && exprE != "unit") {
-            if (!this->isChildOf(exprT, exprE) && !this->isChildOf(exprE, exprT)) { // Not same type
-                throw CheckerException(node->getLine(), node->getColumn(), "Types do not match expected");
-            }
-            node->setReturnType(exprT); // Same type (exactly) MUST add check of parents...
+        // Both class type
+        if (this->isChildOf(exprT, "Object") && this->isChildOf(exprT, "Object")) {
+            std::string ancestor = this->getFirstCommonAncestor(exprT, exprE);
+            node->setReturnType(ancestor);
         }
-        else { // Both unit
+        // One at least equal to unit
+        else if (exprT == "unit" || exprE == "unit") {
             node->setReturnType("unit");
+        }
+        // Equal primitive types
+        else if (exprT == exprE) {
+            node->setReturnType(exprT);
+        }
+        else {
+            throw CheckerException(node->getLine(), node->getColumn(), "Types do not match expected");
         }
 
     } else if (node->getType() == "while") {
@@ -591,12 +607,14 @@ bool Checker::checkNode(ASTNode *node) {
             this->symbolTable->exitScope();
 
             // Check matching types
-            std::string rType = children[1]->getSValue();
-            std::string eType = children[2]->getReturnType();
+            // std::string rType = children[1]->getSValue();
+            // std::string eType = children[2]->getReturnType();
 
-            if (!this->isChildOf(eType, rType) && !this->isChildOf(rType, eType)){
-                throw CheckerException(node->getLine(), node->getColumn(), "Type does not match");
-            }
+            // std::cout << rType << " / " << eType << std::endl;
+
+            // if (!this->isChildOf(eType, rType) && !this->isChildOf(rType, eType)){
+            //     throw CheckerException(node->getLine(), node->getColumn(), "Type does not match");
+            // }
         }
 
         if(children.size() == 4) {
@@ -870,9 +888,10 @@ bool Checker::checkNode(ASTNode *node) {
                 }
                 this->symbolTable->exitScope();
 
-
-                if ((*formals)[i]->getType() != args[i]->getReturnType() &&
-                    !this->isChildOf(args[i]->getReturnType(), (*formals)[i]->getType())) {
+                std::string formalType = (*formals)[i]->getType();
+                std::string argType = args[i]->getReturnType();
+                
+                if (!this->isChildOf(argType, formalType) && !this->isChildOf(argType, formalType)) {
                     throw CheckerException(node->getLine(), node->getColumn(), "Type does not match");
                 }
             }
