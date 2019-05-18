@@ -406,21 +406,21 @@ bool Checker::checkNode(ASTNode *node) {
         std::string name = children[0]->getSValue();
 
         //check that the return type match the expected one
-        std::string rType = children[1]->getSValue();
-        std::string eType;
+        std::string eType = children[1]->getSValue();
+        std::string rType;
 
         if(children.size() == 2) {
             // No assignment
-            eType = this->symbolTable->lookup("variable"+name)->getType();
+            rType = this->symbolTable->lookup("variable"+name)->getType();
         } else {
             // With assignment
             if (!this->checkNode(children[2])) {
                 return false;
             }
-            eType = children[2]->getReturnType();
+            rType = children[2]->getReturnType();
         }
 
-        if (!this->isChildOf(rType, eType) && !this->isChildOf(eType, rType)) {
+        if (!this->isChildOf(rType, eType)) {
             // std::cerr << "Error line " << node->getLine() << ": Type do not match" << std::endl;
             throw CheckerException(node->getLine(), node->getColumn(), "Type do not match");
         }
@@ -456,7 +456,7 @@ bool Checker::checkNode(ASTNode *node) {
         }
         this->symbolTable->exitScope();
         //check the return type
-        if (!this->isChildOf(children[1]->getSValue(), children[2]->getReturnType()) && !this->isChildOf(children[2]->getReturnType(), children[1]->getSValue())) {
+        if (!this->isChildOf(children[2]->getReturnType(), children[1]->getSValue())) {
             throw CheckerException(node->getLine(), node->getColumn(), "Return type of the block does not match declared type of the method");
         }
         node->setReturnType(children[0]->getSValue());
@@ -556,6 +556,13 @@ bool Checker::checkNode(ASTNode *node) {
     } else if (node->getType() == "let") {
         std::vector<ASTNode *> children = node->getChildren();
 
+        // Check type
+        std::string type = children[1]->getSValue();
+        if (this->extend->find(type) == this->extend->end())
+        {
+            throw CheckerException(node->getLine(), node->getColumn(), "unknown type "+type);
+        }
+
         if (children.size() == 4){
             // Evaluate assign
             if (!this->checkNode(children[2])) {
@@ -605,16 +612,6 @@ bool Checker::checkNode(ASTNode *node) {
             }
 
             this->symbolTable->exitScope();
-
-            // Check matching types
-            // std::string rType = children[1]->getSValue();
-            // std::string eType = children[2]->getReturnType();
-
-            // std::cout << rType << " / " << eType << std::endl;
-
-            // if (!this->isChildOf(eType, rType) && !this->isChildOf(rType, eType)){
-            //     throw CheckerException(node->getLine(), node->getColumn(), "Type does not match");
-            // }
         }
 
         if(children.size() == 4) {
@@ -646,8 +643,7 @@ bool Checker::checkNode(ASTNode *node) {
             throw CheckerException(node->getLine(), node->getColumn(), "Use of unboud variable " + name);
         }
 
-        if (identifier->getType() != children[1]->getReturnType() &&
-            !this->isChildOf(children[1]->getType(), identifier->getType())) {
+        if (!this->isChildOf(identifier->getType(), children[1]->getReturnType())) {
             throw CheckerException(node->getLine(), node->getColumn(), "Same type expected");
         }
 
@@ -890,8 +886,8 @@ bool Checker::checkNode(ASTNode *node) {
 
                 std::string formalType = (*formals)[i]->getType();
                 std::string argType = args[i]->getReturnType();
-                
-                if (!this->isChildOf(argType, formalType) && !this->isChildOf(argType, formalType)) {
+
+                if (!this->isChildOf(argType, formalType)) {
                     throw CheckerException(node->getLine(), node->getColumn(), "Type does not match");
                 }
             }
