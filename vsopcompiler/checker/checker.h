@@ -41,20 +41,20 @@ public:
 class Checker
 {
 private:
-    ASTNode *root;
-    SymbolTable *symbolTable;
-    std::map<std::string, std::string> *extend;
+    ASTNode *root;                              // root of the AST to check
+    SymbolTable *symbolTable;                   //symbol table build form the AST
+    std::map<std::string, std::string> *extend; //used to resolve the extend relation of the class
 
-    bool preprocess(ASTNode *node);
-    bool registerClass(std::string className, std::vector<std::string> *waiting, int line, int col);
-    bool registerMethodAndField(ASTNode *node);
-    bool checkNode(ASTNode *root);
+    void preprocess(ASTNode *node);
+    void registerClass(std::string className, std::vector<std::string> *waiting, int line, int col);
+    void registerMethodAndField(ASTNode *node);
+    void checkNode(ASTNode *root);
     bool isChildOf(std::string subclass, std::string testClass);
     std::string getFirstCommonAncestor(std::string c1, std::string c2);
 
 public:
     Checker(ASTNode *root);
-    bool check();
+    void check();
 };
 
 #endif //VSOPCOMPILER_CHECKER_H
