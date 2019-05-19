@@ -40,8 +40,6 @@ int main(int argc, char *argv[]) {
     yylloc.last_column = 1;
     yylloc.last_line = 1;
 
-//    yydebug = 1;
-
     if(argc == 2 and std::string(argv[1]).compare("-lex") == 0)
     {
         DISPLAY = true;

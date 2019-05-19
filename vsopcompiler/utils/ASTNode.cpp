@@ -1,6 +1,7 @@
 #include "ASTNode.h"
 
 ASTNode::ASTNode(int type) {
+    //create a terminal node from a vsop native type, true or false literal
     this->iType = type;
     this->sType = "";
     this->children = std::vector<ASTNode *>();
@@ -8,6 +9,7 @@ ASTNode::ASTNode(int type) {
 }
 
 ASTNode::ASTNode(int type, int iValue) {
+    //create a terminal node from a vsop int literal
     this->iType = type;
     this->sType = "";
     this->iValue = iValue;
@@ -16,6 +18,7 @@ ASTNode::ASTNode(int type, int iValue) {
 }
 
 ASTNode::ASTNode(int type, std::string *sValue) {
+    //create a terminal node from a string literal
     this->iType = type;
     this->sValue = sValue;
     this->children = std::vector<ASTNode *>();
@@ -23,6 +26,7 @@ ASTNode::ASTNode(int type, std::string *sValue) {
 }
 
 ASTNode::ASTNode(std::string type) {
+    //create a non-terminal node -> program, class, formal, etc
     this->iType = -1;
     this->sType = type;
     this->children = std::vector<ASTNode *>();
@@ -30,6 +34,7 @@ ASTNode::ASTNode(std::string type) {
 }
 
 void ASTNode::setPosition(int line, int column) {
+    //set the position of the node -> position of the token which create the node
     prop l; l.iProp = line;
     prop c; c.iProp = column;
     this->properties.emplace("line", l);
@@ -37,10 +42,12 @@ void ASTNode::setPosition(int line, int column) {
 }
 
 int ASTNode::getLine() {
+    //get the line of the token which create the node
     return this->properties.find("line")->second.iProp;
 }
 
 int ASTNode::getColumn() {
+    //get the colum of the token which create the node
     return this->properties.find("column")->second.iProp;
 }
 
@@ -52,6 +59,7 @@ std::string ASTNode::getSValue() {
 }
 
 void ASTNode::setReturnType(std::string type) {
+    // set the type of a non terminal node in the properties list
     prop t; t.sProp = type;
     this->properties.emplace("type", t);
 }
@@ -75,6 +83,7 @@ std::string ASTNode::printReturnType() const {
 }
 
 std::string ASTNode::getType() const {
+    //return the type of the node
     if (this->iType != -1) {
         switch (this->iType) {
             case 260: return "bool";
@@ -95,9 +104,10 @@ std::string ASTNode::getType() const {
 }
 
 void ASTNode::addChild(ASTNode * child, bool front) {
+    //add a child to a given node, by default add it to the end of the list
     if (front){
-        std::vector<ASTNode *>::iterator it = this->children.begin();
-        this->children.insert(it, child);
+        std::vector<ASTNode *>::iterator begin = this->children.begin();
+        this->children.insert(begin, child);
     } else {
         this->children.push_back(child);
     }
@@ -108,6 +118,7 @@ std::vector<ASTNode *> ASTNode::getChildren() {
 }
 
 bool ASTNode::doesSubTreeContains(std::string name) {
+    //search for a given node in the child of the node
     std::vector<ASTNode *> children = this->getChildren();
     for(auto &p: children) {
         if(p->getSValue() == name) {
@@ -121,8 +132,7 @@ bool ASTNode::doesSubTreeContains(std::string name) {
 }
 
 std::ostream & operator<<(std::ostream & os, const ASTNode & node) {
-    // Same order as in vsopc.y
-
+    // Recursively travers the AST to display it
     if (node.iType != -1) {
         switch (node.iType) {
             case 260: os << "bool" << node.printReturnType(); break;
