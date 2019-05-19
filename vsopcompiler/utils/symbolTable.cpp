@@ -5,7 +5,7 @@ SymbolTableEntry::SymbolTableEntry(std::string id, std::string type, std::vector
 {
     this->id = id;
     this->type = type;
-    this->isMethod = isMethod;
+    this->method = isMethod;
     this->formals = formals;
 }
 
