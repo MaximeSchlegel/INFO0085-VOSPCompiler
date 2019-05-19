@@ -39,48 +39,20 @@ public:
 
 class Checker {
 private:
-    ASTNode *root;
-    SymbolTable *symbolTable;
-    std::map<std::string, std::string> *extend;
+    ASTNode *root;    // root of the AST to check
+    SymbolTable *symbolTable;    //symbol table build form the AST
+    std::map<std::string, std::string> *extend;    //used to resolve the extend relation of the class
 
-    bool preprocess(ASTNode *node);
-    bool registerClass(std::string className, std::vector<std::string> *waiting, int line, int col);
-    bool registerMethodAndField(ASTNode *node);
-    bool checkNode(ASTNode *root);
+    void preprocess(ASTNode *node);
+    void registerClass(std::string className, std::vector<std::string> *waiting, int line, int col);
+    void registerMethodAndField(ASTNode *node);
+    void checkNode(ASTNode *root);
     bool isChildOf(std::string subclass, std::string testClass);
     std::string getFirstCommonAncestor(std::string c1, std::string c2);
 
 public:
     Checker(ASTNode *root);
-    bool check();
-
-    //TODO: definition des class
-    //          - une class est nmmée Object
-    //          - redifinition des class
-    //          - cycle dans les héritages
-
-    //TODO: methodes
-    //          - args avec le même nom
-    //          - overwrite d'une methode d'un parent avec des args ou return value differente
-
-    //TODO: field
-    //          - redifinition de type
-    //          - un field est nommé self
-
-    //TODO: Type
-    //          - un type non défini est utilisé
-    //          - les type des return value doit match ceux attendu par la node au dessus
-
-    //TODO: ObjectID
-    //          - utilisation d'un Id non defini dans le scope
-
-    //TODO: Other
-    //          - self est attribué
-
-    //TODO: Main
-    //          - le programme doit avoir une class Main
-    //          - la class Main doit avoir une methode main
-    //          - Main.main signature: unit -> int32
+    void check();
 };
 
 #endif //VSOPCOMPILER_CHECKER_H
