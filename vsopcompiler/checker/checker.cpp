@@ -57,11 +57,13 @@ Checker::Checker(ASTNode *root)
 
 bool Checker::isChildOf(std::string subclass, std::string testClass)
 {
+    // Test equality
     if (subclass == testClass)
     {
         return true;
     }
 
+    // Iterate through the parent classes of subclass
     std::map<std::string, std::string>::iterator entry = this->extend->find(subclass);
     while (entry != this->extend->end())
     {
@@ -79,10 +81,13 @@ bool Checker::isChildOf(std::string subclass, std::string testClass)
 
 std::string Checker::getFirstCommonAncestor(std::string c1, std::string c2)
 {
+    // Check direct parents
     if (this->isChildOf(c1, c2))
     {
         return c2;
     }
+
+    // Check common ancestor with the parent of c2
     std::string parent = this->extend->at(c2);
     return this->getFirstCommonAncestor(c1, parent);
 }
@@ -95,7 +100,6 @@ void Checker::check()
 
 void Checker::preprocess(ASTNode *node)
 {
-
     if (node->getType() == "program")
     {
         std::vector<ASTNode *> children = node->getChildren();
@@ -173,7 +177,6 @@ void Checker::preprocess(ASTNode *node)
 
 void Checker::registerClass(std::string className, std::vector<std::string> *waiting, int line, int col)
 {
-
     std::map<std::string, std::string>::iterator classIt = this->extend->find(className);
     std::map<std::string, std::string>::iterator parentIt = this->extend->find(classIt->second);
 
@@ -380,7 +383,6 @@ void Checker::registerMethodAndField(ASTNode *node)
 
 void Checker::checkNode(ASTNode *node)
 {
-
     if (node->getType() == "program")
     {
         std::vector<ASTNode *> children = node->getChildren();
