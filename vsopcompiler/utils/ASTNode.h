@@ -17,12 +17,12 @@ typedef struct {
 
 class ASTNode {
 private:
-    int iType;
-    std::string sType;
-    int iValue;
-    std::string *sValue;
-    std::map<std::string, prop> properties;
-    std::vector<ASTNode *> children;
+    int iType;    // type of a terminal node
+    std::string sType;    //type of a non terminal node
+    int iValue;    // value of a int literal
+    std::string *sValue;  // value of all the other node meanings changes according to the type of the node
+    std::map<std::string, prop> properties;    // hold lines, and return types od the node
+    std::vector<ASTNode *> children;    // hold the child of this node
 
 public:
     ASTNode(int type);
