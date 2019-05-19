@@ -21,7 +21,7 @@ std::string SymbolTableEntry::getType() const
 
 bool SymbolTableEntry::isMethod() const
 {
-    return this->isMethod;
+    return this->method;
 }
 
 std::vector<SymbolTableEntry *> *SymbolTableEntry::getFormals() const

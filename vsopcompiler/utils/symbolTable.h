@@ -17,7 +17,7 @@ class SymbolTableEntry
 private:
     std::string id;
     std::string type;
-    bool isMethod;
+    bool method;
     std::vector<SymbolTableEntry *> *formals;
 
 public:
